@@ -1,0 +1,8 @@
+.lein-cljsbuild-compiler-0
+.lein-cljsbuild-repl
+.lein-plugins
+.lein-deps-sum
+out/
+lib/
+classes/
+target/
