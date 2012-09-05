@@ -2,6 +2,9 @@
 .lein-cljsbuild-repl
 .lein-plugins
 .lein-deps-sum
+*.swn
+*.swo
+*.swp
 out/
 lib/
 classes/
