@@ -1,5 +1,4 @@
-(ns hlisp.interp
-  (:require [clojure.browser.repl :as repl]))
+(ns hlisp.interp)
 
 (defn mkenv
   ([]

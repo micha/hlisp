@@ -1,6 +1,5 @@
 (ns hlisp.reader
-  (:require [clojure.browser.repl :as repl]
-            [cljs.reader :as reader]))
+  (:require [cljs.reader :as reader]))
 
 (defn third [s]
   (first (rest (rest s))))
