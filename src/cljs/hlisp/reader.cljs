@@ -2,29 +2,30 @@
   (:require [cljs.reader :as reader]))
 
 (defn branch? [s]
-  (and
-    (symbol? (first s))
-    (not= \# (get (str (first s)) 0))))
+  (let [[type] s]
+    (not= \# (get (str type) 0))))
 
 (defn leaf? [s]
-  (and
-    (= 3 (count s))
-    (symbol? (first s))
-    (string? (nth s 2))))
+  (let [[type attr cnodes] s]
+    (and
+      (not (branch? s))
+      (string? cnodes))))
 
 (defn boxed? [s]
-  (and
-    (= 2 (count s))
-    (= (first s) 'quote)
-    (string? (second s))))
+  (let [[type cnodes] s]
+    (and
+      (= 2 (count s))
+      (= type 'quote)
+      (string? cnodes))))
 
 (defn attrs? [s]
-  (and
-    (< 1 (count s))
-    (symbol? (first s))
-    (seq? (second s))
-    (= 1 (count (second s)))
-    (seq? (first (second s)))))
+  (let [[type attr] s]
+    (and
+      (< 1 (count s))
+      (symbol? type)
+      (seq? attr)
+      (= 1 (count attr))
+      (seq? (first attr)))))
 
 (defn valid-exp? [s]
   (or (or (string? s)
@@ -70,8 +71,7 @@
 (def empty-attrs '(()))
 
 (defn normalize-exp [s]
-  (if (not (valid-exp? s))
-    (throw (js/Error. (str s " read error!"))))
+  {:pre [(valid-exp? s)]}
   (cond
     (symbol?     s)  (list s empty-attrs)
     (string?     s)  (list (symbol "#text") empty-attrs s)
