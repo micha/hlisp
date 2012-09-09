@@ -1,9 +1,11 @@
 (ns hlisp.reader
   (:require [cljs.reader :as reader]))
 
+(defn elem-tag? [type]
+  (not= \# (get (str type) 0)))
+
 (defn branch? [s]
-  (let [[type] s]
-    (not= \# (get (str type) 0))))
+  (elem-tag? (first s)))
 
 (defn leaf? [s]
   (let [[type attr cnodes] s]
@@ -69,6 +71,9 @@
     (mkexp type attr chld)))
 
 (def empty-attrs '(()))
+
+(defn text-node [txt]
+  (build-exp (normalize-exp (list (symbol "#text") txt))))
 
 (defn normalize-exp [s]
   {:pre [(valid-exp? s)]}
