@@ -1,4 +1,5 @@
-(ns hlisp.interp)
+(ns hlisp.interp
+  (:use [hlisp.reader :only [expr]]))
 
 (def html-tags
   "Union of HTML 4.01 and HTML 5 tags"
@@ -20,6 +21,65 @@
 (def hlisp-object-tags
     "HLisp-specific self-evaluating symbols"
     #{ "#text" "#comment" "val" "list" "hash" "true" "false" "nil" "null" "fmeta" })
+
+(defn eval-all [env]
+  (fn [forms]
+    (map #(% env) forms)))
+
+(defn lookup-var [name env]
+  "heyho")
+
+(defprotocol Hexp
+  (analyze [expr]))
+
+(defrecord Var [name]
+  Hexp
+  (analyze [expr]
+    (let [name (:name expr)]
+      (fn [env]
+        (lookup-var name env)))))
+
+(defrecord Data [data]
+  Hexp
+  (analyze [expr]
+    (fn [env] expr)))
+
+(defrecord TextNode [tag text]
+  Hexp
+  (analyze [expr]
+    (fn [env] expr)))
+
+(defrecord Node [tag attrs children]
+  Hexp
+  (analyze [expr]
+    (let [children (map analyze (:children expr))]
+      (fn [env]
+        (assoc expr :chld (vec ((eval-all env) children)))))))
+
+(defrecord Proc [attr-params params env proc]
+  Hexp
+  (analyze [expr]
+    (fn [env] expr)))
+
+(defn make-var [name]
+  (Var. name))
+
+(defn make-data [data]
+  (Data. data))
+
+(defn make-text-node [tag text]
+  (TextNode. tag text))
+
+(defn make-node [tag attrs children]
+  (Node. tag attrs children))
+
+(defn make-proc [attr-params params env proc]
+  (Proc. attr-params params env proc))
+
+(defn parse-list
+  [tag text]
+  (make-node tag)
+  )
 
 (defn mkenv
   ([]
@@ -83,4 +143,4 @@
   ((analyze expr) env))
 
 (defn doit [s]
-  (eval (hlisp.reader/build-exp (hlisp.reader/normalize-exp s))))
+  (eval (expr s)))

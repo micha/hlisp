@@ -1,58 +1,46 @@
 (ns hlisp.reader
   (:require [cljs.reader :as reader]))
 
-(defn elem-tag? [type]
-  (not= \# (get (str type) 0)))
+(defn elem-tag? [tag]
+  (not= \# (get (str tag) 0)))
 
 (defn branch? [s]
   (elem-tag? (first s)))
 
 (defn leaf? [s]
-  (let [[type attr cnodes] s]
-    (and
-      (not (branch? s))
-      (string? cnodes))))
-
-(defn boxed? [s]
-  (let [[type cnodes] s]
-    (and
-      (= 2 (count s))
-      (= type 'quote)
-      (string? cnodes))))
+  (not (branch? s)))
 
 (defn attrs? [s]
-  (let [[type attr] s]
-    (and
-      (< 1 (count s))
-      (symbol? type)
-      (seq? attr)
-      (= 1 (count attr))
-      (seq? (first attr)))))
+  (let [[tag attr] s]
+    (or
+      (and
+        (< 1 (count s))
+        (symbol? tag)
+        (seq? attr)
+        (= 1 (count attr))
+        (seq? (first attr)))
+      (not (elem-tag? tag)))))
+
+(defn text-node? [s]
+  (and
+    (= 1 (count s))
+    (string? (first s))))
 
 (defn valid-exp? [s]
   (or (or (string? s)
+          (number? s)
           (vector? s)
+          (map?    s)
+          (set?    s)
           (symbol? s))
       (and (seq? s)
-           (symbol? (first s)))))
+           (symbol? (first s)))
+      (text-node? s)))
 
 (defn valid-tag? [tag]
   (and
     (string? tag)
     (re-matches #"^#?[a-zA-Z0-9_:-]+$" tag)))
-
-(defn mkexp
-  ([]
-   "Empty expression."
-   {:type "" :attr {} :chld [] :text "" :aparams {} :cparams [] :env {} :proc nil})
-
-  ([type attrs cnodes]
-   (let [exp (assoc (mkexp) :type type :attr attrs)]
-     (cond
-       (vector? cnodes) (assoc exp :chld cnodes)
-       (string? cnodes) (assoc exp :text cnodes)
-       :else
-       (throw (js/Error. (str cnodes " is not a vector or a string")))))))
 
 (defn read-attrs-pairs [s]
   (map
@@ -64,27 +52,26 @@
 (defn read-attrs [s]
   (into {} (vec (map vec (read-attrs-pairs s)))))
 
-(defn build-exp [s]
-  (let [type (str (first s)) 
-        attr (read-attrs (first (second s)))
-        chld (if (leaf? s) (nth s 2) (vec (map build-exp (drop 2 s))))]
-    (mkexp type attr chld)))
-
 (def empty-attrs '(()))
 
 (defn text-node [txt]
-  (build-exp (normalize-exp (list (symbol "#text") txt))))
+  (list (symbol "#text") (str txt)))
 
 (defn normalize-exp [s]
   {:pre [(valid-exp? s)]}
   (cond
     (symbol?     s)  (list s empty-attrs)
-    (string?     s)  (list (symbol "#text") empty-attrs s)
-    (vector?     s)  (normalize-exp (cons 'list s)) 
-    (boxed?      s)  (normalize-exp (cons 'val (rest s)))
+    (number?     s)  (list 'val:num empty-attrs (text-node s))
+    (string?     s)  (list 'val:str empty-attrs (text-node s)) 
+    (vector?     s)  (cons 'val:vec s)
+    (map?        s)  (cons 'val:map s) 
+    (set?        s)  (cons 'val:set s)
+    (text-node?  s)  (text-node (first s))
     (not (attrs? s)) (normalize-exp (concat (list (first s) empty-attrs) (rest s))) 
     (branch?     s)  (concat (take 2 s) (map normalize-exp (drop 2 s)))
     (leaf?       s)  s
     :else
     (throw (js/Error. (str s " read error")))))
 
+(defn expr [s]
+  (build-exp (normalize-exp s)))
