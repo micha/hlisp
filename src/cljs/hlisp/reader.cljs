@@ -37,7 +37,7 @@
 
 (defn parse-map-literal [expr]
   (when-let [m ((parse-seqable-literal map? 'val:map) expr)]
-    (concat (take 2 m) (mapcat (drop 2 m)))))
+    (concat (take 2 m) (mapcat (partial drop 2) (drop 2 m)))))
 
 (defn parse-set-literal [expr]
   ((parse-seqable-literal set? 'val:set) expr))
