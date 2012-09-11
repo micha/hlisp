@@ -26,12 +26,11 @@
 
 (defn parse-literal [pred valtag]
   (fn [expr]
-    (when (seqable? expr)
-      (let [[tag thing] expr]
-        (when (and (= 2 (count expr))
-                   (= 'quote tag)
-                   (pred thing))
-          (list valtag empty-attrs (text-node (str thing))))))))
+    (when-let [[tag thing] expr]
+      (when (and (= 2 (count expr))
+                 (= 'quote tag)
+                 (pred thing))
+        (list valtag empty-attrs (text-node (str thing)))))))
 
 (defn parse-string-literal [expr]
   ((parse-literal string? 'val:str) expr))
