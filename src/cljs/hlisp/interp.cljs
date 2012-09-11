@@ -1,6 +1,16 @@
 (ns hlisp.interp
   (:use [hlisp.reader :only [expr]]))
 
+(defn read-attrs-pairs [s]
+  (map
+    #(list (first %)
+           (if (string? (second %)) (second %) ""))
+    (filter #(symbol? (first %))
+            (partition 2 (interleave s (concat (rest s) (list (last s))))))))
+
+(defn read-attrs [s]
+  (into {} (vec (map vec (read-attrs-pairs s)))))
+
 (def html-tags
   "Union of HTML 4.01 and HTML 5 tags"
   #{ "a" "abbr" "acronym" "address" "applet" "area" "article" "aside"
@@ -77,9 +87,14 @@
   (Proc. attr-params params env proc))
 
 (defn parse-list
-  [tag text]
-  (make-node tag)
-  )
+  ([tag text]
+   (make-text-node tag text))
+  ([tag attrs children]
+   
+   )
+
+  
+)
 
 (defn mkenv
   ([]
