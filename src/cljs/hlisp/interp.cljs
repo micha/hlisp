@@ -32,25 +32,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;
 
-(defprotocol IHenv
-  (bind! [env bindings])
-  (resolve [env name]))
-
-(defrecord Henv [parent bindings]
-  IHenv
-  (bind! [env bindings]
-    (swap! (:bindings env) into bindings)
-    env)
-  (resolve [env name]
-    (let [parent    (:parent env)
-          bindings @(:bindings env)]
-      (cond
-        (contains? bindings name) (get bindings name)
-        (not (nil? parent))       (resolve parent name)
-        :else                     nil))))
-
 (defn make-env [parent] 
-  (Henv. parent (atom {})))
+  {:parent parent :bindings (atom {})})
+
+(defn bind-env! [env bindings]
+  (swap! (:bindings env) into bindings)
+  env)
+
+(defn resolve-env [env name]
+  (let [parent    (:parent env)
+        bindings @(:bindings env)]
+    (cond
+      (contains? bindings name) (get bindings name)
+      (not (nil? parent))       (resolve-env parent name)
+      :else                     nil))) 
 
 (def global-env (make-env nil))
 
@@ -105,7 +100,7 @@
 (defn compile-string [s]
   (map compile-form (hlisp.reader/read-string s)))
 
-;;;;;;;;;;;;;;;;;;;;;; Analyzer ;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;; Interpreter ;;;;;;;;;;;;;;;;;;;
 
 (defn text-hexp? [hexp]
   (= \# (get (:tag hexp) 0)))
