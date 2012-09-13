@@ -39,10 +39,9 @@
   (swap! (:bindings env) assoc name value))
 
 (defn get-env [env name]
-  (when (not (nil? env))
+  (when (map? env)
     (let [parent    (:parent env)
           bindings @(:bindings env)]
-      (println "got here " env)
       (if (contains? bindings name)
         (get bindings name)
         (get-env parent name)))))
