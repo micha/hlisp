@@ -2,15 +2,14 @@
   (:require [clojure.set])
   (:use [hlisp.reader :only [read-form]]))
 
-(defn read-attrs-pairs [s]
-  (map
-    #(list (first %)
-           (if (string? (second %)) (second %) ""))
-    (filter #(symbol? (first %))
-            (partition 2 (interleave s (concat (rest s) (list (last s))))))))
+;;;;;;;;;;;;;;;;;;;;;; Utility functions ;;;;;;;;;;;;;
 
-(defn read-attrs [s]
-  (into {} (vec (map vec (read-attrs-pairs s)))))
+(defn to-seq [x]
+  (if (seq? x)
+    x
+    (list x)))
+
+;;;;;;;;;;;;;;;;;;;;;; Special tags ;;;;;;;;;;;;;;;;;;
 
 (def html-tags
   #{ "a" "abbr" "acronym" "address" "applet" "area" "article" "aside"
@@ -41,10 +40,20 @@
 ;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;
 
 (defn make-env
-  ([]
-   {:parent nil :dict {}})
   ([parent]
-   {:parent parent :dict {}}))
+   (atom {:parent parent :bindings (atom {})})))
+
+(defn set-env! [env name value]
+  (swap! (:bindings env) #(assoc %1 %2 %3) name value))
+
+(defn get-env [env name]
+  (when (env)
+    (let [parent    (:parent env)
+          bindings  (:bindings env)]
+      (or (find @bindings name)
+          (get-env parent name)))))
+
+(def global-env (make-env nil))
 
 ;;;;;;;;;;;;;;;;;;;;;; Hexp ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -67,7 +76,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;; Compiler ;;;;;;;;;;;;;;;;;;;;;;
 
+(defn read-attrs-pairs [s]
+  (map
+    #(list (first %)
+           (if (string? (second %)) (second %) ""))
+    (filter #(symbol? (first %))
+            (partition 2 (interleave s (concat (rest s) (list (last s))))))))
 
+(defn read-attrs [s]
+  (into {} (vec (map vec (read-attrs-pairs s)))))
 
 ;;;;;;;;;;;;;;;;;;;;;; Analyzer ;;;;;;;;;;;;;;;;;;;;;;
 
@@ -103,9 +120,11 @@
 (defn analyze-def [hexp]
   (when (def-hexp? hexp)
     (let [children  (nodes (:children hexp))
-          proc      (analyze (last children))
-          names     (map :tag (butlast children)) ]
-      (fn [env]))))
+          name      (:tag (first children))  
+          proc      (analyze (second children))]
+      (fn [env]
+        (let [val (proc env)]
+          (set-env! env name val))))))
 
 (defn analyze-defn [hexp])
 
