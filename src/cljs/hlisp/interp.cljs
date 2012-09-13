@@ -1,5 +1,6 @@
 (ns hlisp.interp
-  (:use [hlisp.reader :only [expr]]))
+  (:require [clojure.set])
+  (:use [hlisp.reader :only [read-form]]))
 
 (defn read-attrs-pairs [s]
   (map
@@ -12,7 +13,6 @@
   (into {} (vec (map vec (read-attrs-pairs s)))))
 
 (def html-tags
-  "Union of HTML 4.01 and HTML 5 tags"
   #{ "a" "abbr" "acronym" "address" "applet" "area" "article" "aside"
      "audio" "b" "base" "basefont" "bdi" "bdo" "big" "blockquote" "body" "br"
      "button" "canvas" "caption" "center" "cite" "code" "col" "colgroup"
@@ -28,134 +28,100 @@
      "td" "textarea" "tfoot" "th" "thead" "time" "title" "tr" "track" "tt"
      "u" "ul" "var" "video" "wbr" })
 
-(def hlisp-object-tags
-    "HLisp-specific self-evaluating symbols"
-    #{ "#text" "#comment" "val" "list" "hash" "true" "false" "nil" "null" "fmeta" })
+(def html-text-tags
+  #{ "#text" "#comment" })
 
-(defn eval-all [env]
-  (fn [forms]
-    (map #(% env) forms)))
+(def hlisp-boxed-tags
+  #{ "val:str" "val:num" "val:seq" "val:vec" "val:set" "val:map" "val:true"
+     "val:false" "val:nil" })
 
-(defn lookup-var [name env]
-  "heyho")
+(def self-evaluating-tags
+  (clojure.set/union html-tags html-text-tags hlisp-boxed-tags))
 
-(defprotocol Hexp
-  (analyze [expr]))
+;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;
 
-(defrecord Var [name]
-  Hexp
-  (analyze [expr]
-    (let [name (:name expr)]
-      (fn [env]
-        (lookup-var name env)))))
-
-(defrecord Data [data]
-  Hexp
-  (analyze [expr]
-    (fn [env] expr)))
-
-(defrecord TextNode [tag text]
-  Hexp
-  (analyze [expr]
-    (fn [env] expr)))
-
-(defrecord Node [tag attrs children]
-  Hexp
-  (analyze [expr]
-    (let [children (map analyze (:children expr))]
-      (fn [env]
-        (assoc expr :chld (vec ((eval-all env) children)))))))
-
-(defrecord Proc [attr-params params env proc]
-  Hexp
-  (analyze [expr]
-    (fn [env] expr)))
-
-(defn make-var [name]
-  (Var. name))
-
-(defn make-data [data]
-  (Data. data))
-
-(defn make-text-node [tag text]
-  (TextNode. tag text))
-
-(defn make-node [tag attrs children]
-  (Node. tag attrs children))
-
-(defn make-proc [attr-params params env proc]
-  (Proc. attr-params params env proc))
-
-(defn parse-list
-  ([tag text]
-   (make-text-node tag text))
-  ([tag attrs children]
-   
-   )
-
-  
-)
-
-(defn mkenv
+(defn make-env
   ([]
-   "Global environment, no parent"
    {:parent nil :dict {}})
+  ([parent]
+   {:parent parent :dict {}}))
 
-  ([env]
-   "Environment frame, has parent env"
-   {:parent env :dict {}}))
+;;;;;;;;;;;;;;;;;;;;;; Hexp ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn self-evaluating? [expr]
-  (let [type (:type expr)]
-    (or (contains? html-tags type)
-        (contains? hlisp-object-tags type)
-        (not (hlisp.reader/elem-tag? type)))))
+(defrecord Hexp [tag attrs children text params env proc data])
 
-(defn analyze-self-evaluating [expr]
-  (if (self-evaluating? expr)
-    (let [analyzed-chlds (map analyze (:chld expr))]
+(defn make-hexp [tag]
+  (Hexp. tag {} [] "" [] {} nil nil))
+
+(defn make-node-hexp [tag attrs children]
+  (assoc (make-hexp tag) :attrs attrs :children children))
+
+(defn make-text-hexp [tag text]
+  (assoc (make-hexp tag) :text (str text)))
+
+(defn make-data-hexp [tag data]
+  (assoc (make-hexp tag) :data data))
+
+(defn make-proc-hexp [params env proc]
+  (assoc (make-hexp tag) :params params :env env :proc proc))
+
+;;;;;;;;;;;;;;;;;;;;;; Compiler ;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;;;;;;;;;;;;;;;;;;;;; Analyzer ;;;;;;;;;;;;;;;;;;;;;;
+
+(defn text-hexp? [hexp]
+  (= \# (get (:tag hexp) 0)))
+
+(defn self-evaluating-hexp? [hexp]
+  (or (contains? self-evaluating-tags (:tag hexp))
+      (text-hexp? hexp)))
+
+(defn has-tag? [tag hexp]
+  (= tag (:tag hexp)))
+
+(def quoted-hexp? (partial has-tag? "quote"))
+(def def-hexp?    (partial has-tag? "def"))
+(def defn-hexp?   (partial has-tag? "defn"))
+(def fn-hexp?     (partial has-tag? "fn"))
+
+(defn nodes [hexps]
+  (remove text-hexp? hexps))
+
+(defn analyze-self-evaluating [hexp]
+  (when (self-evaluating-hexp? hexp)
+    (let [children (mapv analyze (:children hexp))]
       (fn [env]
-        (assoc expr :chld (mapv #(% env) analyzed-chlds))))))
+        (assoc hexp :children (mapv #(% env) children))))))
 
-(defn text-expr? [expr]
-  (= "txt" (:type expr)))
-
-(defn analyze-text-expr [expr]
-  (if (text-expr? expr)
-    (let [s (apply str (map :text (:chld expr)))
-          n (hlisp.reader/text-node s)]
-      (fn [env] n))))
-
-(defn quoted-expr? [expr]
-  (= "quote" (:type expr)))
-
-(defn analyze-quoted-expr [expr]
-  (if (quoted-expr? expr)
+(defn analyze-quoted [hexp]
+  (when (quoted-hexp? hexp)
     (fn [env]
-      (first (:chld expr)))))
+      (first (nodes (:children hexp))))))
 
-(defn analyze-error [expr]
-  (throw (js/Error. "analyze error")))
+(defn analyze-def [hexp]
+  (when (def-hexp? hexp)
+    (let [children  (nodes (:children hexp))
+          proc      (analyze (last children))
+          names     (map :tag (butlast children)) ]
+      (fn [env]))))
 
-(defn analyze [expr]
-  (or
-    (analyze-self-evaluating  expr)
-    (analyze-text-expr        expr)
-    (analyze-quoted-expr      expr)
-    ;(analyze-def              expr)
-    ;(analyze-if               expr)
-    ;(analyze-cond             expr)
-    ;(analyze-begin            expr)
-    ;(analyze-eval             expr)
-    ;(analyze-apply            expr)
-    ;(analyze-call             expr)
-    ;(analyze-lambda           expr)
-    ;(analyze-application      expr)
-    ;(analyze-variable         expr)
-    (analyze-error            expr)))
+(defn analyze-defn [hexp])
 
-(defn eval [expr env]
-  ((analyze expr) env))
+(defn analyze-fn [hexp]
+  (when (fn-hexp? hexp) ))
 
-(defn doit [s]
-  (eval (expr s)))
+(defprotocol IHexp
+  (analyze [hexp]))
+
+(extend-protocol IHexp
+  Hexp
+  (analyze [hexp]
+    (or
+      (analyze-self-evaluating  hexp)
+      (analyze-quoted           hexp)
+      (throw (js/Error. (str hexp " is not a valid expression"))))))
+
+
+
