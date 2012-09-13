@@ -40,8 +40,11 @@
 
 (defn get-env [env name]
   (when (env)
-    (or (find @(:bindings env) name)
-        (get-env (:parent env) name))))
+    (let [parent    (:parent env)
+          bindings @(:bindings env)]
+      (if (contains? bindings name)
+        (find bindings name)
+        (get-env parent name)))))
 
 (def global-env (make-env nil))
 
