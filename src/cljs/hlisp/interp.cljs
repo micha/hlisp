@@ -154,7 +154,12 @@
     (or
       (analyze-self-evaluating  hexp)
       (analyze-quoted           hexp)
+      (analyze-def              hexp)
       (throw (js/Error. (str "analyze: " hexp " is not a valid expression"))))))
 
+(defn analyze-string [s]
+  (map analyze (compile-string s)))
 
+(defn eval-string [s]
+  (map #(% global-env) (analyze-string s)))
 
