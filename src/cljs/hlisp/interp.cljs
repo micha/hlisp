@@ -39,11 +39,12 @@
   (swap! (:bindings env) assoc name value))
 
 (defn get-env [env name]
-  (when (env)
+  (when (not (nil? env))
     (let [parent    (:parent env)
           bindings @(:bindings env)]
+      (println "got here " env)
       (if (contains? bindings name)
-        (find bindings name)
+        (get bindings name)
         (get-env parent name)))))
 
 (def global-env (make-env nil))
