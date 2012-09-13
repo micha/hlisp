@@ -71,5 +71,8 @@
     (parse-string-literal expr)
     (parse-number-literal expr)
     (parse-node           expr)
-    (throw (js/Error. (str expr " isn't a valid expression")))))
+    (throw (js/Error. (str "read-form: " expr " isn't a valid expression")))))
+
+(defn read-string [s]
+  (map read-form (reader/read-string (str "(" s "\n)"))))
 

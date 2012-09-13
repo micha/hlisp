@@ -32,20 +32,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;
 
-(defn make-env [parent] 
-  {:parent parent :bindings (atom {})})
+(defprotocol IHenv
+  (bind! [env bindings])
+  (resolve [env name]))
 
-(defn set-env! [env name value]
-  (swap! (:bindings env) assoc name value)
-  env)
-
-(defn get-env [env name]
-  (when (map? env)
+(defrecord Henv [parent bindings]
+  IHenv
+  (bind! [env bindings]
+    (swap! (:bindings env) into bindings)
+    env)
+  (resolve [env name]
     (let [parent    (:parent env)
           bindings @(:bindings env)]
-      (if (contains? bindings name)
-        (get bindings name)
-        (get-env parent name)))))
+        (cond
+          (contains? bindings name) (get bindings name)
+          (not (nil? parent))       (resolve parent name)
+          :else                     nil))))
+
+(defn make-env [parent] 
+  (Henv. parent (atom {})))
 
 (def global-env (make-env nil))
 
@@ -79,6 +84,26 @@
 
 (defn read-attrs [s]
   (into {} (vec (map vec (read-attrs-pairs s)))))
+
+(defn compile-text-hexp [s]
+  (when (= 2 (count s))
+    (let [[tagsym text] s]
+      (make-text-hexp (str tagsym) text))))
+
+(defn compile-node-hexp [s]
+  (when (< 2 (count s))
+    (let [[tagsym [[& attrlist]] & children] s]
+      (make-node-hexp (str tagsym)
+                      (read-attrs attrlist)
+                      (map compile-form children)))))
+
+(defn compile-form [s]
+  (or (compile-text-hexp        s)
+      (compile-node-hexp        s)
+      (throw (js/Error. (str "compile: " s " is not a valid expression")))))
+
+(defn compile-string [s]
+  (map compile-form (hlisp.reader/read-string s)))
 
 ;;;;;;;;;;;;;;;;;;;;;; Analyzer ;;;;;;;;;;;;;;;;;;;;;;
 
@@ -118,7 +143,7 @@
           proc      (analyze (second children))]
       (fn [env]
         (let [val (proc env)]
-          (set-env! env name val))))))
+          (bind-env! env {name val}))))))
 
 (defn analyze-defn [hexp])
 
@@ -134,7 +159,7 @@
     (or
       (analyze-self-evaluating  hexp)
       (analyze-quoted           hexp)
-      (throw (js/Error. (str hexp " is not a valid expression"))))))
+      (throw (js/Error. (str "analyze: " hexp " is not a valid expression"))))))
 
 
 
