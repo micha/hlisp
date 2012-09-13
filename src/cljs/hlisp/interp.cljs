@@ -44,10 +44,10 @@
   (resolve [env name]
     (let [parent    (:parent env)
           bindings @(:bindings env)]
-        (cond
-          (contains? bindings name) (get bindings name)
-          (not (nil? parent))       (resolve parent name)
-          :else                     nil))))
+      (cond
+        (contains? bindings name) (get bindings name)
+        (not (nil? parent))       (resolve parent name)
+        :else                     nil))))
 
 (defn make-env [parent] 
   (Henv. parent (atom {})))
