@@ -28950,13 +28950,6 @@ goog.require("cljs.core");
 goog.require("hlisp.reader");
 goog.require("hlisp.reader");
 goog.require("clojure.set");
-hlisp.interp.to_seq = function to_seq(x) {
-  if(cljs.core.seq_QMARK_.call(null, x)) {
-    return x
-  }else {
-    return cljs.core.list.call(null, x)
-  }
-};
 hlisp.interp.html_tags = cljs.core.PersistentHashSet.fromArray(["dd", "big", "col", "head", "sub", "tt", "basefont", "a", "output", "b", "figcaption", "body", "rt", "details", "tfoot", "nav", "acronym", "pre", "img", "form", "iframe", "figure", "meta", "section", "caption", "summary", "bdi", "small", "noframes", "wbr", "var", "dl", "em", "fieldset", "isindex", "datalist", "i", "h1", "meter", "h2", "hr", "span", "data", "input", "del", "h3", "script", "track", "command", "html", "dfn", "h4", "noscript", 
 "optgroup", "legend", "bdo", "dir", "param", "area", "h5", "frame", "kbd", "code", "progress", "header", "mark", "time", "h6", "sup", "table", "ins", "font", "blockquote", "br", "p", "dt", "td", "abbr", "q", "samp", "div", "keygen", "style", "base", "button", "strike", "s", "thead", "th", "label", "address", "center", "u", "option", "eventsource", "frameset", "tbody", "article", "audio", "cite", "ul", "strong", "hgroup", "aside", "canvas", "title", "embed", "applet", "ruby", "textarea", "link", "source", 
 "video", "footer", "select", "map", "li", "ol", "rp", "tr", "colgroup", "menu", "object"]);
@@ -28967,19 +28960,19 @@ hlisp.interp.make_env = function make_env(parent) {
   return cljs.core.atom.call(null, cljs.core.ObjMap.fromObject(["\ufdd0'parent", "\ufdd0'bindings"], {"\ufdd0'parent":parent, "\ufdd0'bindings":cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY)}))
 };
 hlisp.interp.set_env_BANG_ = function set_env_BANG_(env, name, value) {
-  return cljs.core.swap_BANG_.call(null, (new cljs.core.Keyword("\ufdd0'bindings")).call(null, env), function(p1__709164_SHARP_, p2__709165_SHARP_, p3__709166_SHARP_) {
-    return cljs.core.assoc.call(null, p1__709164_SHARP_, p2__709165_SHARP_, p3__709166_SHARP_)
+  return cljs.core.swap_BANG_.call(null, (new cljs.core.Keyword("\ufdd0'bindings")).call(null, env), function(p1__713118_SHARP_, p2__713119_SHARP_, p3__713120_SHARP_) {
+    return cljs.core.assoc.call(null, p1__713118_SHARP_, p2__713119_SHARP_, p3__713120_SHARP_)
   }, name, value)
 };
 hlisp.interp.get_env = function get_env(env, name) {
   if(cljs.core.truth_(env.call(null))) {
-    var parent__709170 = (new cljs.core.Keyword("\ufdd0'parent")).call(null, env);
-    var bindings__709171 = (new cljs.core.Keyword("\ufdd0'bindings")).call(null, env);
-    var or__3824__auto____709172 = cljs.core.find.call(null, cljs.core.deref.call(null, bindings__709171), name);
-    if(cljs.core.truth_(or__3824__auto____709172)) {
-      return or__3824__auto____709172
+    var parent__713124 = (new cljs.core.Keyword("\ufdd0'parent")).call(null, env);
+    var bindings__713125 = (new cljs.core.Keyword("\ufdd0'bindings")).call(null, env);
+    var or__3824__auto____713126 = cljs.core.find.call(null, cljs.core.deref.call(null, bindings__713125), name);
+    if(cljs.core.truth_(or__3824__auto____713126)) {
+      return or__3824__auto____713126
     }else {
-      return get_env.call(null, parent__709170, name)
+      return get_env.call(null, parent__713124, name)
     }
   }else {
     return null
@@ -29008,48 +29001,48 @@ hlisp.interp.Hexp = function(tag, attrs, children, text, params, env, proc, data
   }
 };
 hlisp.interp.Hexp.prototype.cljs$core$IHash$_hash$arity$1 = function(this__2314__auto__) {
-  var this__709176 = this;
-  var h__2188__auto____709177 = this__709176.__hash;
-  if(!(h__2188__auto____709177 == null)) {
-    return h__2188__auto____709177
+  var this__713130 = this;
+  var h__2188__auto____713131 = this__713130.__hash;
+  if(!(h__2188__auto____713131 == null)) {
+    return h__2188__auto____713131
   }else {
-    var h__2188__auto____709178 = cljs.core.hash_imap.call(null, this__2314__auto__);
-    this__709176.__hash = h__2188__auto____709178;
-    return h__2188__auto____709178
+    var h__2188__auto____713132 = cljs.core.hash_imap.call(null, this__2314__auto__);
+    this__713130.__hash = h__2188__auto____713132;
+    return h__2188__auto____713132
   }
 };
 hlisp.interp.Hexp.prototype.cljs$core$ILookup$_lookup$arity$2 = function(this__2319__auto__, k__2320__auto__) {
-  var this__709179 = this;
+  var this__713133 = this;
   return this__2319__auto__.cljs$core$ILookup$_lookup$arity$3(this__2319__auto__, k__2320__auto__, null)
 };
-hlisp.interp.Hexp.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2321__auto__, k709174, else__2322__auto__) {
-  var this__709180 = this;
-  if(k709174 === "\ufdd0'tag") {
-    return this__709180.tag
+hlisp.interp.Hexp.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2321__auto__, k713128, else__2322__auto__) {
+  var this__713134 = this;
+  if(k713128 === "\ufdd0'tag") {
+    return this__713134.tag
   }else {
-    if(k709174 === "\ufdd0'attrs") {
-      return this__709180.attrs
+    if(k713128 === "\ufdd0'attrs") {
+      return this__713134.attrs
     }else {
-      if(k709174 === "\ufdd0'children") {
-        return this__709180.children
+      if(k713128 === "\ufdd0'children") {
+        return this__713134.children
       }else {
-        if(k709174 === "\ufdd0'text") {
-          return this__709180.text
+        if(k713128 === "\ufdd0'text") {
+          return this__713134.text
         }else {
-          if(k709174 === "\ufdd0'params") {
-            return this__709180.params
+          if(k713128 === "\ufdd0'params") {
+            return this__713134.params
           }else {
-            if(k709174 === "\ufdd0'env") {
-              return this__709180.env
+            if(k713128 === "\ufdd0'env") {
+              return this__713134.env
             }else {
-              if(k709174 === "\ufdd0'proc") {
-                return this__709180.proc
+              if(k713128 === "\ufdd0'proc") {
+                return this__713134.proc
               }else {
-                if(k709174 === "\ufdd0'data") {
-                  return this__709180.data
+                if(k713128 === "\ufdd0'data") {
+                  return this__713134.data
                 }else {
                   if("\ufdd0'else") {
-                    return cljs.core._lookup.call(null, this__709180.__extmap, k709174, else__2322__auto__)
+                    return cljs.core._lookup.call(null, this__713134.__extmap, k713128, else__2322__auto__)
                   }else {
                     return null
                   }
@@ -29062,35 +29055,35 @@ hlisp.interp.Hexp.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2
     }
   }
 };
-hlisp.interp.Hexp.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2326__auto__, k__2327__auto__, G__709173) {
-  var this__709181 = this;
-  var pred__709182__709185 = cljs.core.identical_QMARK_;
-  var expr__709183__709186 = k__2327__auto__;
-  if(pred__709182__709185.call(null, "\ufdd0'tag", expr__709183__709186)) {
-    return new hlisp.interp.Hexp(G__709173, this__709181.attrs, this__709181.children, this__709181.text, this__709181.params, this__709181.env, this__709181.proc, this__709181.data, this__709181.__meta, this__709181.__extmap, null)
+hlisp.interp.Hexp.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2326__auto__, k__2327__auto__, G__713127) {
+  var this__713135 = this;
+  var pred__713136__713139 = cljs.core.identical_QMARK_;
+  var expr__713137__713140 = k__2327__auto__;
+  if(pred__713136__713139.call(null, "\ufdd0'tag", expr__713137__713140)) {
+    return new hlisp.interp.Hexp(G__713127, this__713135.attrs, this__713135.children, this__713135.text, this__713135.params, this__713135.env, this__713135.proc, this__713135.data, this__713135.__meta, this__713135.__extmap, null)
   }else {
-    if(pred__709182__709185.call(null, "\ufdd0'attrs", expr__709183__709186)) {
-      return new hlisp.interp.Hexp(this__709181.tag, G__709173, this__709181.children, this__709181.text, this__709181.params, this__709181.env, this__709181.proc, this__709181.data, this__709181.__meta, this__709181.__extmap, null)
+    if(pred__713136__713139.call(null, "\ufdd0'attrs", expr__713137__713140)) {
+      return new hlisp.interp.Hexp(this__713135.tag, G__713127, this__713135.children, this__713135.text, this__713135.params, this__713135.env, this__713135.proc, this__713135.data, this__713135.__meta, this__713135.__extmap, null)
     }else {
-      if(pred__709182__709185.call(null, "\ufdd0'children", expr__709183__709186)) {
-        return new hlisp.interp.Hexp(this__709181.tag, this__709181.attrs, G__709173, this__709181.text, this__709181.params, this__709181.env, this__709181.proc, this__709181.data, this__709181.__meta, this__709181.__extmap, null)
+      if(pred__713136__713139.call(null, "\ufdd0'children", expr__713137__713140)) {
+        return new hlisp.interp.Hexp(this__713135.tag, this__713135.attrs, G__713127, this__713135.text, this__713135.params, this__713135.env, this__713135.proc, this__713135.data, this__713135.__meta, this__713135.__extmap, null)
       }else {
-        if(pred__709182__709185.call(null, "\ufdd0'text", expr__709183__709186)) {
-          return new hlisp.interp.Hexp(this__709181.tag, this__709181.attrs, this__709181.children, G__709173, this__709181.params, this__709181.env, this__709181.proc, this__709181.data, this__709181.__meta, this__709181.__extmap, null)
+        if(pred__713136__713139.call(null, "\ufdd0'text", expr__713137__713140)) {
+          return new hlisp.interp.Hexp(this__713135.tag, this__713135.attrs, this__713135.children, G__713127, this__713135.params, this__713135.env, this__713135.proc, this__713135.data, this__713135.__meta, this__713135.__extmap, null)
         }else {
-          if(pred__709182__709185.call(null, "\ufdd0'params", expr__709183__709186)) {
-            return new hlisp.interp.Hexp(this__709181.tag, this__709181.attrs, this__709181.children, this__709181.text, G__709173, this__709181.env, this__709181.proc, this__709181.data, this__709181.__meta, this__709181.__extmap, null)
+          if(pred__713136__713139.call(null, "\ufdd0'params", expr__713137__713140)) {
+            return new hlisp.interp.Hexp(this__713135.tag, this__713135.attrs, this__713135.children, this__713135.text, G__713127, this__713135.env, this__713135.proc, this__713135.data, this__713135.__meta, this__713135.__extmap, null)
           }else {
-            if(pred__709182__709185.call(null, "\ufdd0'env", expr__709183__709186)) {
-              return new hlisp.interp.Hexp(this__709181.tag, this__709181.attrs, this__709181.children, this__709181.text, this__709181.params, G__709173, this__709181.proc, this__709181.data, this__709181.__meta, this__709181.__extmap, null)
+            if(pred__713136__713139.call(null, "\ufdd0'env", expr__713137__713140)) {
+              return new hlisp.interp.Hexp(this__713135.tag, this__713135.attrs, this__713135.children, this__713135.text, this__713135.params, G__713127, this__713135.proc, this__713135.data, this__713135.__meta, this__713135.__extmap, null)
             }else {
-              if(pred__709182__709185.call(null, "\ufdd0'proc", expr__709183__709186)) {
-                return new hlisp.interp.Hexp(this__709181.tag, this__709181.attrs, this__709181.children, this__709181.text, this__709181.params, this__709181.env, G__709173, this__709181.data, this__709181.__meta, this__709181.__extmap, null)
+              if(pred__713136__713139.call(null, "\ufdd0'proc", expr__713137__713140)) {
+                return new hlisp.interp.Hexp(this__713135.tag, this__713135.attrs, this__713135.children, this__713135.text, this__713135.params, this__713135.env, G__713127, this__713135.data, this__713135.__meta, this__713135.__extmap, null)
               }else {
-                if(pred__709182__709185.call(null, "\ufdd0'data", expr__709183__709186)) {
-                  return new hlisp.interp.Hexp(this__709181.tag, this__709181.attrs, this__709181.children, this__709181.text, this__709181.params, this__709181.env, this__709181.proc, G__709173, this__709181.__meta, this__709181.__extmap, null)
+                if(pred__713136__713139.call(null, "\ufdd0'data", expr__713137__713140)) {
+                  return new hlisp.interp.Hexp(this__713135.tag, this__713135.attrs, this__713135.children, this__713135.text, this__713135.params, this__713135.env, this__713135.proc, G__713127, this__713135.__meta, this__713135.__extmap, null)
                 }else {
-                  return new hlisp.interp.Hexp(this__709181.tag, this__709181.attrs, this__709181.children, this__709181.text, this__709181.params, this__709181.env, this__709181.proc, this__709181.data, this__709181.__meta, cljs.core.assoc.call(null, this__709181.__extmap, k__2327__auto__, G__709173), null)
+                  return new hlisp.interp.Hexp(this__713135.tag, this__713135.attrs, this__713135.children, this__713135.text, this__713135.params, this__713135.env, this__713135.proc, this__713135.data, this__713135.__meta, cljs.core.assoc.call(null, this__713135.__extmap, k__2327__auto__, G__713127), null)
                 }
               }
             }
@@ -29101,7 +29094,7 @@ hlisp.interp.Hexp.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(thi
   }
 };
 hlisp.interp.Hexp.prototype.cljs$core$ICollection$_conj$arity$2 = function(this__2324__auto__, entry__2325__auto__) {
-  var this__709187 = this;
+  var this__713141 = this;
   if(cljs.core.vector_QMARK_.call(null, entry__2325__auto__)) {
     return this__2324__auto__.cljs$core$IAssociative$_assoc$arity$3(this__2324__auto__, cljs.core._nth.call(null, entry__2325__auto__, 0), cljs.core._nth.call(null, entry__2325__auto__, 1))
   }else {
@@ -29109,35 +29102,35 @@ hlisp.interp.Hexp.prototype.cljs$core$ICollection$_conj$arity$2 = function(this_
   }
 };
 hlisp.interp.Hexp.prototype.cljs$core$ISeqable$_seq$arity$1 = function(this__2331__auto__) {
-  var this__709188 = this;
-  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'tag", this__709188.tag), cljs.core.vector.call(null, "\ufdd0'attrs", this__709188.attrs), cljs.core.vector.call(null, "\ufdd0'children", this__709188.children), cljs.core.vector.call(null, "\ufdd0'text", this__709188.text), cljs.core.vector.call(null, "\ufdd0'params", this__709188.params), cljs.core.vector.call(null, "\ufdd0'env", this__709188.env), cljs.core.vector.call(null, 
-  "\ufdd0'proc", this__709188.proc), cljs.core.vector.call(null, "\ufdd0'data", this__709188.data)], true), this__709188.__extmap))
+  var this__713142 = this;
+  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'tag", this__713142.tag), cljs.core.vector.call(null, "\ufdd0'attrs", this__713142.attrs), cljs.core.vector.call(null, "\ufdd0'children", this__713142.children), cljs.core.vector.call(null, "\ufdd0'text", this__713142.text), cljs.core.vector.call(null, "\ufdd0'params", this__713142.params), cljs.core.vector.call(null, "\ufdd0'env", this__713142.env), cljs.core.vector.call(null, 
+  "\ufdd0'proc", this__713142.proc), cljs.core.vector.call(null, "\ufdd0'data", this__713142.data)], true), this__713142.__extmap))
 };
 hlisp.interp.Hexp.prototype.cljs$core$IPrintable$_pr_seq$arity$2 = function(this__2333__auto__, opts__2334__auto__) {
-  var this__709189 = this;
-  var pr_pair__2335__auto____709190 = function(keyval__2336__auto__) {
+  var this__713143 = this;
+  var pr_pair__2335__auto____713144 = function(keyval__2336__auto__) {
     return cljs.core.pr_sequential.call(null, cljs.core.pr_seq, "", " ", "", opts__2334__auto__, keyval__2336__auto__)
   };
-  return cljs.core.pr_sequential.call(null, pr_pair__2335__auto____709190, [cljs.core.str("#"), cljs.core.str("Hexp"), cljs.core.str("{")].join(""), ", ", "}", opts__2334__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'tag", this__709189.tag), cljs.core.vector.call(null, "\ufdd0'attrs", this__709189.attrs), cljs.core.vector.call(null, "\ufdd0'children", this__709189.children), cljs.core.vector.call(null, "\ufdd0'text", this__709189.text), 
-  cljs.core.vector.call(null, "\ufdd0'params", this__709189.params), cljs.core.vector.call(null, "\ufdd0'env", this__709189.env), cljs.core.vector.call(null, "\ufdd0'proc", this__709189.proc), cljs.core.vector.call(null, "\ufdd0'data", this__709189.data)], true), this__709189.__extmap))
+  return cljs.core.pr_sequential.call(null, pr_pair__2335__auto____713144, [cljs.core.str("#"), cljs.core.str("Hexp"), cljs.core.str("{")].join(""), ", ", "}", opts__2334__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'tag", this__713143.tag), cljs.core.vector.call(null, "\ufdd0'attrs", this__713143.attrs), cljs.core.vector.call(null, "\ufdd0'children", this__713143.children), cljs.core.vector.call(null, "\ufdd0'text", this__713143.text), 
+  cljs.core.vector.call(null, "\ufdd0'params", this__713143.params), cljs.core.vector.call(null, "\ufdd0'env", this__713143.env), cljs.core.vector.call(null, "\ufdd0'proc", this__713143.proc), cljs.core.vector.call(null, "\ufdd0'data", this__713143.data)], true), this__713143.__extmap))
 };
 hlisp.interp.Hexp.prototype.cljs$core$ICounted$_count$arity$1 = function(this__2323__auto__) {
-  var this__709191 = this;
-  return 8 + cljs.core.count.call(null, this__709191.__extmap)
+  var this__713145 = this;
+  return 8 + cljs.core.count.call(null, this__713145.__extmap)
 };
 hlisp.interp.Hexp.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(this__2315__auto__, other__2316__auto__) {
-  var this__709192 = this;
+  var this__713146 = this;
   if(cljs.core.truth_(function() {
-    var and__3822__auto____709193 = other__2316__auto__;
-    if(cljs.core.truth_(and__3822__auto____709193)) {
-      var and__3822__auto____709194 = this__2315__auto__.constructor === other__2316__auto__.constructor;
-      if(and__3822__auto____709194) {
+    var and__3822__auto____713147 = other__2316__auto__;
+    if(cljs.core.truth_(and__3822__auto____713147)) {
+      var and__3822__auto____713148 = this__2315__auto__.constructor === other__2316__auto__.constructor;
+      if(and__3822__auto____713148) {
         return cljs.core.equiv_map.call(null, this__2315__auto__, other__2316__auto__)
       }else {
-        return and__3822__auto____709194
+        return and__3822__auto____713148
       }
     }else {
-      return and__3822__auto____709193
+      return and__3822__auto____713147
     }
   }())) {
     return true
@@ -29145,20 +29138,20 @@ hlisp.interp.Hexp.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(this__231
     return false
   }
 };
-hlisp.interp.Hexp.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2318__auto__, G__709173) {
-  var this__709195 = this;
-  return new hlisp.interp.Hexp(this__709195.tag, this__709195.attrs, this__709195.children, this__709195.text, this__709195.params, this__709195.env, this__709195.proc, this__709195.data, G__709173, this__709195.__extmap, this__709195.__hash)
+hlisp.interp.Hexp.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2318__auto__, G__713127) {
+  var this__713149 = this;
+  return new hlisp.interp.Hexp(this__713149.tag, this__713149.attrs, this__713149.children, this__713149.text, this__713149.params, this__713149.env, this__713149.proc, this__713149.data, G__713127, this__713149.__extmap, this__713149.__hash)
 };
 hlisp.interp.Hexp.prototype.cljs$core$IMeta$_meta$arity$1 = function(this__2317__auto__) {
-  var this__709196 = this;
-  return this__709196.__meta
+  var this__713150 = this;
+  return this__713150.__meta
 };
 hlisp.interp.Hexp.prototype.cljs$core$IMap$_dissoc$arity$2 = function(this__2328__auto__, k__2329__auto__) {
-  var this__709197 = this;
+  var this__713151 = this;
   if(cljs.core.contains_QMARK_.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'children", "\ufdd0'text", "\ufdd0'data", "\ufdd0'proc", "\ufdd0'env", "\ufdd0'params", "\ufdd0'attrs", "\ufdd0'tag"]), k__2329__auto__)) {
-    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2328__auto__), this__709197.__meta), k__2329__auto__)
+    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2328__auto__), this__713151.__meta), k__2329__auto__)
   }else {
-    return new hlisp.interp.Hexp(this__709197.tag, this__709197.attrs, this__709197.children, this__709197.text, this__709197.params, this__709197.env, this__709197.proc, this__709197.data, this__709197.__meta, this__709197.__hash, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__709197.__extmap, k__2329__auto__)), null)
+    return new hlisp.interp.Hexp(this__713151.tag, this__713151.attrs, this__713151.children, this__713151.text, this__713151.params, this__713151.env, this__713151.proc, this__713151.data, this__713151.__meta, this__713151.__hash, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__713151.__extmap, k__2329__auto__)), null)
   }
 };
 hlisp.interp.Hexp.cljs$lang$type = true;
@@ -29168,9 +29161,9 @@ hlisp.interp.Hexp.cljs$lang$ctorPrSeq = function(this__2353__auto__) {
 hlisp.interp.__GT_Hexp = function __GT_Hexp(tag, attrs, children, text, params, env, proc, data) {
   return new hlisp.interp.Hexp(tag, attrs, children, text, params, env, proc, data)
 };
-hlisp.interp.map__GT_Hexp = function map__GT_Hexp(G__709175) {
-  return new hlisp.interp.Hexp((new cljs.core.Keyword("\ufdd0'tag")).call(null, G__709175), (new cljs.core.Keyword("\ufdd0'attrs")).call(null, G__709175), (new cljs.core.Keyword("\ufdd0'children")).call(null, G__709175), (new cljs.core.Keyword("\ufdd0'text")).call(null, G__709175), (new cljs.core.Keyword("\ufdd0'params")).call(null, G__709175), (new cljs.core.Keyword("\ufdd0'env")).call(null, G__709175), (new cljs.core.Keyword("\ufdd0'proc")).call(null, G__709175), (new cljs.core.Keyword("\ufdd0'data")).call(null, 
-  G__709175), null, cljs.core.dissoc.call(null, G__709175, "\ufdd0'tag", "\ufdd0'attrs", "\ufdd0'children", "\ufdd0'text", "\ufdd0'params", "\ufdd0'env", "\ufdd0'proc", "\ufdd0'data"))
+hlisp.interp.map__GT_Hexp = function map__GT_Hexp(G__713129) {
+  return new hlisp.interp.Hexp((new cljs.core.Keyword("\ufdd0'tag")).call(null, G__713129), (new cljs.core.Keyword("\ufdd0'attrs")).call(null, G__713129), (new cljs.core.Keyword("\ufdd0'children")).call(null, G__713129), (new cljs.core.Keyword("\ufdd0'text")).call(null, G__713129), (new cljs.core.Keyword("\ufdd0'params")).call(null, G__713129), (new cljs.core.Keyword("\ufdd0'env")).call(null, G__713129), (new cljs.core.Keyword("\ufdd0'proc")).call(null, G__713129), (new cljs.core.Keyword("\ufdd0'data")).call(null, 
+  G__713129), null, cljs.core.dissoc.call(null, G__713129, "\ufdd0'tag", "\ufdd0'attrs", "\ufdd0'children", "\ufdd0'text", "\ufdd0'params", "\ufdd0'env", "\ufdd0'proc", "\ufdd0'data"))
 };
 hlisp.interp.Hexp;
 hlisp.interp.make_hexp = function make_hexp(tag) {
@@ -29189,10 +29182,10 @@ hlisp.interp.make_proc_hexp = function make_proc_hexp(params, env, proc) {
   return cljs.core.assoc.call(null, hlisp.interp.make_hexp.call(null, hlisp.interp.tag), "\ufdd0'params", params, "\ufdd0'env", env, "\ufdd0'proc", proc)
 };
 hlisp.interp.read_attrs_pairs = function read_attrs_pairs(s) {
-  return cljs.core.map.call(null, function(p1__709198_SHARP_) {
-    return cljs.core.list.call(null, cljs.core.first.call(null, p1__709198_SHARP_), cljs.core.string_QMARK_.call(null, cljs.core.second.call(null, p1__709198_SHARP_)) ? cljs.core.second.call(null, p1__709198_SHARP_) : "")
-  }, cljs.core.filter.call(null, function(p1__709199_SHARP_) {
-    return cljs.core.symbol_QMARK_.call(null, cljs.core.first.call(null, p1__709199_SHARP_))
+  return cljs.core.map.call(null, function(p1__713152_SHARP_) {
+    return cljs.core.list.call(null, cljs.core.first.call(null, p1__713152_SHARP_), cljs.core.string_QMARK_.call(null, cljs.core.second.call(null, p1__713152_SHARP_)) ? cljs.core.second.call(null, p1__713152_SHARP_) : "")
+  }, cljs.core.filter.call(null, function(p1__713153_SHARP_) {
+    return cljs.core.symbol_QMARK_.call(null, cljs.core.first.call(null, p1__713153_SHARP_))
   }, cljs.core.partition.call(null, 2, cljs.core.interleave.call(null, s, cljs.core.concat.call(null, cljs.core.rest.call(null, s), cljs.core.list.call(null, cljs.core.last.call(null, s)))))))
 };
 hlisp.interp.read_attrs = function read_attrs(s) {
@@ -29202,9 +29195,9 @@ hlisp.interp.text_hexp_QMARK_ = function text_hexp_QMARK_(hexp) {
   return cljs.core._EQ_.call(null, "#", cljs.core._lookup.call(null, (new cljs.core.Keyword("\ufdd0'tag")).call(null, hexp), 0, null))
 };
 hlisp.interp.self_evaluating_hexp_QMARK_ = function self_evaluating_hexp_QMARK_(hexp) {
-  var or__3824__auto____709201 = cljs.core.contains_QMARK_.call(null, hlisp.interp.self_evaluating_tags, (new cljs.core.Keyword("\ufdd0'tag")).call(null, hexp));
-  if(or__3824__auto____709201) {
-    return or__3824__auto____709201
+  var or__3824__auto____713155 = cljs.core.contains_QMARK_.call(null, hlisp.interp.self_evaluating_tags, (new cljs.core.Keyword("\ufdd0'tag")).call(null, hexp));
+  if(or__3824__auto____713155) {
+    return or__3824__auto____713155
   }else {
     return hlisp.interp.text_hexp_QMARK_.call(null, hexp)
   }
@@ -29221,11 +29214,11 @@ hlisp.interp.nodes = function nodes(hexps) {
 };
 hlisp.interp.analyze_self_evaluating = function analyze_self_evaluating(hexp) {
   if(cljs.core.truth_(hlisp.interp.self_evaluating_hexp_QMARK_.call(null, hexp))) {
-    var children__709204 = cljs.core.mapv.call(null, hlisp.interp.analyze, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp));
+    var children__713158 = cljs.core.mapv.call(null, hlisp.interp.analyze, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp));
     return function(env) {
-      return cljs.core.assoc.call(null, hexp, "\ufdd0'children", cljs.core.mapv.call(null, function(p1__709202_SHARP_) {
-        return p1__709202_SHARP_.call(null, env)
-      }, children__709204))
+      return cljs.core.assoc.call(null, hexp, "\ufdd0'children", cljs.core.mapv.call(null, function(p1__713156_SHARP_) {
+        return p1__713156_SHARP_.call(null, env)
+      }, children__713158))
     }
   }else {
     return null
@@ -29242,12 +29235,12 @@ hlisp.interp.analyze_quoted = function analyze_quoted(hexp) {
 };
 hlisp.interp.analyze_def = function analyze_def(hexp) {
   if(cljs.core.truth_(hlisp.interp.def_hexp_QMARK_.call(null, hexp))) {
-    var children__709209 = hlisp.interp.nodes.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp));
-    var name__709210 = (new cljs.core.Keyword("\ufdd0'tag")).call(null, cljs.core.first.call(null, children__709209));
-    var proc__709211 = hlisp.interp.analyze.call(null, cljs.core.second.call(null, children__709209));
+    var children__713163 = hlisp.interp.nodes.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp));
+    var name__713164 = (new cljs.core.Keyword("\ufdd0'tag")).call(null, cljs.core.first.call(null, children__713163));
+    var proc__713165 = hlisp.interp.analyze.call(null, cljs.core.second.call(null, children__713163));
     return function(env) {
-      var val__709212 = proc__709211.call(null, env);
-      return hlisp.interp.set_env_BANG_.call(null, env, name__709210, val__709212)
+      var val__713166 = proc__713165.call(null, env);
+      return hlisp.interp.set_env_BANG_.call(null, env, name__713164, val__713166)
     }
   }else {
     return null
@@ -29266,24 +29259,24 @@ hlisp.interp.analyze_fn = function analyze_fn(hexp) {
 hlisp.interp.IHexp = {};
 hlisp.interp.analyze = function analyze(hexp) {
   if(function() {
-    var and__3822__auto____709217 = hexp;
-    if(and__3822__auto____709217) {
+    var and__3822__auto____713171 = hexp;
+    if(and__3822__auto____713171) {
       return hexp.hlisp$interp$IHexp$analyze$arity$1
     }else {
-      return and__3822__auto____709217
+      return and__3822__auto____713171
     }
   }()) {
     return hexp.hlisp$interp$IHexp$analyze$arity$1(hexp)
   }else {
-    var x__2359__auto____709218 = hexp == null ? null : hexp;
+    var x__2359__auto____713172 = hexp == null ? null : hexp;
     return function() {
-      var or__3824__auto____709219 = hlisp.interp.analyze[goog.typeOf(x__2359__auto____709218)];
-      if(or__3824__auto____709219) {
-        return or__3824__auto____709219
+      var or__3824__auto____713173 = hlisp.interp.analyze[goog.typeOf(x__2359__auto____713172)];
+      if(or__3824__auto____713173) {
+        return or__3824__auto____713173
       }else {
-        var or__3824__auto____709220 = hlisp.interp.analyze["_"];
-        if(or__3824__auto____709220) {
-          return or__3824__auto____709220
+        var or__3824__auto____713174 = hlisp.interp.analyze["_"];
+        if(or__3824__auto____713174) {
+          return or__3824__auto____713174
         }else {
           throw cljs.core.missing_protocol.call(null, "IHexp.analyze", hexp);
         }
@@ -29293,13 +29286,13 @@ hlisp.interp.analyze = function analyze(hexp) {
 };
 hlisp.interp.Hexp.prototype.hlisp$interp$IHexp$ = true;
 hlisp.interp.Hexp.prototype.hlisp$interp$IHexp$analyze$arity$1 = function(hexp) {
-  var or__3824__auto____709221 = hlisp.interp.analyze_self_evaluating.call(null, hexp);
-  if(cljs.core.truth_(or__3824__auto____709221)) {
-    return or__3824__auto____709221
+  var or__3824__auto____713175 = hlisp.interp.analyze_self_evaluating.call(null, hexp);
+  if(cljs.core.truth_(or__3824__auto____713175)) {
+    return or__3824__auto____713175
   }else {
-    var or__3824__auto____709222 = hlisp.interp.analyze_quoted.call(null, hexp);
-    if(cljs.core.truth_(or__3824__auto____709222)) {
-      return or__3824__auto____709222
+    var or__3824__auto____713176 = hlisp.interp.analyze_quoted.call(null, hexp);
+    if(cljs.core.truth_(or__3824__auto____713176)) {
+      return or__3824__auto____713176
     }else {
       throw new Error([cljs.core.str(hexp), cljs.core.str(" is not a valid expression")].join(""));
     }

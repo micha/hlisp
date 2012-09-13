@@ -2,13 +2,6 @@
   (:require [clojure.set])
   (:use [hlisp.reader :only [read-form]]))
 
-;;;;;;;;;;;;;;;;;;;;;; Utility functions ;;;;;;;;;;;;;
-
-(defn to-seq [x]
-  (if (seq? x)
-    x
-    (list x)))
-
 ;;;;;;;;;;;;;;;;;;;;;; Special tags ;;;;;;;;;;;;;;;;;;
 
 (def html-tags
