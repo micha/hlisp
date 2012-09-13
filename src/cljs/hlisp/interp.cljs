@@ -32,9 +32,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;
 
-(defn make-env
-  ([parent]
-   (atom {:parent parent :bindings (atom {})})))
+(defn make-env [parent] 
+  (atom {:parent parent :bindings (atom {})}))
 
 (defn set-env! [env name value]
   (swap! (:bindings env) #(assoc %1 %2 %3) name value))
