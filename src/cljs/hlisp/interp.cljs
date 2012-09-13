@@ -36,9 +36,8 @@
   {:parent parent :bindings (atom {})})
 
 (defn set-env! [env name value]
-  (when (map? env)
-    (swap! (:bindings env) assoc name value)
-    env))
+  (swap! (:bindings env) assoc name value)
+  env)
 
 (defn get-env [env name]
   (when (map? env)
