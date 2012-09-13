@@ -51,10 +51,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;; Hexp ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defrecord Hexp [tag attrs children text params env proc data])
+(defrecord Hexp [tag attrs children text attr-params params env proc data])
 
 (defn make-hexp [tag]
-  (Hexp. tag {} [] "" [] {} nil nil))
+  (Hexp. tag {} [] "" {} [] {} nil nil))
 
 (defn make-node-hexp [tag attrs children]
   (assoc (make-hexp tag) :attrs attrs :children children))
@@ -65,8 +65,12 @@
 (defn make-data-hexp [tag data]
   (assoc (make-hexp tag) :data data))
 
-(defn make-proc-hexp [params env proc]
-  (assoc (make-hexp tag) :params params :env env :proc proc))
+(defn make-proc-hexp [attr-params params env proc]
+  (assoc (make-hexp "proc")
+         :attr-params attr-params
+         :params      params
+         :env         env
+         :proc        proc))
 
 ;;;;;;;;;;;;;;;;;;;;;; Compiler ;;;;;;;;;;;;;;;;;;;;;;
 
@@ -114,7 +118,6 @@
 
 (def quoted-hexp? (partial has-tag? "quote"))
 (def def-hexp?    (partial has-tag? "def"))
-(def defn-hexp?   (partial has-tag? "defn"))
 (def fn-hexp?     (partial has-tag? "fn"))
 
 (defn nodes [hexps]
@@ -140,10 +143,23 @@
         (let [val (proc env)]
           (bind-env! env {name val}))))))
 
-(defn analyze-defn [hexp])
+(defn make-child-params [m]
+  (mapv :tag m))
+
+(defn analyze-sequence [body]
+  (let [procs (map analyze body)]
+    ()
+    )
+  )
 
 (defn analyze-fn [hexp]
-  (when (fn-hexp? hexp) ))
+  (when (fn-hexp? hexp)
+    (let [[c-params & body] (:children hexp)
+          child-params      (mapv :tag c-params)
+          attr-params       (:attrs params)
+          proc              (analyze-sequence body)]
+      (fn [env]
+        (make-proc-hexp attr-params child-params proc)))))
 
 (defprotocol IHexp
   (analyze [hexp]))

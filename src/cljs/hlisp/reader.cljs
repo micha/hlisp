@@ -24,8 +24,11 @@
 (defn parse-seqable-literal [pred valtag]
   (fn [expr]
     (when (pred expr)
-      (concat (list valtag empty-attrs)
-              (map read-form expr)))))
+      (let [head    (first expr)
+            tail    (rest expr)
+            attrs   (if (valid-attrlist? head) head empty-attrs)
+            items   (if (= empty-attrs attrs) expr tail)]
+        (concat (list valtag attrs) (map read-form items))))))
 
 (defn parse-atomic-literal [pred valtag]
   (fn [expr]
