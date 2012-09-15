@@ -23,3 +23,7 @@
   (if-not (z/end? loc)
     (recur (-> loc #(z/replace % (f (z/node %))) z/next) f)
     (-> loc z/root z/node)))
+
+(defn doit []
+  (eval '(js/alert "hi there")))
+

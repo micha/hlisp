@@ -1,6 +1,8 @@
 (ns hlisp.reader
   (:require [cljs.reader :as reader]))
 
+(declare read-form)
+
 ;; An empty attribute list.
 (def empty-attrs '(()))
 

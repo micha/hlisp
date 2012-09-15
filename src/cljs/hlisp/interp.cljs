@@ -2,6 +2,8 @@
   (:require [clojure.set])
   (:use [hlisp.reader :only [read-form]]))
 
+(declare compile-form analyze)
+
 ;;;;;;;;;;;;;;;;;;;;;; Special tags ;;;;;;;;;;;;;;;;;;
 
 (def html-tags
@@ -33,19 +35,21 @@
 ;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;
 
 (defn make-env [parent] 
-  {:parent parent :bindings (atom {})})
+  {:root (atom {}) :parent parent :bindings {}})
 
-(defn bind-env! [env bindings]
-  (swap! (:bindings env) into bindings)
-  env)
+(defn bind-env [env bindings]
+  (update-in env [:bindings] into bindings))
+
+(defn bind-root-env! [env bindings]
+  (swap! (:root env) into bindings))
 
 (defn resolve-env [env name]
   (let [parent    (:parent env)
-        bindings @(:bindings env)]
+        bindings  (:bindings env)]
     (cond
       (contains? bindings name) (get bindings name)
       (not (nil? parent))       (resolve-env parent name)
-      :else                     nil))) 
+      :else                     (get @(:root env) name)))) 
 
 (def global-env (make-env nil))
 
@@ -85,14 +89,16 @@
   (into {} (vec (map vec (read-attrs-pairs s)))))
 
 (defn compile-text-hexp [s]
-  (when (= 2 (count s))
-    (let [[tagsym text] s]
-      (make-text-hexp (str tagsym) text))))
+  (let [[tagsym text] s
+        tag (str tagsym)]
+    (when (= \# (first tag))
+      (make-text-hexp tag text))))
 
 (defn compile-node-hexp [s]
-  (when (< 2 (count s))
-    (let [[tagsym [[& attrlist]] & children] s]
-      (make-node-hexp (str tagsym)
+  (let [[tagsym [[& attrlist]] & children] s
+        tag (str tagsym)]
+    (when (not= \# (first tag))
+      (make-node-hexp tag
                       (read-attrs attrlist)
                       (map compile-form children)))))
 
@@ -141,7 +147,7 @@
           proc      (analyze (second children))]
       (fn [env]
         (let [val (proc env)]
-          (bind-env! env {name val}))))))
+          (bind-root-env! env {name val}))))))
 
 (defn make-child-params [m]
   (mapv :tag m))
@@ -155,11 +161,11 @@
 (defn analyze-fn [hexp]
   (when (fn-hexp? hexp)
     (let [[c-params & body] (:children hexp)
-          child-params      (mapv :tag c-params)
-          attr-params       (:attrs params)
+          child-params      (mapv :tag (:children c-params))
+          attr-params       (:attrs c-params)
           proc              (analyze-sequence body)]
       (fn [env]
-        (make-proc-hexp attr-params child-params proc)))))
+        (make-proc-hexp attr-params child-params env proc)))))
 
 (defprotocol IHexp
   (analyze [hexp]))
