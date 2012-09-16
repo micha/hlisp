@@ -78,6 +78,9 @@
     (parse-node           expr)
     (throw (js/Error. (str "read-form: " expr " isn't a valid expression")))))
 
+(defn read-forms [forms]
+  (map read-form forms))
+
 (defn read-string [s]
-  (map read-form (reader/read-string (str "(" s "\n)"))))
+  (read-forms (reader/read-string (str "(" s "\n)"))))
 

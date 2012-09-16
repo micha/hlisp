@@ -2,7 +2,16 @@
   (:require [clojure.set])
   (:use [hlisp.reader :only [read-form]]))
 
-(declare compile-form analyze)
+(declare compile-form analyze analyze-body analyze-seq text-hexp? eval-all) 
+
+(defn do! [& _])
+
+(def funroll-body
+  (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
+
+(defn funroll-seq [procs]
+  (fn [& args]
+    (map #(apply % args) procs)))
 
 ;;;;;;;;;;;;;;;;;;;;;; Special tags ;;;;;;;;;;;;;;;;;;
 
@@ -34,25 +43,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;
 
-(defn make-env [parent] 
-  {:root (atom {}) :parent parent :bindings {}})
+(def *global-env* (atom {}))
 
-(defn bind-env [env bindings]
-  (update-in env [:bindings] into bindings))
+(def bind-env into)
 
-(defn bind-root-env! [env bindings]
-  (swap! (:root env) into bindings)
-  nil)
+(def bind-env! (partial swap! *global-env* into))
 
 (defn resolve-env [env name]
-  (let [parent    (:parent env)
-        bindings  (:bindings env)]
-    (cond
-      (contains? bindings name) (get bindings name)
-      (not (nil? parent))       (resolve-env parent name)
-      :else                     (get @(:root env) name)))) 
-
-(def global-env (make-env nil))
+  (or
+    (get env name)
+    (get @*global-env* name)))
 
 ;;;;;;;;;;;;;;;;;;;;;; Hexp ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -108,12 +108,10 @@
       (compile-node-hexp        s)
       (throw (js/Error. (str "compile: " s " is not a valid expression")))))
 
-(defn compile-string [s]
-  (map compile-form (hlisp.reader/read-string s)))
+(defn compile-forms [forms]
+  (map compile-form forms))
 
-;;;;;;;;;;;;;;;;;;;;;; Interpreter ;;;;;;;;;;;;;;;;;;;
-
-(declare text-hexp?)
+;;;;;;;;;;;;;;;;;;;;;; Syntactic Analysis ;;;;;;;;;;;;
 
 (defn elems [hexps]
   (remove text-hexp? hexps))
@@ -156,13 +154,10 @@
           proc      (analyze (second children))]
       (fn [env]
         (let [val (proc env)]
-          (bind-root-env! env {name val}))))))
+          (do! (bind-env! {name val})))))))
 
 (defn make-child-params [m]
   (mapv :tag m))
-
-(def funroll
-  (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
 
 (defn analyze-fn [hexp]
   (when (fn-hexp? hexp)
@@ -170,7 +165,7 @@
           child-params      (mapv :tag (:children c-params))
           attr-params       (:attrs c-params)
           proc              (if (seq body)
-                              (funroll (map analyze body))
+                              (analyze-body body)
                               (throw (js/Error. "empty body")))]
       (fn [env]
         (make-proc-hexp attr-params child-params env proc)))))
@@ -182,24 +177,24 @@
         (or (resolve-env env name)
             (throw (js/Error. (str "unbound variable " name))))))))
 
-(defn eval-all [thunks env]
-  (map #(% env) thunks))
+(defn apply-fn [hexp args attr-args]
+  (let [proc        (:proc        hexp)
+        params      (:params      hexp)
+        attr-params (:attr-params hexp)
+        env         (bind-env (:env hexp) (zipmap params args))]
+    (proc env)))
 
 (defn analyze-application [hexp]
   (when (application-hexp? hexp)
-    (let [proc        (analyze (make-hexp (:tag hexp))) 
-          child-args  (map analyze (elems (:children hexp)))
-          attr-args   (:attrs hexp)
-          attr-params (:attr-params hexp)
-          params      (:params hexp)]
+    (let [proc      (analyze (make-hexp (:tag hexp))) 
+          args      (analyze-seq (elems (:children hexp))) 
+          attr-args (:attrs hexp)]
       (fn [env]
-        (let [c-args  (eval-all child-args env)
-              
-              ])
-        )
-      )
-    )
-  )
+        (let [func (proc env)]
+          (condp = (:tag func)
+            "proc"  (apply-fn func (args env) attr-args)
+            "fproc" (apply-fn func (args env) attr-args)
+            (update-in func [:children] into (args env))))))))
 
 (defprotocol IHexp
   (analyze [hexp]))
@@ -214,14 +209,20 @@
       (analyze-fn               hexp)
       (analyze-variable         hexp)
       (analyze-application      hexp)
+      (js/console.log "unknown expr type:" hexp)
       (throw (js/Error. (str "analyze: " hexp " is not a valid expression"))))))
 
-(defn analyze-string [s]
-  (doall (map analyze (compile-string s))))
+(def analyze-body   (comp funroll-body (partial map analyze)))
+(def analyze-seq    (comp funroll-seq (partial map analyze)))
+
+(def analyze-forms  (comp analyze-seq compile-forms))
+
+;;;;;;;;;;;;;;;;;;;;;; Evaluation ;;;;;;;;;;;;;;;;;;;;
+
+(defn eval-forms [& forms]
+  (remove nil? ((analyze-forms (hlisp.reader/read-forms (first forms))) {})))
 
 (defn eval-string [s]
-  (doall (map #(% global-env) (analyze-string s))))
+  (remove nil? ((analyze-forms (hlisp.reader/read-string s)) {})))
 
-(defn doit []
-  (eval-string "(def f (fn [x] x))")
-  (first (eval-string "f")))
+

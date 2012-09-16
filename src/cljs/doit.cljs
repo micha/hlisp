@@ -1,0 +1,22 @@
+(ns hlisp.doit
+  (:require [hlisp.reader :as reader]
+            [hlisp.interp :as interp])
+  (:require-macros [hlisp.macros :as macros]))
+
+(defn as-forms [x]
+  (js/console.log
+    (.toString
+      (interp/eval-forms x))))
+
+(defn as-string [x]
+  (js/console.log
+    (.toString
+      (interp/eval-string x))))
+
+(as-forms '(
+
+  (def f (fn [x] x))
+  (def ttt (f (ul (li "one") (li "two")))) 
+  (ttt (p "hello"))
+    
+))
