@@ -41,7 +41,8 @@
   (update-in env [:bindings] into bindings))
 
 (defn bind-root-env! [env bindings]
-  (swap! (:root env) into bindings))
+  (swap! (:root env) into bindings)
+  nil)
 
 (defn resolve-env [env name]
   (let [parent    (:parent env)
@@ -112,6 +113,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;; Interpreter ;;;;;;;;;;;;;;;;;;;
 
+(declare text-hexp?)
+
+(defn elems [hexps]
+  (remove text-hexp? hexps))
+
 (defn text-hexp? [hexp]
   (= \# (get (:tag hexp) 0)))
 
@@ -126,8 +132,11 @@
 (def def-hexp?    (partial has-tag? "def"))
 (def fn-hexp?     (partial has-tag? "fn"))
 
-(defn nodes [hexps]
-  (remove text-hexp? hexps))
+(defn application-hexp? [hexp]
+  (seq (elems (:children hexp))))
+
+(defn variable-hexp? [hexp]
+  (not (application-hexp? hexp)))
 
 (defn analyze-self-evaluating [hexp]
   (when (self-evaluating-hexp? hexp)
@@ -138,11 +147,11 @@
 (defn analyze-quoted [hexp]
   (when (quoted-hexp? hexp)
     (fn [env]
-      (first (nodes (:children hexp))))))
+      (first (elems (:children hexp))))))
 
 (defn analyze-def [hexp]
   (when (def-hexp? hexp)
-    (let [children  (nodes (:children hexp))
+    (let [children  (elems (:children hexp))
           name      (:tag (first children))  
           proc      (analyze (second children))]
       (fn [env]
@@ -152,20 +161,45 @@
 (defn make-child-params [m]
   (mapv :tag m))
 
-(defn analyze-sequence [body]
-  (let [procs (map analyze body)]
-    ()
-    )
-  )
+(def funroll
+  (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
 
 (defn analyze-fn [hexp]
   (when (fn-hexp? hexp)
-    (let [[c-params & body] (:children hexp)
+    (let [[c-params & body] (elems (:children hexp)) 
           child-params      (mapv :tag (:children c-params))
           attr-params       (:attrs c-params)
-          proc              (analyze-sequence body)]
+          proc              (if (seq body)
+                              (funroll (map analyze body))
+                              (throw (js/Error. "empty body")))]
       (fn [env]
         (make-proc-hexp attr-params child-params env proc)))))
+
+(defn analyze-variable [hexp]
+  (when (variable-hexp? hexp)
+    (let [name (:tag hexp)]
+      (fn [env]
+        (or (resolve-env env name)
+            (throw (js/Error. (str "unbound variable " name))))))))
+
+(defn eval-all [thunks env]
+  (map #(% env) thunks))
+
+(defn analyze-application [hexp]
+  (when (application-hexp? hexp)
+    (let [proc        (analyze (make-hexp (:tag hexp))) 
+          child-args  (map analyze (elems (:children hexp)))
+          attr-args   (:attrs hexp)
+          attr-params (:attr-params hexp)
+          params      (:params hexp)]
+      (fn [env]
+        (let [c-args  (eval-all child-args env)
+              
+              ])
+        )
+      )
+    )
+  )
 
 (defprotocol IHexp
   (analyze [hexp]))
@@ -177,11 +211,17 @@
       (analyze-self-evaluating  hexp)
       (analyze-quoted           hexp)
       (analyze-def              hexp)
+      (analyze-fn               hexp)
+      (analyze-variable         hexp)
+      (analyze-application      hexp)
       (throw (js/Error. (str "analyze: " hexp " is not a valid expression"))))))
 
 (defn analyze-string [s]
-  (map analyze (compile-string s)))
+  (doall (map analyze (compile-string s))))
 
 (defn eval-string [s]
-  (map #(% global-env) (analyze-string s)))
+  (doall (map #(% global-env) (analyze-string s))))
 
+(defn doit []
+  (eval-string "(def f (fn [x] x))")
+  (first (eval-string "f")))
