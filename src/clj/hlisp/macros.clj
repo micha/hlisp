@@ -1,11 +1,5 @@
-(ns hlisp.macros
-  (:require [hlisp.reader :as reader]
-            [hlisp.interp :as interp]))
+(ns hlisp.macros)
 
 (defmacro foo [& forms]
-  (list 'quote '(+ 1 1)))
+  ''(+ 1 1))
 
-(defmacro hlisp [& forms]
-  (js/console.log
-    (.toString
-      (interp/eval-forms forms))))

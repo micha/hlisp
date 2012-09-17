@@ -2,9 +2,7 @@
   (:require [clojure.set])
   (:use [hlisp.reader :only [read-form]]))
 
-(declare compile-form analyze analyze-body analyze-seq text-hexp? eval-all) 
-
-(defn do! [& _])
+(declare prims compile-form analyze analyze-body analyze-seq text-hexp? eval-all) 
 
 (def funroll-body
   (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
@@ -44,15 +42,11 @@
 ;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;
 
 (def *global-env* (atom {}))
-
-(def bind-env into)
-
-(def bind-env! (partial swap! *global-env* into))
+(def bind-env     into)
+(def bind-global! (partial swap! *global-env* into))
 
 (defn resolve-env [env name]
-  (or
-    (get env name)
-    (get @*global-env* name)))
+  (or (get env name) (get @*global-env* name)))
 
 ;;;;;;;;;;;;;;;;;;;;;; Hexp ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -64,14 +58,17 @@
 (defn make-node-hexp [tag attrs children]
   (assoc (make-hexp tag) :attrs attrs :children children))
 
+(defn make-seq-hexp [items]
+  (make-node-hexp "val:seq" {} (vec items)))
+
 (defn make-text-hexp [tag text]
   (assoc (make-hexp tag) :text (str text)))
 
-(defn make-data-hexp [tag data]
-  (assoc (make-hexp tag) :data data))
+(defn make-prim-hexp [proc]
+  (assoc (make-hexp :prim) :proc proc))
 
 (defn make-proc-hexp [attr-params params env proc]
-  (assoc (make-hexp "proc")
+  (assoc (make-hexp :proc)
          :attr-params attr-params
          :params      params
          :env         env
@@ -106,7 +103,7 @@
 (defn compile-form [s]
   (or (compile-text-hexp        s)
       (compile-node-hexp        s)
-      (throw (js/Error. (str "compile: " s " is not a valid expression")))))
+      (assert false (str "compile: " s " is not a valid expression"))))
 
 (defn compile-forms [forms]
   (map compile-form forms))
@@ -154,47 +151,60 @@
           proc      (analyze (second children))]
       (fn [env]
         (let [val (proc env)]
-          (do! (bind-env! {name val})))))))
+          (bind-global! {name val})
+          nil)))))
 
-(defn make-child-params [m]
-  (mapv :tag m))
+(defn parse-bindings [params args]
+  (let [k (first params)
+        v (first args)]
+    (cond
+      (= "&" k)
+      (parse-bindings (rest params) (list (make-seq-hexp args)))
+      (and k v)
+      (into {k v} (parse-bindings (rest params) (rest args)))
+      (or k v)
+      (assert false "arity mismatch"))))
 
 (defn analyze-fn [hexp]
   (when (fn-hexp? hexp)
     (let [[c-params & body] (elems (:children hexp)) 
-          child-params      (mapv :tag (:children c-params))
+          params            (mapv :tag (:children c-params))
           attr-params       (:attrs c-params)
-          proc              (if (seq body)
-                              (analyze-body body)
-                              (throw (js/Error. "empty body")))]
+          proc              (analyze-body body)]
+      (assert (seq body) "empty body")
       (fn [env]
-        (make-proc-hexp attr-params child-params env proc)))))
-
-(defn analyze-variable [hexp]
-  (when (variable-hexp? hexp)
-    (let [name (:tag hexp)]
-      (fn [env]
-        (or (resolve-env env name)
-            (throw (js/Error. (str "unbound variable " name))))))))
+        (make-proc-hexp attr-params params env proc)))))
 
 (defn apply-fn [hexp args attr-args]
   (let [proc        (:proc        hexp)
         params      (:params      hexp)
         attr-params (:attr-params hexp)
-        env         (bind-env (:env hexp) (zipmap params args))]
+        env         (bind-env (:env hexp) (parse-bindings params args))]
     (proc env)))
 
-(defn analyze-application [hexp]
-  (when (application-hexp? hexp)
-    (let [proc      (analyze (make-hexp (:tag hexp))) 
-          args      (analyze-seq (elems (:children hexp))) 
-          attr-args (:attrs hexp)]
-      (fn [env]
-        (let [func (proc env)]
-          (condp = (:tag func)
-            "proc"  (apply-fn func (args env) attr-args)
-            "fproc" (apply-fn func (args env) attr-args)
-            (update-in func [:children] into (args env))))))))
+(defn make-cljs-args [args attr-args]
+  (into (vec args) (mapcat identity (vec attr-args))))
+
+(defn apply-prim [hexp args attr-args]
+  ((:proc hexp) attr-args args))
+
+(defn analyze-node [hexp]
+  (let [name      (:tag hexp) 
+        args      (analyze-seq (elems (:children hexp))) 
+        attr-args (:attrs hexp)]
+    (fn [env]
+      (let [proc (resolve-env env name)
+            argv (args env)]
+        (assert proc (str "eval: unbound variable " name))
+        (cond
+          (and (seq argv) (= :proc (:tag proc))) 
+          (apply-fn proc (args env) attr-args)
+          (and (seq argv) (= :prim (:tag proc))) 
+          (apply-prim proc (args env) attr-args)
+          :else
+          (-> proc
+            (update-in [:children]  into (args env))
+            (update-in [:attrs]     into attr-args)))))))
 
 (defprotocol IHexp
   (analyze [hexp]))
@@ -207,15 +217,30 @@
       (analyze-quoted           hexp)
       (analyze-def              hexp)
       (analyze-fn               hexp)
-      (analyze-variable         hexp)
-      (analyze-application      hexp)
-      (js/console.log "unknown expr type:" hexp)
-      (throw (js/Error. (str "analyze: " hexp " is not a valid expression"))))))
+      (analyze-node             hexp)
+      (assert false (str "analyze: " hexp " is not a valid expression")))))
 
 (def analyze-body   (comp funroll-body (partial map analyze)))
 (def analyze-seq    (comp funroll-seq (partial map analyze)))
 
 (def analyze-forms  (comp analyze-seq compile-forms))
+
+;;;;;;;;;;;;;;;;;;;;;; Setup environment ;;;;;;;;;;;;;
+
+(def prims
+  {
+
+   "foop"
+   (fn [{:syms [hey] :as attr} args]
+     (assoc
+       (make-hexp "div")
+       :children (vec args)
+       :attrs (into {'asdf hey} attr)))
+
+   })
+
+(bind-global!
+  (into {} (mapv #(vec [(first %) (make-prim-hexp (second %))]) prims)))
 
 ;;;;;;;;;;;;;;;;;;;;;; Evaluation ;;;;;;;;;;;;;;;;;;;;
 

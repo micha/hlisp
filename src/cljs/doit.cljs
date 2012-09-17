@@ -13,10 +13,11 @@
     (.toString
       (interp/eval-string x))))
 
-(as-forms '(
+(as-forms
+  '(
 
-  (def f (fn [x] x))
-  (def ttt (f (ul (li "one") (li "two")))) 
-  (ttt (p "hello"))
-    
-))
+    (def f (fn [x & y] x))
+    (def ttt (f (ul (li "one") (li "two")))) 
+    (foop ((hey "omfg" yo "wheep")) p) 
+
+    )) 
