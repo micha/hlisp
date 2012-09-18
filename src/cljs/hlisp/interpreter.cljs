@@ -15,10 +15,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; Convenience functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn zip-apply [fns args]
-  "(zip-apply [f g h] [x y z]) => '((f x) (g y) (h z))"
-  (map (partial apply apply)
-       (partition 2 (interleave fns (partition 1 args)))))
+(defn funcall [f & args] (apply f args))
+
+(defn zip-apply [& fns]
+  "((zip-apply f1 f2 ...) [x1 x2 ...] [y1 y2 ...] ...)
+  = (list (f1 x1 y1 ...) (f2 x2 y2 ...) ...)"
+  (fn [& argvecs]
+    (apply (partial map funcall) (cons fns argvecs))))
 
 (def funroll-body
   (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
@@ -182,6 +185,6 @@
 
 (defn bind-primitive! [prims]
   (bind-global!
-    (into {} (mapv (comp vec (partial zip-apply [str make-prim-hexp]))
+    (into {} (mapv (comp vec (zip-apply str make-prim-hexp))
                    (partition 2 prims)))))
 
