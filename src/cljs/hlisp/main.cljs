@@ -2,11 +2,14 @@
   (:require
     [goog.dom             :as   gdom])
   (:use
-    [clojure.browser.dom  :only [log remove-children]]
+    [clojure.browser.dom  :only [log
+                                 log-obj
+                                 remove-children]]
     [hlisp.primitives     :only [prims]]
     [hlisp.dom            :only [read-dom]]
     [hlisp.reader         :only [read-forms]]
-    [hlisp.interpreter    :only [eval* bind-primitive!]]))
+    [hlisp.interpreter    :only [eval*
+                                 bind-primitive!]]))
 
 (bind-primitive! prims)
 
