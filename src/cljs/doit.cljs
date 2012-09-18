@@ -1,7 +1,9 @@
 (ns hlisp.doit
-  (:require [hlisp.reader :as reader]
-            [hlisp.interp :as interp])
-  (:require-macros [hlisp.macros :as macros]))
+  (:require
+    [hlisp.reader :as reader]
+    [hlisp.interpreter :as interp])
+  (:require-macros
+    [hlisp.macros :as macros]))
 
 (defn as-forms [x]
   (js/console.log

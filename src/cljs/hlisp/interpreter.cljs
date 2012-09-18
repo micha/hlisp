@@ -1,4 +1,4 @@
-(ns hlisp.interp
+(ns hlisp.interpreter
   (:require
     [clojure.set])
   (:use
