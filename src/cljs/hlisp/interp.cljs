@@ -15,7 +15,7 @@
 (declare prims analyze analyze-body analyze-seq apply* text-hexp?
          eval-all)
 
-;; Convenience functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;; Convenience functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def funroll-body
   (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
@@ -24,7 +24,16 @@
   (fn [& args]
     (map #(apply % args) procs)))
 
-;; Special tags ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def *global-env* (atom {}))
+(def bind-env     into)
+(def bind-global! (partial swap! *global-env* into))
+
+(defn resolve-env [env name]
+  (or (get env name) (get @*global-env* name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;; Syntactic Analysis ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def html-tags
   #{ "a" "abbr" "acronym" "address" "applet" "area" "article" "aside"
@@ -51,17 +60,6 @@
 
 (def self-evaluating-tags
   (clojure.set/union html-tags html-text-tags hlisp-boxed-tags))
-
-;; Environment ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(def *global-env* (atom {}))
-(def bind-env     into)
-(def bind-global! (partial swap! *global-env* into))
-
-(defn resolve-env [env name]
-  (or (get env name) (get @*global-env* name)))
-
-;;;;;;;;;;;;;;;;;;;;;; Syntactic Analysis ;;;;;;;;;;;;
 
 (defn elems [hexps]
   (remove text-hexp? hexps))
@@ -133,7 +131,7 @@
 (def analyze-seq    (comp funroll-seq (partial map analyze)))
 (def analyze-forms  (comp analyze-seq compile-forms))
 
-;;;;;;;;;;;;;;;;;;;;;; Apply ;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Apply ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn parse-bindings [params args]
   (let [k (first params)
@@ -169,12 +167,7 @@
     (apply-prim   hexp attr-args args)
     (apply-node   hexp attr-args args)))
 
-;;;;;;;;;;;;;;;;;;;;;; Primitives ;;;;;;;;;;;;;;;;;;;;
-
-(bind-global!
-  (into {} (mapv #(vec [(first %) (make-prim-hexp (second %))]) prims)))
-
-;;;;;;;;;;;;;;;;;;;;;; Evaluator ;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Eval ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn eval-forms [& forms]
   (remove nil? ((analyze-forms (hlisp.reader/read-forms (first forms))) {})))
@@ -182,4 +175,7 @@
 (defn eval-string [s]
   (remove nil? ((analyze-forms (hlisp.reader/read-string s)) {})))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Primitives ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(bind-global!
+  (into {} (mapv #(vec [(first %) (make-prim-hexp (second %))]) prims)))
