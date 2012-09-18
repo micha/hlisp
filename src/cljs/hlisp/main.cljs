@@ -1,22 +1,36 @@
 (ns hlisp.main
-  (:use [hlisp.primitives   :only [prims]]
-        [hlisp.interpreter  :only [bind-primitive!
-                                   eval-forms
-                                   eval-string]]))
+  (:require
+    [goog.dom             :as   gdom])
+  (:use
+    [clojure.browser.dom  :only [log remove-children]]
+    [hlisp.primitives     :only [prims]]
+    [hlisp.dom            :only [read-dom]]
+    [hlisp.reader         :only [read-forms]]
+    [hlisp.interpreter    :only [eval* bind-primitive!]]))
 
 (bind-primitive! prims)
 
-(defn as-forms [x]
-  (js/console.log (.toString (eval-forms x)))) 
+(def as-forms
+  (comp log eval* read-forms))
 
-(defn as-string [x]
-  (js/console.log (.toString (eval-string x)))) 
+(js/console.time "load time")
 
 (as-forms
   '(
 
     (def f (fn [x & y] x))
-    (def ttt (f (ul (li "one") (li "two")))) 
+    (def ttt
+      (f
+        (ul (li "one")
+            (li "two")))) 
+
     (foop ((hey "omfg" yo "wheep")) p) 
 
     ))
+
+(log (eval* (read-dom (-> js/document .-body)))) 
+
+(gdom/removeChildren (-> js/document .-body)) 
+
+(js/console.timeEnd "load time")
+

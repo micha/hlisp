@@ -1,5 +1,6 @@
 (ns hlisp.compiler
   (:use
+    [hlisp.util :only [zipfn]]
     [hlisp.hexp :only [make-hexp
                        make-node-hexp
                        make-seq-hexp
@@ -7,7 +8,9 @@
                        make-prim-hexp
                        make-proc-hexp]]))
 
-(declare compile-form)
+(declare compile-form decompile-hexp)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Compiler ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn read-attrs-pairs [s]
   (map
@@ -34,9 +37,32 @@
                       (map compile-form children)))))
 
 (defn compile-form [s]
-  (or (compile-text-hexp        s)
-      (compile-node-hexp        s)
+  (or (compile-text-hexp s)
+      (compile-node-hexp s)
       (assert false (str "compile: " s " is not a valid expression"))))
 
 (defn compile-forms [forms]
   (map compile-form forms))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Decompiler ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn decompile-text-hexp [hexp]
+  (let [{:keys [tag text]} hexp]
+    (when (= \# (first tag))
+      (list (symbol tag) text))))
+
+(defn decompile-node-hexp [hexp]
+  (let [{:keys [tag attrs children]} hexp]
+    (when (string? tag)
+      (concat
+        (list (symbol tag)
+              (list (mapcat (zipfn [symbol str]) attrs)))
+        (map decompile-hexp children)))))
+
+(defn decompile-hexp [hexp]
+  (or (decompile-text-hexp hexp)
+      (decompile-node-hexp hexp)))
+
+(defn decompile-hexps [hexps]
+  (map decompile-hexp hexps))
+

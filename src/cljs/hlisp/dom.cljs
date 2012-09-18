@@ -39,4 +39,7 @@
         children  (if (branch? node)
                     (map dom->list (nodelist-seq (.-childNodes node)))
                     (list (.-nodeValue node)))]
-    (concat (list tag) attrs children)))
+    (concat (list (symbol tag)) attrs children)))
+
+(defn read-dom [root]
+  (list (dom->list root)))

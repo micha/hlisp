@@ -2,8 +2,11 @@
   (:require
     [clojure.set])
   (:use
-    [hlisp.reader     :only [read-form]]
-    [hlisp.compiler   :only [compile-forms]]
+    [hlisp.util       :only [zipfn
+                             funroll-body
+                             funroll-seq]]
+    [hlisp.compiler   :only [compile-forms
+                             decompile-hexps]]
     [hlisp.hexp       :only [make-hexp
                              make-node-hexp
                              make-seq-hexp
@@ -12,17 +15,6 @@
                              make-proc-hexp]]))
 
 (declare analyze analyze-body analyze-seq apply* text-hexp? eval-all)
-
-;;;;;;;;;;;;;;;;;;;;;;;;; Convenience functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(def zipfn (partial partial map #(apply %1 %&)))
-
-(def funroll-body
-  (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
-
-(defn funroll-seq [procs]
-  (fn [& args]
-    (map #(apply % args) procs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -130,6 +122,11 @@
 (def analyze-seq    (comp funroll-seq (partial map analyze)))
 (def analyze-forms  (comp analyze-seq compile-forms))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Eval ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn eval* [forms]
+  (decompile-hexps (remove nil? ((analyze-forms forms) {}))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Apply ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn parse-bindings [params args]
@@ -165,14 +162,6 @@
     (apply-fn     hexp attr-args args)
     (apply-prim   hexp attr-args args)
     (apply-node   hexp attr-args args)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Eval ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn eval-forms [& forms]
-  (remove nil? ((analyze-forms (hlisp.reader/read-forms (first forms))) {})))
-
-(defn eval-string [s]
-  (remove nil? ((analyze-forms (hlisp.reader/read-string s)) {})))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Primitives ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
