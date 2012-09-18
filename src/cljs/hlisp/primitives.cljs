@@ -8,13 +8,11 @@
                        make-proc-hexp]]))
 
 (def prims
-  {
-
-   "foop"
+  ["foop"
    (fn [{:syms [hey] :as attr} args]
      (assoc
        (make-hexp "div")
        :children (vec args)
-       :attrs (into {'asdf hey} attr)))
+       :attrs (into {'asdf hey} attr)))] 
 
-   })
+  )

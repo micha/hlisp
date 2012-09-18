@@ -7,6 +7,8 @@
                        make-prim-hexp
                        make-proc-hexp]]))
 
+(declare compile-form)
+
 (defn read-attrs-pairs [s]
   (map
     #(list (first %)

@@ -4,7 +4,6 @@
   (:use
     [hlisp.reader     :only [read-form]]
     [hlisp.compiler   :only [compile-forms]]
-    [hlisp.primitives :only [prims]]
     [hlisp.hexp       :only [make-hexp
                              make-node-hexp
                              make-seq-hexp
@@ -12,10 +11,14 @@
                              make-prim-hexp
                              make-proc-hexp]]))
 
-(declare prims analyze analyze-body analyze-seq apply* text-hexp?
-         eval-all)
+(declare analyze analyze-body analyze-seq apply* text-hexp? eval-all)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; Convenience functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn zip-apply [fns args]
+  "(zip-apply [f g h] [x y z]) => '((f x) (g y) (h z))"
+  (map (partial apply apply)
+       (partition 2 (interleave fns (partition 1 args)))))
 
 (def funroll-body
   (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
@@ -177,5 +180,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Primitives ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(bind-global!
-  (into {} (mapv #(vec [(first %) (make-prim-hexp (second %))]) prims)))
+(defn bind-primitive! [prims]
+  (bind-global!
+    (into {} (mapv (comp vec (partial zip-apply [str make-prim-hexp]))
+                   (partition 2 prims)))))
+
