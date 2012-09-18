@@ -15,13 +15,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; Convenience functions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn funcall [f & args] (apply f args))
-
-(defn zip-apply [& fns]
-  "((zip-apply f1 f2 ...) [x1 x2 ...] [y1 y2 ...] ...)
-  = (list (f1 x1 y1 ...) (f2 x2 y2 ...) ...)"
-  (fn [& argvecs]
-    (apply (partial map funcall) (cons fns argvecs))))
+(def zipfn (partial partial map #(apply %1 %&)))
 
 (def funroll-body
   (partial reduce (fn [x y] (fn [& args] (apply x args) (apply y args)))))
@@ -97,9 +91,8 @@
 
 (defn analyze-def [hexp]
   (when (def-hexp? hexp)
-    (let [children  (elems (:children hexp))
-          name      (:tag (first children))
-          proc      (analyze (second children))]
+    (let [children    (elems (:children hexp))
+          [name proc] ((zipfn [:tag analyze]) children)]
       (fn [env]
         (let [val (proc env)]
           (bind-global! {name val})
@@ -185,6 +178,6 @@
 
 (defn bind-primitive! [prims]
   (bind-global!
-    (into {} (mapv (comp vec (zip-apply str make-prim-hexp))
+    (into {} (mapv (comp vec (zipfn [str make-prim-hexp]))
                    (partition 2 prims)))))
 
