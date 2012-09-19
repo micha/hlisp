@@ -1,7 +1,10 @@
 (ns hlisp.dom
-  (:require [goog.dom             :as gdom]
-            [clojure.browser.dom  :as dom]
-            [hlisp.util           :as util]))
+  (:require [jayq.core   :as jq]
+            [jayq.util   :as ju]
+            [hlisp.util  :as util]))
+
+(def $        jq/$)
+(def clj->js  ju/clj->js)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; DOM -> hlisp ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -51,24 +54,42 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; hlisp -> DOM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn create-elem [hexp]
-  (let [{:keys [tag text]} hexp, tagstr (str tag)]
-    (condp = tagstr
+(defn create-elem [[tag text & _]]
+  (let [t (str tag)]
+    (condp = t
       "#text"     (-> js/document (.createTextNode  text))
       "#comment"  (-> js/document (.createComment   text))
-      (-> js/document (.createElement tagstr)))))
+      (-> js/document (.createElement t)))))
 
-(defn write-dom [hexp]
-  (let [{:keys [attrs children]} hexp
-        js-attrs  (util/clj->js attrs)
-        elem      (-> (create-elem hexp) (gdom/setProperties js-attrs))]
-    (if (seq children)
-      elem
-      (apply dom/append elem (map write-dom children)))
-    
-    ))
+(defn write-dom [[tag attrs & children :as hexp]]
+  (let [$elem ($ (create-elem hexp))]
+    (if (list? attrs)
+      (-> $elem
+        (jq/attr (into {} (vec (map vec (partition 2 (first attrs))))))
+        (jq/append (mapv write-dom children)))
+      $elem)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; hlisp -> DOM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(def xhr-opts
+  {:async     false
+   :dataType  "text"
+   :type      "GET"
+   })
 
+(defn status-ok? [status]
+  (and (>= status 200) (< status 300)))
+
+(defn xhr [uri & {:keys [opt]}] 
+   (let [ret      (.ajax js/jQuery (str uri) (clj->js (into xhr-opts opt)))
+         status   (.-status       ret)
+         message  (.-statusText   ret)
+         text     (.-responseText ret)]
+     (assert (status-ok? status) (str status " " message))
+     text))
+
+(defn load-remote-scripts []
+  (mapv (comp xhr #(-> ($ %) (jq/attr "src"))) 
+        (-> ($ "head") (jq/find "script[type='text/hlisp'][src]")))) 
 
 

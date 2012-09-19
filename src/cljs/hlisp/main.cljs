@@ -1,39 +1,31 @@
 (ns hlisp.main
   (:require
+    [jayq.core            :as   jq]
+    [jayq.util            :as   ju]
     [goog.dom             :as   gdom])
   (:use
     [clojure.browser.dom  :only [log
                                  log-obj
                                  remove-children]]
     [hlisp.primitives     :only [prims]]
-    [hlisp.dom            :only [read-dom]]
-    [hlisp.reader         :only [read-forms]]
+    [hlisp.dom            :only [read-dom
+                                 write-dom
+                                 load-remote-scripts]]
+    [hlisp.reader         :only [read-forms
+                                 read-string]]
     [hlisp.interpreter    :only [eval*
                                  bind-primitive!]]))
 
-(bind-primitive! prims)
-
-(def as-forms
-  (comp log eval* read-forms))
-
 (js/console.time "load time")
 
-(as-forms
-  '(
+(bind-primitive! prims)
 
-    (def f (fn [x & y] x))
-    (def ttt
-      (f
-        (ul (li "one")
-            (li "two")))) 
-
-    (foop ((hey "omfg" yo "wheep")) p) 
-
-    ))
-
-(log (eval* (read-dom (-> js/document .-body)))) 
-
-(gdom/removeChildren (-> js/document .-body)) 
+(let [$body (jq/$ "body")]
+  (doall
+    (jq/empty $body)
+    (map #(-> $body (jq/append %))
+         (map write-dom
+              (eval* (first (map read-string (load-remote-scripts)))))))) 
 
 (js/console.timeEnd "load time")
 

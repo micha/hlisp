@@ -118,6 +118,10 @@
     (analyze-fn               hexp)
     (analyze-node             hexp)))
 
+(defn tap [thing]
+  (js/console.log (str thing))
+  thing)
+
 (def analyze-body   (comp funroll-body (partial map analyze)))
 (def analyze-seq    (comp funroll-seq (partial map analyze)))
 (def analyze-forms  (comp analyze-seq compile-forms))
