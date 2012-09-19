@@ -1,4 +1,9 @@
-(ns hlisp.dom) 
+(ns hlisp.dom
+  (:require [goog.dom             :as gdom]
+            [clojure.browser.dom  :as dom]
+            [hlisp.util           :as util]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; DOM -> hlisp ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def node-types
   {1 :element})
@@ -43,3 +48,27 @@
 
 (defn read-dom [root]
   (list (dom->list root)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; hlisp -> DOM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn create-elem [hexp]
+  (let [{:keys [tag text]} hexp, tagstr (str tag)]
+    (condp = tagstr
+      "#text"     (-> js/document (.createTextNode  text))
+      "#comment"  (-> js/document (.createComment   text))
+      (-> js/document (.createElement tagstr)))))
+
+(defn write-dom [hexp]
+  (let [{:keys [attrs children]} hexp
+        js-attrs  (util/clj->js attrs)
+        elem      (-> (create-elem hexp) (gdom/setProperties js-attrs))]
+    (if (seq children)
+      elem
+      (apply dom/append elem (map write-dom children)))
+    
+    ))
+
+
+
+
+
