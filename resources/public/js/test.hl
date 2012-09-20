@@ -2,6 +2,3 @@
   (fn [x]
     (div (h1 "Hello") x)))
 
-(f (p "foo"))
-
-

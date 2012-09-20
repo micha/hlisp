@@ -8,3 +8,7 @@
 (defn funroll-seq [procs]
   (fn [& args] (map #(apply % args) procs)))
 
+(defn tee [arg]
+  (js/console.log ";;" (str arg))
+  arg)
+

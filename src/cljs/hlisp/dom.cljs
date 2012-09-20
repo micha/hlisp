@@ -3,9 +3,6 @@
             [jayq.util   :as ju]
             [hlisp.util  :as util]))
 
-(def $        jq/$)
-(def clj->js  ju/clj->js)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; DOM -> hlisp ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def node-types
@@ -32,7 +29,7 @@
 
 (defn ie7-value [node]
   (if-let [v (and (branch? node) (-> node .-value))]
-    (list "value" (-> node .-value))
+    (list 'value (-> node .-value))
     '()))
 
 (defn build-attrs [node]
@@ -42,12 +39,13 @@
               (ie7-value node)))))
 
 (defn dom->list [node]
-  (let [tag       (-> node .-nodeName .toLowerCase)
-        attrs     (if (not= \# (first tag)) (build-attrs node) '())
-        children  (if (branch? node)
-                    (map dom->list (nodelist-seq (.-childNodes node)))
-                    (list (.-nodeValue node)))]
-    (concat (list (symbol tag)) attrs children)))
+  (let [tag (-> node .-nodeName .toLowerCase)] 
+    (when (not= "script" tag)
+      (let [attrs     (if (not= \# (first tag)) (build-attrs node) '())
+            children  (if (branch? node)
+                        (remove nil? (map dom->list (nodelist-seq (.-childNodes node)))) 
+                        (list (.-nodeValue node)))] 
+        (concat (list (symbol tag)) attrs children)))))
 
 (defn read-dom [root]
   (list (dom->list root)))
@@ -62,34 +60,10 @@
       (-> js/document (.createElement t)))))
 
 (defn write-dom [[tag attrs & children :as hexp]]
-  (let [$elem ($ (create-elem hexp))]
+  (let [$elem (jq/$ (create-elem hexp))]
     (if (list? attrs)
       (-> $elem
         (jq/attr (into {} (vec (map vec (partition 2 (first attrs))))))
         (jq/append (mapv write-dom children)))
       $elem)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; hlisp -> DOM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(def xhr-opts
-  {:async     false
-   :dataType  "text"
-   :type      "GET"
-   })
-
-(defn status-ok? [status]
-  (and (>= status 200) (< status 300)))
-
-(defn xhr [uri & {:keys [opt]}] 
-   (let [ret      (.ajax js/jQuery (str uri) (clj->js (into xhr-opts opt)))
-         status   (.-status       ret)
-         message  (.-statusText   ret)
-         text     (.-responseText ret)]
-     (assert (status-ok? status) (str status " " message))
-     text))
-
-(defn load-remote-scripts []
-  (mapv (comp xhr #(-> ($ %) (jq/attr "src"))) 
-        (-> ($ "head") (jq/find "script[type='text/hlisp'][src]")))) 
-
 
