@@ -30,3 +30,7 @@
          :env         env
          :proc        proc))
 
+(defn make-data-hexp [data]
+  (assoc (make-hexp :data) :data data))
+
+

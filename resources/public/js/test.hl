@@ -1,4 +1,14 @@
 (def f
   (fn [x]
-    (div (h1 "Hello") x)))
+    (div (h1 "Hello there...") x)))
 
+(def g
+  (fn [x]
+    (div (h3 "heyyyy")
+         (call 
+           (fn [y]
+             (div (h2 "Wow...")
+                  y))
+           x))))
+
+(str '"hey there" '" foo" '" and bar!")

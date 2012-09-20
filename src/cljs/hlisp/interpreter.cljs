@@ -57,17 +57,21 @@
   (remove text-hexp? hexps))
 
 (defn text-hexp? [hexp]
-  (= \# (get (:tag hexp) 0)))
+  (= \# (first (:tag hexp))))
 
 (defn self-evaluating-hexp? [hexp]
   (or (contains? self-evaluating-tags (:tag hexp))
-      (text-hexp? hexp)))
+      (text-hexp? hexp)
+      (data-hexp? hexp)))
 
 (defn has-tag? [tag hexp]
   (= tag (:tag hexp)))
 
 (def quoted-hexp? (partial has-tag? "quote"))
 (def def-hexp?    (partial has-tag? "def"))
+(def data-hexp?   (partial has-tag? :data))
+(def call-hexp?   (partial has-tag? "call"))
+(def let-hexp?    (partial has-tag? "let"))
 (def fn-hexp?     (partial has-tag? "fn"))
 
 (defn analyze-self-evaluating [hexp]
@@ -90,6 +94,24 @@
           (bind-global! {name val})
           nil)))))
 
+(defn analyze-call [hexp]
+  (when (call-hexp? hexp)
+    (let [[{:keys [attrs] :as f} & call-args] (elems (:children hexp))
+          proc (analyze f)
+          args (analyze-seq call-args)]
+      (assert (seq call-args) "empty arg list for call")
+      (fn [env]
+        (apply* (proc env) attrs (args env))))))
+
+(defn analyze-let [hexp]
+  (when (let-hexp? hexp)
+    (let [{:keys [children]} hexp
+          [{bind-pairs :children} & body] (elems children)]
+      (assert (even? (count bind-pairs)) "odd number of bindings for let")
+      )
+    )
+  )
+
 (defn analyze-fn [hexp]
   (when (fn-hexp? hexp)
     (let [[c-params & body] (elems (:children hexp))
@@ -101,26 +123,23 @@
         (make-proc-hexp attr-params params env proc)))))
 
 (defn analyze-node [hexp]
-  (let [name      (:tag hexp)
-        attr-args (:attrs hexp)
-        args      (analyze-seq (elems (:children hexp)))]
+  (let [{:keys [tag attrs children]} hexp
+        args (analyze-seq (elems children))]
     (fn [env]
-      (let [proc (resolve-env env name)
+      (let [proc (resolve-env env tag)
             argv (args env)]
-        (assert proc (str "eval: unbound variable " name))
-        (apply* proc attr-args (args env))))))
+        (assert proc (str "eval: unbound variable " tag))
+        (apply* proc attrs (args env))))))
 
 (defn analyze [hexp]
   (or
     (analyze-self-evaluating  hexp)
     (analyze-quoted           hexp)
     (analyze-def              hexp)
+    (analyze-call             hexp)
+    (analyze-let              hexp)
     (analyze-fn               hexp)
     (analyze-node             hexp)))
-
-(defn tap [thing]
-  (js/console.log (str thing))
-  thing)
 
 (def analyze-body   (comp funroll-body (partial map analyze)))
 (def analyze-seq    (comp funroll-seq (partial map analyze)))
@@ -129,7 +148,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Eval ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn eval* [forms]
-  (decompile-hexps (remove nil? ((analyze-forms forms) {}))))
+  (remove nil? (decompile-hexps ((analyze-forms forms) {}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Apply ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -144,28 +163,19 @@
       (or k v)
       (assert false "arity mismatch"))))
 
-(defn apply-fn [hexp attr-args args]
-  (when (and (seq args) (= :proc (:tag hexp)))
-    (let [proc        (:proc        hexp)
-          params      (:params      hexp)
-          attr-params (:attr-params hexp)
-          env         (bind-env (:env hexp) (parse-bindings params args))]
-      (proc env))))
-
-(defn apply-prim [hexp attr-args args]
-  (when (and (seq args) (= :prim (:tag hexp)))
-    ((:proc hexp) attr-args args)))
-
-(defn apply-node [hexp attr-args args]
-  (-> hexp
-    (update-in [:children]  into args)
-    (update-in [:attrs]     into attr-args)))
-
 (defn apply* [hexp attr-args args]
-  (or
-    (apply-fn     hexp attr-args args)
-    (apply-prim   hexp attr-args args)
-    (apply-node   hexp attr-args args)))
+  (let [{:keys [tag attrs proc params attr-params env children]} hexp]
+    (cond
+      (or (string? tag) (nil? (seq args))) 
+      (-> hexp
+        (update-in [:children]  into args)
+        (update-in [:attrs]     into attr-args))
+
+      (= :prim tag)
+      (proc attr-args args)
+
+      (= :proc tag) 
+      (proc (bind-env env (parse-bindings params args))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Primitives ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

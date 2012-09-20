@@ -38,22 +38,18 @@
         (-> (jq/$ "head") (jq/find "script[type='text/hlisp'][src]")))) 
 
 (defn init []
-  (js/console.time "load time")
-
-  (bind-primitive! prims)
-
   (let [body      (-> js/document .-body)
         $body     (jq/$ body)
-        scrp-src  (first (map read-string (load-remote-scripts)))
-        body-src  (drop 2 (first (read-dom body)))]
+        scrp-src  (first (mapv read-string (load-remote-scripts)))
+        body-src  (drop 2 (vec (first (read-dom body))))]
     (tee body-src)
     (jq/empty $body)
     (mapv #(-> $body (jq/append %))
           (concat (map write-dom (eval* scrp-src)) 
-                  (map write-dom (eval* body-src))))) 
-
-  (js/console.timeEnd "load time"))
+                  (map write-dom (eval* body-src))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; hlisp -> DOM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(bind-primitive! prims)
 
 (jq/document-ready init)
