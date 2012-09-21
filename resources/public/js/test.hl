@@ -4,11 +4,6 @@
 
 (def g
   (fn [x]
-    (div (h3 "heyyyy")
-         (call 
-           (fn [y]
-             (div (h2 "Wow...")
-                  y))
-           x))))
+    '(call f x)))
 
 (str '"hey there" '" foo" '" and bar!")

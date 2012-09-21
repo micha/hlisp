@@ -39,14 +39,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Decompiler ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn decompile-hexp [{:keys [tag attrs children text] :as hexp}]
+(defn decompile-hexp [{:keys [tag attrs children text ids] :as hexp}]
   (cond
     (= \# (first tag))
     (list (symbol tag) text)
 
     (string? tag)
-    (concat (list (symbol tag) (list (mapcat (zipfn [symbol str]) attrs)))
-            (map decompile-hexp children))))
+    (let [attrmap (if (seq ids)
+                    (assoc attrs :hl (clojure.string/join " " ids))
+                    attrs)]
+      (concat (list (symbol tag) (list (mapcat (zipfn [symbol str]) attrmap)))
+              (map decompile-hexp children)))))
 
 (defn decompile-hexps [hexps]
   (map decompile-hexp hexps))

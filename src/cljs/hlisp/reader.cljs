@@ -84,3 +84,6 @@
 (defn read-string [s]
   (read-forms (reader/read-string (str "(" s "\n)"))))
 
+(defn readit [s]
+  (reader/read-string s))
+

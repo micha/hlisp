@@ -14,7 +14,7 @@
                              make-prim-hexp
                              make-proc-hexp]]))
 
-(declare analyze analyze-body analyze-seq apply* text-hexp? eval-all)
+(declare analyze analyze-body analyze-seq apply* text-hexp? data-hexp?)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -147,8 +147,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Eval ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn filter-ids [hexps]
+  (map #(if (self-evaluating-hexp? %) % (assoc % :ids [])) hexps))
+
 (defn eval* [forms]
-  (remove nil? (decompile-hexps ((analyze-forms forms) {}))))
+  (remove nil? (decompile-hexps (filter-ids ((analyze-forms forms) {})))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Apply ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

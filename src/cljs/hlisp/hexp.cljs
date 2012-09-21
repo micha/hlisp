@@ -2,6 +2,7 @@
 
 (defn make-hexp [tag]
   {:tag         tag
+   :ids         [(gensym)]
    :attrs       {}
    :children    []
    :text        ""
@@ -32,5 +33,11 @@
 
 (defn make-data-hexp [data]
   (assoc (make-hexp :data) :data data))
+
+(defrecord Foo [a b]) 
+
+(extend-type Foo
+  IPrintable
+  (-pr-seq [o] (list "Foo:<" (:a o) "," (:b o) ">")))
 
 
