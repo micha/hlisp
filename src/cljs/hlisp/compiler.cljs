@@ -31,6 +31,15 @@
       (= "val:str" tag)
       (make-data-hexp (apply str (mapv second children)))
 
+      (= "val:nil" tag)
+      (make-data-hexp nil)
+
+      (= "val:true" tag)
+      (make-data-hexp true)
+
+      (= "val:false" tag)
+      (make-data-hexp false)
+
       :else
       (make-node-hexp tag (make-attrs attrs) (map compile-form children)))))
 

@@ -11,13 +11,14 @@
     [hlisp.reader     :only [read-forms]]
     [hlisp.hexp       :only [make-hexp
                              make-node-hexp
+                             make-data-hexp
                              make-seq-hexp
                              make-text-hexp
                              make-prim-hexp
                              make-proc-hexp]]))
 
-(declare analyze analyze-body analyze-seq apply* text-hexp? data-hexp?
-         syntax-quote)
+(declare analyze analyze-all analyze-body analyze-seq apply* text-hexp?
+         data-hexp? syntax-quote)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -73,11 +74,17 @@
 (def quoted-hexp?         (partial has-tag? "quote"))
 (def syntax-quoted-hexp?  (partial has-tag? "syntax-quote"))
 (def def-hexp?            (partial has-tag? "def"))
+(def if-hexp?             (partial has-tag? "if"))
 (def macro-hexp?          (partial has-tag? "macro"))
 (def data-hexp?           (partial has-tag? :data))
 (def call-hexp?           (partial has-tag? "call"))
 (def let-hexp?            (partial has-tag? "let"))
 (def fn-hexp?             (partial has-tag? "fn"))
+
+(defn truthy-hexp? [hexp]
+  (let [{:keys [tag data]} hexp]
+    (or (not (= :data tag))
+        (and (not= nil data) (not= false data)))))
 
 (defn analyze-self-evaluating [hexp]
   (when (self-evaluating-hexp? hexp)
@@ -101,7 +108,17 @@
       (fn [env]
         (let [val (proc env)]
           (bind-global! {name val})
-          nil)))))
+          (make-data-hexp nil))))))
+
+(defn analyze-if [hexp]
+  (when (if-hexp? hexp)
+    (let [[pred consq alt] (analyze-all (elems (:children hexp)))]
+      (fn [env]
+        (if (truthy-hexp? (pred env))
+          (consq env)
+          (if alt
+            (alt env)
+            (make-data-hexp nil)))))))
 
 (defn analyze-call [hexp]
   (when (call-hexp? hexp)
@@ -152,13 +169,15 @@
     (analyze-quoted           hexp)
     (analyze-syntax-quoted    hexp)
     (analyze-def              hexp)
+    (analyze-if               hexp)
     (analyze-call             hexp)
     (analyze-let              hexp)
     (analyze-fn               hexp)
     (analyze-node             hexp)))
 
-(def analyze-body   (comp funroll-body (partial map analyze)))
-(def analyze-seq    (comp funroll-seq (partial map analyze)))
+(def analyze-all    (partial map analyze))
+(def analyze-body   (comp funroll-body analyze-all))
+(def analyze-seq    (comp funroll-seq analyze-all))
 (def analyze-forms  (comp analyze-seq compile-forms))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Syntax Quoting ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -3,7 +3,9 @@
   (fn [x]
     (let [y (div x (h2 "foo"))
           z (div x (h2 "bar"))]
-      (log '"omfg got here")
+      (if p
+        (log '"omfg got here")
+        (log '"omfg false"))
       (div
         (h1 "Hello there...")
         y

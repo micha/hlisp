@@ -21,12 +21,10 @@
 (def prims
   [
 
-   "foop"
-   (fn [{:syms [hey] :as attr} args]
-     (assoc
-       (make-hexp "div")
-       :children (vec args)
-       :attrs (into {'asdf hey} attr)))
+   "concat"
+   (fn [_ args]
+     (let [children (vec (mapcat :children args))]
+       (assoc (first args) :children children)))
 
    "log"
    (fn [_ args]
