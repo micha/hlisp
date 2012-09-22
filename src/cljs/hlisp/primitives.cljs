@@ -2,13 +2,14 @@
   (:require [jayq.core :as jq]
             [jayq.util :as ju])
   (:use
-    [hlisp.util :only [tee]]
-    [hlisp.hexp :only [make-hexp
-                       make-data-hexp
-                       make-node-hexp
-                       make-text-hexp
-                       make-prim-hexp
-                       make-proc-hexp]]))
+    [hlisp.util         :only [tee]]
+    [hlisp.interpreter  :only [apply*]]
+    [hlisp.hexp         :only [make-hexp
+                               make-data-hexp
+                               make-node-hexp
+                               make-text-hexp
+                               make-prim-hexp
+                               make-proc-hexp]]))
 
 (defn filter-e [id]
   (fn [v]
@@ -25,6 +26,10 @@
    (fn [_ args]
      (let [children (vec (mapcat :children args))]
        (assoc (first args) :children children)))
+
+   "call"
+   (fn [_ args]
+     (apply* (first args) {} (rest args)))
 
    "log"
    (fn [_ args]

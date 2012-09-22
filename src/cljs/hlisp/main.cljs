@@ -42,7 +42,6 @@
         $body     (jq/$ body)
         scrp-src  (first (mapv read-string (load-remote-scripts)))
         body-src  (drop 2 (vec (first (read-dom body))))]
-    (tee body-src)
     (jq/empty $body)
     (mapv #(-> $body (jq/append %))
           (concat (map write-dom (eval* scrp-src)) 

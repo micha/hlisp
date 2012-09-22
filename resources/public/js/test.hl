@@ -1,11 +1,21 @@
 
+(def when 
+  (macro [predicate & body]
+    (syntax-quote
+      (do
+        (log '"---->")
+        (if (unquote predicate)
+          (do (unquote-splicing body))
+          'nil)))))
+
 (def f
   (fn [x]
     (let [y (div x (h2 "foo"))
           z (div x (h2 "bar"))]
-      (if p
-        (log '"omfg got here")
-        (log '"omfg false"))
+      (when 'false
+        (log '"zomg hey here")
+        (log '"omfg got here"))
+      (log '"asdf")
       (div
         (h1 "Hello there...")
         y
@@ -15,8 +25,8 @@
   (fn [x]
     '(call f x)))
 
-(def when 
-  (macro [predicate & body]
-    (syntax-quote
-      (if (unquote predicate)
-        (do (unquote-splicing body))))))
+
+
+
+
+

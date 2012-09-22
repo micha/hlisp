@@ -3,6 +3,7 @@
     [clojure.set])
   (:use
     [hlisp.util       :only [zipfn
+                             tee
                              funroll-body
                              funroll-seq]]
     [hlisp.compiler   :only [compile-forms
@@ -75,9 +76,9 @@
 (def syntax-quoted-hexp?  (partial has-tag? "syntax-quote"))
 (def def-hexp?            (partial has-tag? "def"))
 (def if-hexp?             (partial has-tag? "if"))
+(def do-hexp?             (partial has-tag? "do"))
 (def macro-hexp?          (partial has-tag? "macro"))
 (def data-hexp?           (partial has-tag? :data))
-(def call-hexp?           (partial has-tag? "call"))
 (def let-hexp?            (partial has-tag? "let"))
 (def fn-hexp?             (partial has-tag? "fn"))
 
@@ -120,14 +121,9 @@
             (alt env)
             (make-data-hexp nil)))))))
 
-(defn analyze-call [hexp]
-  (when (call-hexp? hexp)
-    (let [[{:keys [attrs] :as f} & call-args] (elems (:children hexp))
-          proc (analyze f)
-          args (analyze-seq call-args)]
-      (assert (seq call-args) "empty arg list for call")
-      (fn [env]
-        (apply* (proc env) attrs (args env))))))
+(defn analyze-do [hexp]
+  (when (do-hexp? hexp)
+    (analyze-body (elems (:children hexp)))))
 
 (defn analyze-let [hexp]
   (when (let-hexp? hexp)
@@ -156,12 +152,15 @@
 
 (defn analyze-node [hexp]
   (let [{:keys [tag attrs children]} hexp
-        args (analyze-seq (elems children))]
-    (fn [env]
-      (let [proc (resolve-env env tag)
-            argv (args env)]
-        (assert proc (str "eval: unbound variable " tag))
-        (apply* proc attrs (args env))))))
+        form (resolve-env {} tag)] 
+    (if (= :macro tag)
+      (analyze (apply* form attrs children)) 
+      (let [args (analyze-seq children)]
+        (fn [env]
+          (let [proc (resolve-env env tag)
+                argv (args env)]
+            (assert proc (str "eval: unbound variable " tag))
+            (apply* proc attrs (args env))))))))
 
 (defn analyze [hexp]
   (or
@@ -170,7 +169,7 @@
     (analyze-syntax-quoted    hexp)
     (analyze-def              hexp)
     (analyze-if               hexp)
-    (analyze-call             hexp)
+    (analyze-do               hexp)
     (analyze-let              hexp)
     (analyze-fn               hexp)
     (analyze-node             hexp)))
@@ -185,7 +184,7 @@
 (defn syntax-quote-list [hexp]
   (let [a (make-hexp "concat")
         b [(make-hexp "call") (syntax-quote (make-hexp (:tag hexp)))] 
-        c (mapv syntax-quote (:children hexp))]
+        c (mapv syntax-quote (elems (:children hexp)))]
     (assoc a :children (into b c))))
 
 (defn syntax-quote [{:keys [tag children] :as hexp}]
@@ -236,10 +235,10 @@
         (update-in [:attrs]     into attr-args))
 
       (= :prim tag)
-      (proc attr-args args)
+      (proc attr-args (elems args))
 
-      (= :proc tag) 
-      (proc (bind-env env (parse-bindings params args))))))
+      (or (= :macro tag) (= :proc tag)) 
+      (proc (bind-env env (parse-bindings params (elems args)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Primitives ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
