@@ -6,7 +6,9 @@
                              funroll-body
                              funroll-seq]]
     [hlisp.compiler   :only [compile-forms
+                             compile-form
                              decompile-hexps]]
+    [hlisp.reader     :only [read-forms]]
     [hlisp.hexp       :only [make-hexp
                              make-node-hexp
                              make-seq-hexp
@@ -14,7 +16,8 @@
                              make-prim-hexp
                              make-proc-hexp]]))
 
-(declare analyze analyze-body analyze-seq apply* text-hexp? data-hexp?)
+(declare analyze analyze-body analyze-seq apply* text-hexp? data-hexp?
+         syntax-quote)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Environment ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -67,12 +70,14 @@
 (defn has-tag? [tag hexp]
   (= tag (:tag hexp)))
 
-(def quoted-hexp? (partial has-tag? "quote"))
-(def def-hexp?    (partial has-tag? "def"))
-(def data-hexp?   (partial has-tag? :data))
-(def call-hexp?   (partial has-tag? "call"))
-(def let-hexp?    (partial has-tag? "let"))
-(def fn-hexp?     (partial has-tag? "fn"))
+(def quoted-hexp?         (partial has-tag? "quote"))
+(def syntax-quoted-hexp?  (partial has-tag? "syntax-quote"))
+(def def-hexp?            (partial has-tag? "def"))
+(def macro-hexp?          (partial has-tag? "macro"))
+(def data-hexp?           (partial has-tag? :data))
+(def call-hexp?           (partial has-tag? "call"))
+(def let-hexp?            (partial has-tag? "let"))
+(def fn-hexp?             (partial has-tag? "fn"))
 
 (defn analyze-self-evaluating [hexp]
   (when (self-evaluating-hexp? hexp)
@@ -84,6 +89,10 @@
   (when (quoted-hexp? hexp)
     (fn [env]
       (first (elems (:children hexp))))))
+
+(defn analyze-syntax-quoted [hexp]
+  (when (syntax-quoted-hexp? hexp)
+    (analyze (first (:children (syntax-quote (first (:children hexp))))))))
 
 (defn analyze-def [hexp]
   (when (def-hexp? hexp)
@@ -106,21 +115,27 @@
 (defn analyze-let [hexp]
   (when (let-hexp? hexp)
     (let [{:keys [children]} hexp
-          [{bind-pairs :children} & body] (elems children)]
-      (assert (even? (count bind-pairs)) "odd number of bindings for let")
-      )
-    )
-  )
+          [{bind-pairs :children} & body] (elems children)
+          nbind (count bind-pairs)]
+      (assert (even? nbind) "odd number of bindings for let")
+      (if (< 0 nbind)
+        (let [wrap-param  [(make-node-hexp "val:vec" {} [(first bind-pairs)])] 
+              wrap-arg    [(second bind-pairs)]
+              next-bind   [(make-node-hexp "val:vec" {} (vec (drop 2 bind-pairs)))] 
+              next-let    [(make-node-hexp "let" {} (into next-bind (vec body)))] 
+              wrap-fn     [(make-node-hexp "fn" {} (into wrap-param next-let))]]
+          (analyze (make-node-hexp "call" {} (into wrap-fn wrap-arg))))
+        (analyze-body body)))))
 
 (defn analyze-fn [hexp]
-  (when (fn-hexp? hexp)
+  (when-let [fn-type (cond (fn-hexp? hexp) :proc (macro-hexp? hexp) :macro)]
     (let [[c-params & body] (elems (:children hexp))
           params            (mapv :tag (:children c-params))
           attr-params       (:attrs c-params)
           proc              (analyze-body body)]
       (assert (seq body) "empty body")
       (fn [env]
-        (make-proc-hexp attr-params params env proc)))))
+        (make-proc-hexp fn-type attr-params params env proc)))))
 
 (defn analyze-node [hexp]
   (let [{:keys [tag attrs children]} hexp
@@ -135,6 +150,7 @@
   (or
     (analyze-self-evaluating  hexp)
     (analyze-quoted           hexp)
+    (analyze-syntax-quoted    hexp)
     (analyze-def              hexp)
     (analyze-call             hexp)
     (analyze-let              hexp)
@@ -145,13 +161,39 @@
 (def analyze-seq    (comp funroll-seq (partial map analyze)))
 (def analyze-forms  (comp analyze-seq compile-forms))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Syntax Quoting ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn syntax-quote-list [hexp]
+  (let [a (make-hexp "concat")
+        b [(make-hexp "call") (syntax-quote (make-hexp (:tag hexp)))] 
+        c (mapv syntax-quote (:children hexp))]
+    (assoc a :children (into b c))))
+
+(defn syntax-quote [{:keys [tag children] :as hexp}]
+  (let [child-args (elems children)]
+    (cond
+      (= "unquote-splicing" tag)
+      (first child-args)
+
+      (= "unquote" tag) 
+      (make-node-hexp "val:seq" {} [(first child-args)])
+
+      (not (seq children)) 
+      (make-node-hexp "val:seq" {} [(make-node-hexp "quote" {} [hexp])])
+
+      :else
+      (make-node-hexp "val:seq" {} [(syntax-quote-list hexp)]))))
+
+(defn sq-test [form]
+  (nth (first (decompile-hexps (list (syntax-quote (first (compile-forms (read-forms (list form)))))))) 2))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Eval ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn filter-ids [hexps]
   (map #(if (self-evaluating-hexp? %) % (assoc % :ids [])) hexps))
 
 (defn eval* [forms]
-  (remove nil? (decompile-hexps (filter-ids ((analyze-forms forms) {})))))
+  (decompile-hexps (filter-ids ((analyze-forms forms) {}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Apply ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -1,9 +1,20 @@
+
 (def f
   (fn [x]
-    (div (h1 "Hello there...") x)))
+    (let [y (div x (h2 "foo"))
+          z (div x (h2 "bar"))]
+      (log '"omfg got here")
+      (div
+        (h1 "Hello there...")
+        y
+        z))))
 
 (def g
   (fn [x]
     '(call f x)))
 
-(str '"hey there" '" foo" '" and bar!")
+(def when 
+  (macro [predicate & body]
+    (syntax-quote
+      (if (unquote predicate)
+        (do (unquote-splicing body))))))

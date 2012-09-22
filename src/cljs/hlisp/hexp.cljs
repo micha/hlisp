@@ -24,8 +24,8 @@
 (defn make-prim-hexp [proc]
   (assoc (make-hexp :prim) :proc proc))
 
-(defn make-proc-hexp [attr-params params env proc]
-  (assoc (make-hexp :proc)
+(defn make-proc-hexp [tag attr-params params env proc]
+  (assoc (make-hexp tag)
          :attr-params attr-params
          :params      params
          :env         env

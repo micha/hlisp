@@ -28,6 +28,10 @@
        :children (vec args)
        :attrs (into {'asdf hey} attr)))
 
+   "log"
+   (fn [_ args]
+     (js/console.log (apply str (map :data args))))
+
    "str"
    (fn [_ args]
      (make-data-hexp (apply str (map :data args))))

@@ -49,8 +49,8 @@
                     (assoc attrs :hl (clojure.string/join " " ids))
                     attrs)]
       (concat (list (symbol tag) (list (mapcat (zipfn [symbol str]) attrmap)))
-              (map decompile-hexp children)))))
+              (remove nil? (map decompile-hexp children))))))
 
 (defn decompile-hexps [hexps]
-  (map decompile-hexp hexps))
+  (remove nil? (map decompile-hexp hexps)))
 
