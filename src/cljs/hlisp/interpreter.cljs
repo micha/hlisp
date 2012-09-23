@@ -108,7 +108,7 @@
 (defn analyze-syntax-quoted [hexp]
   (when (syntax-quoted-hexp? hexp)
     (let [form (first (elems (:children hexp)))]
-      (analyze (tee dc "[SQ]" (first (:children (syntax-quote form))))))))
+      (analyze (first (:children (syntax-quote form)))))))
 
 (defn analyze-def [hexp]
   (when (def-hexp? hexp)
@@ -166,7 +166,7 @@
   (let [{:keys [tag attrs children]} hexp
         form (resolve-env {} tag)] 
     (if (= :macro (:tag form))
-      (analyze (tee dc "[mm]" (apply* form attrs children)))
+      (analyze (apply* form attrs children))
       (let [args (analyze-seq children)]
         (fn [env]
           (let [proc (resolve-env env tag)
@@ -178,7 +178,7 @@
   (when (eval-hexp? hexp)
     (let [proc (analyze (first (elems (:children hexp))))]
       (fn [env]
-        (tee dc "eval" ((analyze (proc env)) {}))))))
+        ((analyze (proc env)) {})))))
 
 (defn analyze [hexp]
   (or

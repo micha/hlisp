@@ -1,7 +1,6 @@
 
 (def defmacro
-  (macro
-    [sym args & macro-body]
+  (macro [sym args & macro-body]
     (syntax-quote
       (def (unquote sym)
         (macro (unquote args)
@@ -18,10 +17,18 @@
     (if (unquote predicate)
       (do (unquote-splicing consequent)))))
 
+(defmacro when-not [predicate & consequent]
+  (syntax-quote
+    (if (unquote predicate)
+      'nil
+      (do (unquote-splicing consequent)))))
+
 (defn f [x & more]
-  (let [y 'false]
-    (log-obj (when y (log '"~~~~~ TRUE") (log '"again ~~~~" y)))
-    (div x)))
+  (let [y 'true]
+    (when y
+      (log '"~~~~~ TRUE")
+      (log '"~~~~~ y = " y))
+    (concat (div x) more)))
 
 
 
