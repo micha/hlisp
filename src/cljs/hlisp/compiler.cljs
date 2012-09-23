@@ -63,3 +63,20 @@
 (defn decompile-hexps [hexps]
   (remove nil? (map decompile-hexp hexps)))
 
+(defn dc [{:keys [tag attrs children text ids data] :as hexp}]
+  (cond
+    (= \# (first tag))
+    (list (symbol tag) text)
+
+    (= :data tag)
+    (list tag data)
+
+    (seq children)
+    (concat (list (symbol tag))
+            (remove nil? (map dc children)))
+
+    :else
+    (symbol tag)
+    ))
+
+(def dcs (partial map dc))

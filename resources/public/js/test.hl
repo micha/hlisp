@@ -1,29 +1,27 @@
 
-(def when 
-  (macro [predicate & body]
+(def defmacro
+  (macro
+    [sym args & macro-body]
     (syntax-quote
-      (do
-        (log '"---->")
-        (if (unquote predicate)
-          (do (unquote-splicing body))
-          'nil)))))
+      (def (unquote sym)
+        (macro (unquote args)
+          (unquote-splicing macro-body))))))
 
-(def f
-  (fn [x]
-    (let [y (div x (h2 "foo"))
-          z (div x (h2 "bar"))]
-      (when 'false
-        (log '"zomg hey here")
-        (log '"omfg got here"))
-      (log '"asdf")
-      (div
-        (h1 "Hello there...")
-        y
-        z))))
+(defmacro defn [sym args & fn-body]
+  (syntax-quote
+    (def (unquote sym)
+      (fn (unquote args)
+        (unquote-splicing fn-body)))))
 
-(def g
-  (fn [x]
-    '(call f x)))
+(defmacro when [predicate & consequent]
+  (syntax-quote
+    (if (unquote predicate)
+      (do (unquote-splicing consequent)))))
+
+(defn f [x & more]
+  (let [y 'false]
+    (log-obj (when y (log '"~~~~~ TRUE") (log '"again ~~~~" y)))
+    (div x)))
 
 
 

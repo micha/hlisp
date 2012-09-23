@@ -45,6 +45,9 @@
   (or ((parse-atomic-literal true?  'val:true)  expr) 
       ((parse-atomic-literal false? 'val:false) expr)))
 
+(defn parse-nil-literal [expr]
+  ((parse-atomic-literal nil? 'val:nil) expr))
+
 (defn parse-map-literal [expr]
   (when-let [m ((parse-seqable-literal map? 'val:map) expr)]
     (concat (take 2 m) (mapcat (partial drop 2) (drop 2 m)))))
@@ -75,6 +78,7 @@
     (parse-symbol         expr)
     (parse-text-node      expr)
     (parse-bool-literal   expr)
+    (parse-nil-literal    expr)
     (parse-map-literal    expr)
     (parse-set-literal    expr)
     (parse-vector-literal expr)

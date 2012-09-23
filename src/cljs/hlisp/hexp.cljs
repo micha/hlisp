@@ -34,10 +34,7 @@
 (defn make-data-hexp [data]
   (assoc (make-hexp :data) :data data))
 
-(defrecord Foo [a b]) 
-
-(extend-type Foo
-  IPrintable
-  (-pr-seq [o] (list "Foo:<" (:a o) "," (:b o) ">")))
+(defn make-quote-hexp [hexp]
+  (make-node-hexp "quote" {} [hexp]))
 
 

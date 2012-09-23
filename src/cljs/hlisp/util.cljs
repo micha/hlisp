@@ -10,7 +10,10 @@
 (defn funroll-seq [procs]
   (fn [& args] (map #(apply % args) procs)))
 
-(defn tee [arg]
-  (js/console.log ";;" (str arg))
-  arg)
+(defn tee [f & arg]
+  (let [pre (if (seq (butlast arg)) (apply str (butlast arg)) "-->") 
+        ret (last arg)
+        out (str (f ret))]
+    (js/console.log ";;" pre (str "\n" out)) 
+    ret))
 

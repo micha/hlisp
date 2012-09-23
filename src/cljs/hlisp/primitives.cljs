@@ -4,6 +4,8 @@
   (:use
     [hlisp.util         :only [tee]]
     [hlisp.interpreter  :only [apply*]]
+    [hlisp.compiler     :only [dc
+                               dcs]]
     [hlisp.hexp         :only [make-hexp
                                make-data-hexp
                                make-node-hexp
@@ -28,12 +30,18 @@
        (assoc (first args) :children children)))
 
    "call"
-   (fn [_ args]
-     (apply* (first args) {} (rest args)))
+   (fn [_ [f & args]]
+     (if-not (seq args) f (apply* f {} args)))
 
    "log"
    (fn [_ args]
-     (js/console.log (apply str (map :data args))))
+     (js/console.log (apply str (map :data args)))
+     (make-data-hexp nil))
+
+   "log-obj"
+   (fn [_ args]
+     (tee dcs "[log-obj]" args)
+     (make-data-hexp nil))
 
    "str"
    (fn [_ args]

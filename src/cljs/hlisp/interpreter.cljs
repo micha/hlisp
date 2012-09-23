@@ -8,13 +8,19 @@
                              funroll-seq]]
     [hlisp.compiler   :only [compile-forms
                              compile-form
+                             dc
+                             dcs
+                             decompile-hexp
                              decompile-hexps]]
-    [hlisp.reader     :only [read-forms]]
+    [hlisp.reader     :only [read-forms
+                             read-form
+                             read-string]]
     [hlisp.hexp       :only [make-hexp
                              make-node-hexp
                              make-data-hexp
                              make-seq-hexp
                              make-text-hexp
+                             make-quote-hexp
                              make-prim-hexp
                              make-proc-hexp]]))
 
@@ -76,6 +82,7 @@
 (def syntax-quoted-hexp?  (partial has-tag? "syntax-quote"))
 (def def-hexp?            (partial has-tag? "def"))
 (def if-hexp?             (partial has-tag? "if"))
+(def eval-hexp?           (partial has-tag? "eval"))
 (def do-hexp?             (partial has-tag? "do"))
 (def macro-hexp?          (partial has-tag? "macro"))
 (def data-hexp?           (partial has-tag? :data))
@@ -100,16 +107,20 @@
 
 (defn analyze-syntax-quoted [hexp]
   (when (syntax-quoted-hexp? hexp)
-    (analyze (first (:children (syntax-quote (first (:children hexp))))))))
+    (let [form (first (elems (:children hexp)))]
+      (analyze (tee dc "[SQ]" (first (:children (syntax-quote form))))))))
 
 (defn analyze-def [hexp]
   (when (def-hexp? hexp)
-    (let [children    (elems (:children hexp))
-          [name proc] ((zipfn [:tag analyze]) children)]
+    (let [[{:keys [tag]} expr]  (elems (:children hexp))
+          proc                  (analyze expr)
+          bind-now              (macro-hexp? expr)]
+      (when bind-now
+        (bind-global! {tag (proc {})}))
       (fn [env]
-        (let [val (proc env)]
-          (bind-global! {name val})
-          (make-data-hexp nil))))))
+        (when-not bind-now
+          (bind-global! {tag (proc env)})) 
+        (make-data-hexp nil)))))
 
 (defn analyze-if [hexp]
   (when (if-hexp? hexp)
@@ -141,7 +152,8 @@
         (analyze-body body)))))
 
 (defn analyze-fn [hexp]
-  (when-let [fn-type (cond (fn-hexp? hexp) :proc (macro-hexp? hexp) :macro)]
+  (when-let [fn-type (cond (fn-hexp? hexp)    :proc
+                           (macro-hexp? hexp) :macro)]
     (let [[c-params & body] (elems (:children hexp))
           params            (mapv :tag (:children c-params))
           attr-params       (:attrs c-params)
@@ -153,14 +165,20 @@
 (defn analyze-node [hexp]
   (let [{:keys [tag attrs children]} hexp
         form (resolve-env {} tag)] 
-    (if (= :macro tag)
-      (analyze (apply* form attrs children)) 
+    (if (= :macro (:tag form))
+      (analyze (tee dc "[mm]" (apply* form attrs children)))
       (let [args (analyze-seq children)]
         (fn [env]
           (let [proc (resolve-env env tag)
                 argv (args env)]
             (assert proc (str "eval: unbound variable " tag))
             (apply* proc attrs (args env))))))))
+
+(defn analyze-eval [hexp]
+  (when (eval-hexp? hexp)
+    (let [proc (analyze (first (elems (:children hexp))))]
+      (fn [env]
+        (tee dc "eval" ((analyze (proc env)) {}))))))
 
 (defn analyze [hexp]
   (or
@@ -169,6 +187,7 @@
     (analyze-syntax-quoted    hexp)
     (analyze-def              hexp)
     (analyze-if               hexp)
+    (analyze-eval             hexp)
     (analyze-do               hexp)
     (analyze-let              hexp)
     (analyze-fn               hexp)
@@ -181,11 +200,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Syntax Quoting ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn syntax-quote-list [hexp]
-  (let [a (make-hexp "concat")
-        b [(make-hexp "call") (syntax-quote (make-hexp (:tag hexp)))] 
-        c (mapv syntax-quote (elems (:children hexp)))]
-    (assoc a :children (into b c))))
+(defn syntax-quote-list [{:keys [tag children] :as hexp}]
+  (let [wrap (make-hexp "concat")
+        head [(make-quote-hexp (make-hexp tag))] 
+        tail (mapv syntax-quote (elems children))
+        ]
+    (make-node-hexp "concat" {} (into head tail))
+    )
+  )
 
 (defn syntax-quote [{:keys [tag children] :as hexp}]
   (let [child-args (elems children)]
@@ -194,16 +216,18 @@
       (first child-args)
 
       (= "unquote" tag) 
-      (make-node-hexp "val:seq" {} [(first child-args)])
+      (make-seq-hexp [(first child-args)])
 
-      (not (seq children)) 
-      (make-node-hexp "val:seq" {} [(make-node-hexp "quote" {} [hexp])])
+      (not (seq child-args)) 
+      (make-seq-hexp [(make-quote-hexp hexp)])
 
       :else
-      (make-node-hexp "val:seq" {} [(syntax-quote-list hexp)]))))
+      (make-seq-hexp [(syntax-quote-list hexp)]))))
 
 (defn sq-test [form]
-  (nth (first (decompile-hexps (list (syntax-quote (first (compile-forms (read-forms (list form)))))))) 2))
+  (tee dc "~~[st]~~" (first (elems (:children (syntax-quote (compile-form (read-form form)))))))
+  
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Eval ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -212,6 +236,9 @@
 
 (defn eval* [forms]
   (decompile-hexps (filter-ids ((analyze-forms forms) {}))))
+
+(defn eval-string* [s]
+  (tee dcs ">>" (filter-ids ((analyze-forms (read-string s)) {}))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Apply ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -227,7 +254,7 @@
       (assert false "arity mismatch"))))
 
 (defn apply* [hexp attr-args args]
-  (let [{:keys [tag attrs proc params attr-params env children]} hexp]
+  (let [{:keys [tag attrs proc params attr-params env]} hexp]
     (cond
       (or (string? tag) (nil? (seq args))) 
       (-> hexp
