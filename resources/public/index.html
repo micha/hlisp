@@ -6,35 +6,83 @@
 
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/flapjax.js"></script>
+
+  <style type="text/css">
+    li.checked { color: red; }
+  </style>
 </head>
 <body>
 
   <def>
-    <mything></mything>
-    <call>
-      <f></f>
-      <div>
-        <h3>ClojureScript!</h3>
-      </div>
-      <p>1!</p>
-      <p>2!</p>
-      <p>3!</p>
-    </call>
+    <myradio></myradio>
+    <make-radio><val:nil></val:nil></make-radio>
   </def>
 
-  <mything id="t1"></mything>
+  <def>
+    <trig1></trig1>
+    <add-radio>
+      <myradio></myradio>
+      <li></li>
+      <val:str>one</val:str>
+    </add-radio>
+  </def>
 
-  <concat>
-    <div id="1">
-      <p>one</p>
-    </div>
-    <div id="2">
-      <p>two</p>
-    </div>
-    <div id="3">
-      <p>three</p>
-    </div>
-  </concat>
+  <def>
+    <trig2></trig2>
+    <add-radio>
+      <myradio></myradio>
+      <li></li>
+      <val:str>two</val:str>
+    </add-radio>
+  </def>
+
+  <def>
+    <trig3></trig3>
+    <add-radio>
+      <myradio></myradio>
+      <li></li>
+      <val:str>three</val:str>
+    </add-radio>
+  </def>
+
+  <def>
+    <cont1></cont1>
+    <add-deck>
+      <myradio></myradio>
+      <div></div>
+      <val:str>one</val:str>
+    </add-deck>
+  </def>
+
+  <def>
+    <cont2></cont2>
+    <add-deck>
+      <myradio></myradio>
+      <div></div>
+      <val:str>two</val:str>
+    </add-deck>
+  </def>
+
+  <def>
+    <cont3></cont3>
+    <add-deck>
+      <myradio></myradio>
+      <div></div>
+      <val:str>three</val:str>
+    </add-deck>
+  </def>
+
+  <ul>
+    <trig1>one</trig1>
+    <trig2>two</trig2>
+    <trig3>three</trig3>
+  </ul>
+
+  <div>
+    <cont1>Content one.</cont1>
+    <cont2>Content two.</cont2>
+    <cont3>Content three.</cont3>
+  </div>
 
   <!-- ClojureScript -->
   <script>

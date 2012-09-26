@@ -56,7 +56,7 @@
   ((parse-seqable-literal set? 'val:set) expr))
 
 (defn parse-vector-literal [expr]
-  ((parse-seqable-literal vector? 'val:vec) expr))
+  ((parse-seqable-literal vector? 'list) expr))
 
 (defn parse-string-literal [expr]
   ((parse-atomic-literal string? 'val:str) expr))

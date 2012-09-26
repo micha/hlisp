@@ -1,16 +1,17 @@
 (ns hlisp.main
   (:require
+    [hlisp.primitives     :as   p]
     [jayq.core            :as   jq]
     [goog.dom             :as   gdom])
   (:use
     [jayq.util            :only [clj->js]]
-    [hlisp.primitives     :only [prims]]
     [hlisp.util           :only [tee]]
     [hlisp.dom            :only [read-dom
                                  write-dom]]
     [hlisp.reader         :only [read-forms
                                  read-string]]
     [hlisp.interpreter    :only [eval*
+                                 eval-string*
                                  bind-primitive!]]))
 
 
@@ -42,14 +43,22 @@
         $body     (jq/$ body)
         scrp-src  (first (mapv read-string (load-remote-scripts)))
         body-src  (drop 2 (vec (first (read-dom body))))]
+    (js/console.time "init")
     (jq/empty $body)
     (mapv #(-> $body (jq/append %))
           (concat (map write-dom (eval* scrp-src)) 
-                  (map write-dom (eval* body-src))))))
+                  (map write-dom (eval* body-src))))
+    (js/console.timeEnd "init")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; hlisp -> DOM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(bind-primitive! prims)
+(bind-primitive! p/prims)
+
+(bind-primitive! ["dom-assoc!"    p/dom-assoc!
+                  "dom-dissoc!"   p/dom-dissoc!
+                  ])
+
+(set! js/hl eval-string*)
 
 (jq/document-ready init)
 

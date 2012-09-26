@@ -15,10 +15,12 @@
     [hlisp.reader     :only [read-forms
                              read-form
                              read-string]]
-    [hlisp.hexp       :only [make-hexp
+    [hlisp.hexp       :only [html-tags
+                             html-text-tags
+                             make-hexp
                              make-node-hexp
                              make-data-hexp
-                             make-seq-hexp
+                             make-list-hexp
                              make-text-hexp
                              make-quote-hexp
                              make-prim-hexp
@@ -38,31 +40,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;; Syntactic Analysis ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def html-tags
-  #{ "a" "abbr" "acronym" "address" "applet" "area" "article" "aside"
-     "audio" "b" "base" "basefont" "bdi" "bdo" "big" "blockquote" "body" "br"
-     "button" "canvas" "caption" "center" "cite" "code" "col" "colgroup"
-     "command" "data" "datalist" "dd" "del" "details" "dfn" "dir" "div"
-     "dl" "dt" "em" "embed" "eventsource" "fieldset" "figcaption" "figure"
-     "font" "footer" "form" "frame" "frameset" "h1" "h2" "h3" "h4" "h5"
-     "h6" "head" "header" "hgroup" "hr" "html" "i" "iframe" "img" "input"
-     "ins" "isindex" "kbd" "keygen" "label" "legend" "li" "link" "map"
-     "mark" "menu" "meta" "meter" "nav" "noframes" "noscript" "object" "ol"
-     "optgroup" "option" "output" "p" "param" "pre" "progress" "q" "rp"
-     "rt" "ruby" "s" "samp" "script" "section" "select" "small" "source"
-     "span" "strike" "strong" "style" "sub" "summary" "sup" "table" "tbody"
-     "td" "textarea" "tfoot" "th" "thead" "time" "title" "tr" "track" "tt"
-     "u" "ul" "var" "video" "wbr" })
-
-(def html-text-tags
-  #{ "#text" "#comment" })
+(def hlisp-tags
+  #{ "list" })
 
 (def hlisp-boxed-tags
   #{ "val:str" "val:num" "val:seq" "val:vec" "val:set" "val:map" "val:true"
      "val:false" "val:nil" })
 
 (def self-evaluating-tags
-  (clojure.set/union html-tags html-text-tags hlisp-boxed-tags))
+  (clojure.set/union html-tags html-text-tags hlisp-tags hlisp-boxed-tags))
 
 (defn elems [hexps]
   (remove text-hexp? hexps))
@@ -93,12 +79,6 @@
   (let [{:keys [tag data]} hexp]
     (or (not (= :data tag))
         (and (not= nil data) (not= false data)))))
-
-(defn analyze-self-evaluating [hexp]
-  (when (self-evaluating-hexp? hexp)
-    (let [children (mapv analyze (:children hexp))]
-      (fn [env]
-        (assoc hexp :children (mapv #(% env) children))))))
 
 (defn analyze-quoted [hexp]
   (when (quoted-hexp? hexp)
@@ -132,6 +112,12 @@
             (alt env)
             (make-data-hexp nil)))))))
 
+(defn analyze-eval [hexp]
+  (when (eval-hexp? hexp)
+    (let [proc (analyze (first (elems (:children hexp))))]
+      (fn [env]
+        ((analyze (proc env)) {})))))
+
 (defn analyze-do [hexp]
   (when (do-hexp? hexp)
     (analyze-body (elems (:children hexp)))))
@@ -143,9 +129,9 @@
           nbind (count bind-pairs)]
       (assert (even? nbind) "odd number of bindings for let")
       (if (< 0 nbind)
-        (let [wrap-param  [(make-node-hexp "val:vec" {} [(first bind-pairs)])] 
+        (let [wrap-param  [(make-list-hexp [(first bind-pairs)])] 
               wrap-arg    [(second bind-pairs)]
-              next-bind   [(make-node-hexp "val:vec" {} (vec (drop 2 bind-pairs)))] 
+              next-bind   [(make-list-hexp (vec (drop 2 bind-pairs)))] 
               next-let    [(make-node-hexp "let" {} (into next-bind (vec body)))] 
               wrap-fn     [(make-node-hexp "fn" {} (into wrap-param next-let))]]
           (analyze (make-node-hexp "call" {} (into wrap-fn wrap-arg))))
@@ -167,22 +153,19 @@
         form (resolve-env {} tag)] 
     (if (= :macro (:tag form))
       (analyze (apply* form attrs children))
-      (let [args (analyze-seq children)]
+      (let [args1 (analyze-all children)
+            args2 (funroll-seq args1)]
         (fn [env]
-          (let [proc (resolve-env env tag)
-                argv (args env)]
-            (assert proc (str "eval: unbound variable " tag))
-            (apply* proc attrs (args env))))))))
+          (let [proc (resolve-env env tag)]
+            (cond
+              proc
+              (apply* proc attrs (args2 env))
 
-(defn analyze-eval [hexp]
-  (when (eval-hexp? hexp)
-    (let [proc (analyze (first (elems (:children hexp))))]
-      (fn [env]
-        ((analyze (proc env)) {})))))
+              (self-evaluating-hexp? hexp)
+              (assoc hexp :children (mapv #(% env) args1)))))))))
 
 (defn analyze [hexp]
   (or
-    (analyze-self-evaluating  hexp)
     (analyze-quoted           hexp)
     (analyze-syntax-quoted    hexp)
     (analyze-def              hexp)
@@ -191,7 +174,8 @@
     (analyze-do               hexp)
     (analyze-let              hexp)
     (analyze-fn               hexp)
-    (analyze-node             hexp)))
+    (analyze-node             hexp)
+    (assert false (str "unbound variable " (:tag hexp)))))
 
 (def analyze-all    (partial map analyze))
 (def analyze-body   (comp funroll-body analyze-all))
@@ -203,11 +187,8 @@
 (defn syntax-quote-list [{:keys [tag children] :as hexp}]
   (let [wrap (make-hexp "concat")
         head [(make-quote-hexp (make-hexp tag))] 
-        tail (mapv syntax-quote (elems children))
-        ]
-    (make-node-hexp "concat" {} (into head tail))
-    )
-  )
+        tail (mapv syntax-quote (elems children))]
+    (make-node-hexp "concat" {} (into head tail))))
 
 (defn syntax-quote [{:keys [tag children] :as hexp}]
   (let [child-args (elems children)]
@@ -216,13 +197,13 @@
       (first child-args)
 
       (= "unquote" tag) 
-      (make-seq-hexp [(first child-args)])
+      (make-list-hexp [(first child-args)])
 
       (not (seq child-args)) 
-      (make-seq-hexp [(make-quote-hexp hexp)])
+      (make-list-hexp [(make-quote-hexp hexp)])
 
       :else
-      (make-seq-hexp [(syntax-quote-list hexp)]))))
+      (make-list-hexp [(syntax-quote-list hexp)]))))
 
 (defn sq-test [form]
   (tee dc "~~[st]~~" (first (elems (:children (syntax-quote (compile-form (read-form form)))))))
@@ -247,7 +228,7 @@
         v (first args)]
     (cond
       (= "&" k)
-      (parse-bindings (rest params) (list (make-seq-hexp args)))
+      (parse-bindings (rest params) (list (make-list-hexp args)))
       (and k v)
       (into {k v} (parse-bindings (rest params) (rest args)))
       (or k v)
@@ -268,6 +249,9 @@
       (proc (bind-env env (parse-bindings params (elems args)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Primitives ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn bindp! [name f]
+  (bind-global! {(str name) (make-prim-hexp f)}))
 
 (defn bind-primitive! [prims]
   (bind-global!
