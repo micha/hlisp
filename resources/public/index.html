@@ -7,70 +7,29 @@
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/flapjax.js"></script>
 
+  <script type="text/hlisp">
+    (defvalues mytabs
+      trig1 cont1
+      trig2 cont2
+      (make-tabs '"one"
+        li div '"one"
+        li div '"two"))
+
+    (defvalues myradio
+      rtrig1
+      rtrig2
+      (make-radio '"one"
+        (a ((href "javascript:void(0)"))) '"one"
+        (a ((href "javascript:void(0)"))) '"two"))
+
+    (sync-e mytabs myradio)
+  </script>
+
   <style type="text/css">
     li.checked { color: red; }
   </style>
 </head>
 <body>
-
-  <def>
-    <mytabs></mytabs>
-    <make-tabs>
-      <val:str>one</val:str>
-    </make-tabs>
-  </def>
-
-  <defvalues>
-    <trig1></trig1>
-    <cont1></cont1>
-    <add-tab>
-      <mytabs></mytabs>
-      <li></li>
-      <div></div>
-      <val:str>one</val:str>
-    </add-tab>
-  </defvalues>
-
-  <defvalues>
-    <trig2></trig2>
-    <cont2></cont2>
-    <add-tab>
-      <mytabs></mytabs>
-      <li></li>
-      <div></div>
-      <val:str>two</val:str>
-    </add-tab>
-  </defvalues>
-
-  <def>
-    <myradio></myradio>
-    <make-radio>
-      <val:str>one</val:str>
-    </make-radio>
-  </def>
-
-  <def>
-    <rtrig1></rtrig1>
-    <add-radio>
-      <myradio></myradio>
-      <a href="javascript:void(0)"></a>
-      <val:str>one</val:str>
-    </add-radio>
-  </def>
-
-  <def>
-    <rtrig2></rtrig2>
-    <add-radio>
-      <myradio></myradio>
-      <a href="javascript:void(0)"></a>
-      <val:str>two</val:str>
-    </add-radio>
-  </def>
-
-  <sync-e>
-    <myradio></myradio>
-    <mytabs></mytabs>
-  </sync-e>
 
   <ul style="padding:0;list-style-type:none">
     <trig1 style="display:inline;padding-right:5px">question</trig1>

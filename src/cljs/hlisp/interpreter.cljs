@@ -69,6 +69,7 @@
 (def defvalues-hexp?      (partial has-tag? "defvalues"))
 (def def-hexp?            (partial has-tag? "def"))
 (def if-hexp?             (partial has-tag? "if"))
+(def apply-hexp?          (partial has-tag? "apply"))
 (def eval-hexp?           (partial has-tag? "eval"))
 (def do-hexp?             (partial has-tag? "do"))
 (def macro-hexp?          (partial has-tag? "macro"))
@@ -130,6 +131,16 @@
       (fn [env]
         ((analyze (proc env)) {})))))
 
+(defn analyze-apply [hexp]
+  (when (apply-hexp? hexp)
+    (let [[f v]     (elems (:children hexp))
+          proc      (analyze f)
+          args      (analyze v)]
+      (fn [env]
+        (let [p (proc env)
+              a (args env)]
+          (apply* p {} (elems (:children a))))))))
+
 (defn analyze-do [hexp]
   (when (do-hexp? hexp)
     (analyze-body (elems (:children hexp)))))
@@ -184,6 +195,7 @@
     (analyze-def              hexp)
     (analyze-if               hexp)
     (analyze-eval             hexp)
+    (analyze-apply            hexp)
     (analyze-do               hexp)
     (analyze-let              hexp)
     (analyze-fn               hexp)

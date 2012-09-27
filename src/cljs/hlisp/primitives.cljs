@@ -36,9 +36,16 @@
         k  (:data prop)
         v  (:data val)]
     (-> (jq/$ (str "[hl~='" id "']")) (.css k v))
-    elem)
-  
-  )
+    elem))
+
+(defn x-map [_ [f coll]]
+  (make-list-hexp
+    (mapv (fn [x] (apply* f {} [x])) (elems (:children coll)))))
+
+(defn x-mapcat [_ [f coll]]
+  (make-list-hexp
+    (vec (mapcat :children (:children (x-map {} [f coll]))))))
+
 (defn x-partition [_ [n coll]]
   (let [p   (partition (:data n) (elems (:children coll)))
         pp  (mapv #(make-list-hexp (vec %)) p)]

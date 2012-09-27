@@ -61,6 +61,8 @@
 (bind-primitive! ["dom-assoc!"    p/dom-assoc!
                   "dom-dissoc!"   p/dom-dissoc!
                   "dom-css!"      p/dom-css!
+                  "map"           p/x-map
+                  "mapcat"        p/x-mapcat
                   "partition"     p/x-partition
                   "sync-e"        p/sync-e
                   ])
