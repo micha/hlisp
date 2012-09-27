@@ -9,15 +9,15 @@
 
   <script type="text/hlisp">
     (defvalues mytabs
-      trig1 cont1
-      trig2 cont2
+      question-tab  question
+      answer-tab    answer
       (make-tabs '"one"
         li div '"one"
         li div '"two"))
 
     (defvalues myradio
-      rtrig1
-      rtrig2
+      show-question
+      show-answer
       (make-radio '"one"
         (a ((href "javascript:void(0)"))) '"one"
         (a ((href "javascript:void(0)"))) '"two"))
@@ -26,29 +26,33 @@
   </script>
 
   <style type="text/css">
-    li.checked { color: red; }
+    ul.control-tabs { padding: 0; list-style-type: none; }
+    ul.control-tabs li { display: inline; padding-right: 5px; }
+    ul.control-tabs li.checked { color: red; }
   </style>
 </head>
 <body>
 
-  <ul style="padding:0;list-style-type:none">
-    <trig1 style="display:inline;padding-right:5px">question</trig1>
-    <trig2 style="display:inline;padding-right:5px">answer</trig2>
+  <ul class="control-tabs">
+    <question-tab>question</question-tab>
+    <answer-tab>answer</answer-tab>
   </ul>
 
   <div>
-    <cont1>
-      <p><b>Q.</b> Why did the chicken cross the road? <rtrig2>A</rtrig2></p>
-    </cont1>
-    <cont2>
-      <p><b>A.</b> To get to the other side! <rtrig1>Q</rtrig1></p>
-    </cont2>
+    <question>
+      <p>
+        <b>Q.</b> Why did the chicken cross the road? <show-answer>A</show-answer>
+      </p>
+    </question>
+    <answer>
+      <p>
+        <b>A.</b> To get to the other side! <show-question>Q</show-question>
+      </p>
+    </answer>
   </div>
 
   <!-- ClojureScript -->
-  <script>
-    var CLOSURE_NO_DEPS = true;
-  </script>
+  <script> var CLOSURE_NO_DEPS = true; </script>
   <script src="js/main.js"></script>
 </body>
 </html>
