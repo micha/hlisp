@@ -99,7 +99,6 @@
           ks      (map :tag syms)]
       (fn [env]
         (let [vs (elems (:children (proc env)))]
-          (doall (map #(js/console.log (str {%1 %2})) ks vs)) 
           (doall (map #(bind-global! {%1 %2}) ks vs)) 
           (make-data-hexp nil))))))
 

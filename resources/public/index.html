@@ -42,14 +42,48 @@
     </add-tab>
   </defvalues>
 
-  <ul>
-    <trig1>one</trig1>
-    <trig2>two</trig2>
+  <def>
+    <myradio></myradio>
+    <make-radio>
+      <val:str>one</val:str>
+    </make-radio>
+  </def>
+
+  <def>
+    <rtrig1></rtrig1>
+    <add-radio>
+      <myradio></myradio>
+      <a href="javascript:void(0)"></a>
+      <val:str>one</val:str>
+    </add-radio>
+  </def>
+
+  <def>
+    <rtrig2></rtrig2>
+    <add-radio>
+      <myradio></myradio>
+      <a href="javascript:void(0)"></a>
+      <val:str>two</val:str>
+    </add-radio>
+  </def>
+
+  <sync-e>
+    <myradio></myradio>
+    <mytabs></mytabs>
+  </sync-e>
+
+  <ul style="padding:0;list-style-type:none">
+    <trig1 style="display:inline;padding-right:5px">question</trig1>
+    <trig2 style="display:inline;padding-right:5px">answer</trig2>
   </ul>
 
   <div>
-    <cont1>Content one.</cont1>
-    <cont2>Content two.</cont2>
+    <cont1>
+      <p><b>Q.</b> Why did the chicken cross the road? <rtrig2>A</rtrig2></p>
+    </cont1>
+    <cont2>
+      <p><b>A.</b> To get to the other side! <rtrig1>Q</rtrig1></p>
+    </cont2>
   </div>
 
   <!-- ClojureScript -->

@@ -60,7 +60,9 @@
 
 (bind-primitive! ["dom-assoc!"    p/dom-assoc!
                   "dom-dissoc!"   p/dom-dissoc!
+                  "dom-css!"      p/dom-css!
                   "partition"     p/x-partition
+                  "sync-e"        p/sync-e
                   ])
 
 (set! js/hl eval-string*)

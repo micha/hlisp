@@ -24,30 +24,32 @@
       (do (unquote-splicing body)))))
 
 (defn make-radio [init]
-  (receiverE init))
+  (receiver-e init))
 
 (defn add-radio [radio, elem, val]
-  (mapE
-    (fn [v] (sendE radio val))
-    (clicksE elem))
-  (mapE
+  (map-e
+    (fn [v] (send-e radio val))
+    (clicks-e elem))
+  (map-e
     (fn [v]
-      (dom-dissoc! elem '"data-checked")
-      (dom-remove-class! elem '"checked"))
-    (filterE (fn [v] (not= v val)) radio))
-  (mapE
+      (dom-dissoc!        elem '"data-checked")
+      (dom-css!           elem '"cursor" '"pointer")
+      (dom-remove-class!  elem '"checked"))
+    (filter-e (fn [v] (not= v val)) radio))
+  (map-e
     (fn [v]
-      (dom-assoc! elem '"data-checked" '"data-checked")
+      (dom-assoc!     elem '"data-checked"  '"data-checked")
+      (dom-css!       elem '"cursor"        '"default")
       (dom-add-class! elem '"checked"))
-    (filterE (fn [v] (= v val)) radio))
-  (sendE radio val)
+    (filter-e (fn [v] (= v val)) radio))
+  (send-e radio val)
   elem)
 
 (defn make-deck [init]
-  (receiverE init))
+  (receiver-e init))
 
 (defn add-deck [deck, elem, val]
-  (mapE (fn [v] (dom-toggle! elem (= v val))) deck)
+  (map-e (fn [v] (dom-toggle! elem (= v val))) deck)
   elem)
 
 (defn make-tabs [init]

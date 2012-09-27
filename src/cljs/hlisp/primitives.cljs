@@ -31,10 +31,30 @@
     (-> (jq/$ (str "[hl~='" id "']")) (.removeAttr k))
     elem))
 
+(defn dom-css! [_ [elem prop val]]
+  (let [id (peek (:ids elem))
+        k  (:data prop)
+        v  (:data val)]
+    (-> (jq/$ (str "[hl~='" id "']")) (.css k v))
+    elem)
+  
+  )
 (defn x-partition [_ [n coll]]
   (let [p   (partition (:data n) (elems (:children coll)))
         pp  (mapv #(make-list-hexp (vec %)) p)]
     (make-list-hexp pp)))
+
+(defn filterRepeatsE [_ [e]]
+  (make-data-hexp (js/filterRepeatsE (:data e))))
+
+(defn sync-e [_ [stream1 stream2]]
+  (let [s1 (:data stream1)
+        s2 (:data stream2)
+        e1 (js/filterRepeatsE s1)
+        e2 (js/filterRepeatsE s2)]
+    (js/mapE (fn [v] (.sendEvent s2 v)) e1)
+    (js/mapE (fn [v] (.sendEvent s1 v)) e2)
+    (make-data-hexp nil)))
 
 (def prims
   [
@@ -97,39 +117,39 @@
    (fn [_ [{:keys [ids] :as hexp}]]
      (assoc hexp :ids (conj ids (gensym))))
 
-   "clicksE"
+   "clicks-e"
    (fn [_ [{:keys [ids] :as hexp}]]
      (make-data-hexp
        (js/filterE
          (js/clicksE (.-body js/document))
          (fj/filter-id (peek ids)))))
 
-   "oneE"
+   "one-e"
    (fn [_ [e]]
      (make-data-hexp
        (js/oneE (:data e))))
 
-   "mapE"
+   "map-e"
    (fn [_ [f e]]
      (make-data-hexp
        (js/mapE
          (fn [v] (apply* f {} [(make-data-hexp v)]))
          (:data e))))
 
-   "filterE"
+   "filter-e"
    (fn [_ [pred src]]
      (make-data-hexp
        (js/filterE
          (:data src)
          (fn [v] (truthy-hexp? (apply* pred {} [(make-data-hexp v)]))))))
 
-   "receiverE"
+   "receiver-e"
    (fn [_ [init]]
      (let [r (js/receiverE)]
        (fj/init! #(.sendEvent r (:data init)))       
        (make-data-hexp r)))
 
-   "sendE"
+   "send-e"
    (fn [_ [rcv e]]
      (.sendEvent (:data rcv) (:data e)) 
      (make-data-hexp nil))
