@@ -66,6 +66,7 @@
 
 (def quoted-hexp?         (partial has-tag? "quote"))
 (def syntax-quoted-hexp?  (partial has-tag? "syntax-quote"))
+(def defvalues-hexp?      (partial has-tag? "defvalues"))
 (def def-hexp?            (partial has-tag? "def"))
 (def if-hexp?             (partial has-tag? "if"))
 (def eval-hexp?           (partial has-tag? "eval"))
@@ -89,6 +90,18 @@
   (when (syntax-quoted-hexp? hexp)
     (let [form (first (elems (:children hexp)))]
       (analyze (first (:children (syntax-quote form)))))))
+
+(defn analyze-defvalues [hexp]
+  (when (defvalues-hexp? hexp)
+    (let [args    (elems (:children hexp))
+          syms    (butlast args)
+          proc    (analyze (last args))
+          ks      (map :tag syms)]
+      (fn [env]
+        (let [vs (elems (:children (proc env)))]
+          (doall (map #(js/console.log (str {%1 %2})) ks vs)) 
+          (doall (map #(bind-global! {%1 %2}) ks vs)) 
+          (make-data-hexp nil))))))
 
 (defn analyze-def [hexp]
   (when (def-hexp? hexp)
@@ -168,6 +181,7 @@
   (or
     (analyze-quoted           hexp)
     (analyze-syntax-quoted    hexp)
+    (analyze-defvalues        hexp)
     (analyze-def              hexp)
     (analyze-if               hexp)
     (analyze-eval             hexp)

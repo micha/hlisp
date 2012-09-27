@@ -5,7 +5,8 @@
             [flapjax.core :as fj])
   (:use
     [hlisp.util         :only [tee]]
-    [hlisp.interpreter  :only [apply*
+    [hlisp.interpreter  :only [elems
+                               apply*
                                truthy-hexp?]]
     [hlisp.compiler     :only [dc
                                dcs]]
@@ -30,9 +31,13 @@
     (-> (jq/$ (str "[hl~='" id "']")) (.removeAttr k))
     elem))
 
+(defn x-partition [_ [n coll]]
+  (let [p   (partition (:data n) (elems (:children coll)))
+        pp  (mapv #(make-list-hexp (vec %)) p)]
+    (make-list-hexp pp)))
+
 (def prims
   [
-
 
    "dom-add-class!"
    (fn [_ [elem class-name]]
@@ -119,9 +124,10 @@
          (fn [v] (truthy-hexp? (apply* pred {} [(make-data-hexp v)]))))))
 
    "receiverE"
-   (fn [_ _]
-     (make-data-hexp
-       (js/receiverE)))
+   (fn [_ [init]]
+     (let [r (js/receiverE)]
+       (fj/init! #(.sendEvent r (:data init)))       
+       (make-data-hexp r)))
 
    "sendE"
    (fn [_ [rcv e]]

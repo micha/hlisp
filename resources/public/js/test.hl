@@ -23,8 +23,8 @@
       'nil
       (do (unquote-splicing body)))))
 
-(defn make-radio [_]
-  (receiverE 'nil))
+(defn make-radio [init]
+  (receiverE init))
 
 (defn add-radio [radio, elem, val]
   (mapE
@@ -43,26 +43,18 @@
   (sendE radio val)
   elem)
 
-(defn make-deck [_]
-  (receiverE 'nil))
+(defn make-deck [init]
+  (receiverE init))
 
 (defn add-deck [deck, elem, val]
   (mapE (fn [v] (dom-toggle! elem (= v val))) deck)
   elem)
 
-(defn make-tabs [_]
-  (make-radio 'nil))
+(defn make-tabs [init]
+  (make-radio init))
 
 (defn add-tab [tabs trig cont val]
   (let [t (add-radio tabs trig val)
         c (add-deck tabs cont val)]
-    (values t c)))
-
-
-
-
-
-
-
-
+    (list t c)))
 

@@ -31,6 +31,9 @@
       (= "val:str" tag)
       (make-data-hexp (apply str (mapv second children)))
 
+      (= "val:num" tag)
+      (make-data-hexp (cljs.reader/read-string (second (first children))))
+
       (= "val:nil" tag)
       (make-data-hexp nil)
 
