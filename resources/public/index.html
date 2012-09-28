@@ -11,16 +11,16 @@
     (defvalues mytabs
       question-tab  question
       answer-tab    answer
-      (make-tabs '"one"
-        li div '"one"
-        li div '"two"))
+      (make-tabs "one"
+        li div "one"
+        li div "two"))
 
     (defvalues myradio
       show-question
       show-answer
-      (make-radio '"one"
-        (a ((href "javascript:void(0)"))) '"one"
-        (a ((href "javascript:void(0)"))) '"two"))
+      (make-radio "one"
+        (a ((href "javascript:void(0)"))) "one"
+        (a ((href "javascript:void(0)"))) "two"))
 
     (sync-e mytabs myradio)
   </script>

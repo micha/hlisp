@@ -19,27 +19,18 @@
   (when (symbol? expr)
     (list expr empty-attrs)))
 
-(defn parse-text-node [expr]
-  (when (string? expr)
-    (text-node expr)))
-
 (defn parse-seqable-literal [pred valtag]
   (fn [expr]
     (when (pred expr)
-      (let [head    (first expr)
-            tail    (rest expr)
+      (let [[head & tail] expr
             attrs   (if (valid-attrlist? head) head empty-attrs)
             items   (if (= empty-attrs attrs) expr tail)]
         (concat (list valtag attrs) (map read-form items))))))
 
 (defn parse-atomic-literal [pred valtag]
   (fn [expr]
-    (when (seq? expr)
-      (let [[tag thing] expr]
-        (and (= 2 (count expr))
-             (= 'quote tag)
-             (pred thing)
-             (list valtag empty-attrs (text-node (str thing))))))))
+    (when (pred expr)
+      (list valtag empty-attrs (text-node (str expr))))))
 
 (defn parse-bool-literal [expr]
   (or ((parse-atomic-literal true?  'val:true)  expr) 
@@ -62,7 +53,13 @@
   ((parse-atomic-literal string? 'val:str) expr))
 
 (defn parse-number-literal [expr]
+  (js/console.log "got here " (str expr))
   ((parse-atomic-literal number? 'val:num) expr))
+
+(defn parse-text-node [expr]
+  (let [[text & more] expr]
+    (when (and (string? text) (nil? (seq more))) 
+      (text-node text))))
 
 (defn parse-node [expr]
   (when (valid-node-expr? expr)
@@ -76,7 +73,6 @@
 (defn read-form [expr]
   (or
     (parse-symbol         expr)
-    (parse-text-node      expr)
     (parse-bool-literal   expr)
     (parse-nil-literal    expr)
     (parse-map-literal    expr)
@@ -84,6 +80,7 @@
     (parse-vector-literal expr)
     (parse-string-literal expr)
     (parse-number-literal expr)
+    (parse-text-node      expr)
     (parse-node           expr)
     (assert false (str "read-form: " expr " isn't a valid expression"))))
 

@@ -20,7 +20,7 @@
 (defmacro when-not [predicate & body]
   (syntax-quote
     (if (unquote predicate)
-      'nil
+      nil
       (do (unquote-splicing body)))))
 
 (defn make-radio [init & args]
@@ -30,7 +30,7 @@
       (map
         (fn [x]
           (apply add-radio (concat (list r) x)))
-        (partition '2 args)))))
+        (partition 2 args)))))
 
 (defn add-radio [radio, elem, val]
   (map-e
@@ -39,15 +39,15 @@
     (clicks-e elem))
   (map-e
     (fn [v]
-      (dom-dissoc!        elem '"data-checked")
-      (dom-css!           elem '"cursor" '"pointer")
-      (dom-remove-class!  elem '"checked"))
+      (dom-dissoc!        elem "data-checked")
+      (dom-css!           elem "cursor" "pointer")
+      (dom-remove-class!  elem "checked"))
     (filter-e (fn [v] (not= v val)) radio))
   (map-e
     (fn [v]
-      (dom-assoc!     elem '"data-checked"  '"data-checked")
-      (dom-css!       elem '"cursor"        '"default")
-      (dom-add-class! elem '"checked"))
+      (dom-assoc!     elem "data-checked"  "data-checked")
+      (dom-css!       elem "cursor"        "default")
+      (dom-add-class! elem "checked"))
     (filter-e (fn [v] (= v val)) radio))
   elem)
 
@@ -68,7 +68,7 @@
       (mapcat
         (fn [x]
           (apply add-tab (concat (list r) x)))
-        (partition '3 args)))))
+        (partition 3 args)))))
 
 (defn add-tab [tabs trig cont val]
   (let [t (add-radio tabs trig val)
