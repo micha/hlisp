@@ -34,12 +34,18 @@
   ;; #<function foo(x){ ... }>
 
   (foo (p ($text "hello world")))
-
+  
   ;; (div (h1 ($text "Title")) (p ($text "hello world")))
   ;; <div>
   ;;   <h1>Title</h1>
   ;;   <p>hello world</p>
   ;; </div>
+
+  (let [[x y & z] (div (h1 ($text "Hello")) (p ($text "ClojureScript")))]
+    (assoc x :id "master"))
+
+  ;; (h1 {:id "master"} ($text "Hello"))
+  ;; <h1 id="master">Hello</h1>
 
   (reduce
     conj
