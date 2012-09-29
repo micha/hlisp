@@ -11,6 +11,9 @@
 (declare make-elem-node make-text-node)
 
 (defprotocol IDomNode
+  (pr-node [n] "Get string representation of node.")
+  (tag [n] "Get node's tag string.")
+  (attrs [n] "Get node's attribute map.")
   (dom [n] "Produce DOM tree for this node (and children)."))
 
 (deftype TextNode [tag text]
@@ -19,13 +22,45 @@
   
   IPrintable
   (-pr-seq [n opts]
-    (str "(" (.-tag n) " " (pr-str (.-text n)) ")"))
-  
+    (js/console.log (dom n))
+    (pr-node n))
+
   IDomNode
+  (pr-node [n]
+    (str "(" (.-tag n) " " (pr-str (.-text n)) ")"))
+  (tag [n] (.-tag n))
+  (attrs [n] nil)
   (dom [n]
     (jq/$ (if (= "$text" (.-tag n))
             (-> js/document (.createTextNode (.-text n)))
             (-> js/document (.createComment (.-text n)))))))
+
+(defn make-text-node [text]
+  (TextNode. "$text" text))
+
+(defn make-comment-node [text]
+  (TextNode. "$comment" text))
+
+(defn pr-text-node [n]
+  (str "(" (.-tag n) " " (pr-str (.-text n)) ")")
+  
+  )
+
+(defn pr-elem-node [n]
+  (let [tag       (.-tag n)
+        attrs     (.-attrs n) 
+        children  (.-children n)
+        o-paren   (if (seq children) "(" "")
+        c-paren   (if (seq children) ")" "")
+        attrs-str (if (< 0 (count attrs)) (pr-str attrs) "")
+        child-str (if (seq children) (join " " (map pr-elem-node children)) "")
+        str-parts (filter #(not= "" %) (list tag attrs-str child-str))
+        str-all   (if (< 1 (count str-parts))
+                    (concat '("(") str-parts '(")"))
+                    str-parts)]
+    (join " " str-all))
+  
+  )
 
 (deftype ElemNode [tag attrs children ids]
   IFn
@@ -38,7 +73,7 @@
         (let [[head & tail] args
               typ (type head)]
           (if (or (= typ ElemNode) (= typ TextNode))
-            (make-elem-node ntag nattrs (vec args) nids)
+            (make-elem-node ntag nattrs (into nchildren (vec args)) nids)
             (make-elem-node ntag (into nattrs head) (into nchildren (vec tail)) nids)))
         n)))
 
@@ -104,20 +139,25 @@
 
   IPrintable
   (-pr-seq [n opts]
+    (js/console.log (dom n))
+    (pr-node n))
+  
+  IDomNode
+  (pr-node [n]
     (let [tag       (.-tag n)
           attrs     (.-attrs n) 
           children  (.-children n)
           o-paren   (if (seq children) "(" "")
           c-paren   (if (seq children) ")" "")
           attrs-str (if (< 0 (count attrs)) (pr-str attrs) "")
-          child-str (if (seq children) (join " " (map pr-str children)) "")
+          child-str (if (seq children) (join " " (map pr-node children)) "")
           str-parts (filter #(not= "" %) (list tag attrs-str child-str))
           str-all   (if (< 1 (count str-parts))
                       (concat '("(") str-parts '(")"))
                       str-parts)]
       (join " " str-all)))
-  
-  IDomNode
+  (tag [n] (.-tag n))
+  (attrs [n] (.-attrs n))
   (dom [n]
     (let [$elem       (jq/$ (-> js/document (.createElement (.-tag n)))) 
           ids         (.-ids n)
@@ -128,7 +168,9 @@
           children    (mapv dom (.-children n))]
       (-> $elem
         (jq/attr attrs)
-        (jq/append children)))))
+        (jq/append children))))
+
+)
 
 (defn make-elem-node
   ([tag]
@@ -139,9 +181,6 @@
    (ElemNode. tag attrs kids []))
   ([tag attrs kids ids]
    (ElemNode. tag attrs kids ids)))
-
-(defn make-text-node [text]
-  (TextNode. "$text" text))
 
 (defn clone [n]
   (make-elem-node (.-tag n) (.-attrs n) (.-children n) (conj (.-ids n) (gensym))))
@@ -273,3 +312,4 @@
 (def $list (make-elem-node "$list"))
 
 (defn $text [s] (make-text-node s))
+(defn $comment [s] (make-comment-node s))
