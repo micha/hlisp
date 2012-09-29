@@ -21,7 +21,11 @@
     (p ($text "bar")))
 
   ;; (div ($comment "hey there") (p ($text "foo")) (p ($text "bar")))
-  ;; <div><!--hey there--><p>foo</p><p>bar</p></div>
+  ;; <div>
+  ;;   <!--hey there-->
+  ;;   <p>foo</p>
+  ;;   <p>bar</p>
+  ;; </div>
 
   (defn foo [x]
     (div
@@ -33,12 +37,26 @@
   (foo (p ($text "hello world")))
 
   ;; (div (h1 ($text "Title")) (p ($text "hello world")))
-  ;; <div><h1>Title</h1><p>hello world</p></div>
+  ;; <div>
+  ;;   <h1>Title</h1>
+  ;;   <p>hello world</p>
+  ;; </div>
 
-  (reduce conj (div {:id "main"}) (foo (p ($text "hello world"))))
+  (reduce
+    conj
+    (div {:id "main"}
+      (div
+        (p ($text "whoa"))))
+    (foo (p ($text "hello world"))))
 
   ;; (div {:id "main"} (h1 ($text "Title")) (p ($text "hello world")))
-  ;; <div id="main"><h1>Title</h1><p>hello world</p></div>
+  ;; <div id="main">
+  ;;   <div>
+  ;;     <p>whoa</p>
+  ;;   </div>
+  ;;   <h1>Title</h1>
+  ;;   <p>hello world</p>
+  ;; </div>
 
   )
 
