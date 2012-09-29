@@ -13,6 +13,8 @@
   ;; In the cljs repl you can do things like these and see the results in both
   ;; the repl and the browser console.
 
+  (in-ns 'hlisp.env)
+
   (div
     ($comment "hey there")
     (p ($text "foo"))
