@@ -1,4 +1,3 @@
-
 (def defmacro
   (macro [sym args & body]
     (syntax-quote

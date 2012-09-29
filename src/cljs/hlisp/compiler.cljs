@@ -79,7 +79,6 @@
             (remove nil? (map dc children)))
 
     :else
-    (symbol tag)
-    ))
+    (symbol tag)))
 
 (def dcs (partial map dc))

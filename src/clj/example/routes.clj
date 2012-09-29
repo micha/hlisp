@@ -13,6 +13,16 @@
      (update-in req [:uri]
                 #(if (= "/" %) "/index.html" %)))))
 
+(defn wrap-content-type [handler type-map]
+  (fn [req]
+    (let [resp (handler req)
+          uri  (:uri req)
+          ext  (clojure.string/replace uri #".*\.([^\.]+)$" "$1")
+          typ  (or (and (not= uri ext) (get type-map ext))
+                   (get-in resp [:headers "Content-Type"]))]
+      (assoc-in resp [:headers "Content-Type"] typ))))
+
 (def app
   (-> (handler/site main-routes)
+      (wrap-content-type {"hl" "text/plain"}) 
       wrap-dir-index))

@@ -53,7 +53,6 @@
   ((parse-atomic-literal string? 'val:str) expr))
 
 (defn parse-number-literal [expr]
-  (js/console.log "got here " (str expr))
   ((parse-atomic-literal number? 'val:num) expr))
 
 (defn parse-text-node [expr]
