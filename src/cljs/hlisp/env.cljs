@@ -22,7 +22,7 @@
   (foo (p ($text "hello world")))
   ;; (div (h1 ($text "Title")) (p ($text "hello world")))
 
-  (reduce conj (div {"id" "main"}) (foo (p ($text "hello world"))))
+  (reduce conj (div {:id "main"}) (foo (p ($text "hello world"))))
   ;; (div {"id" "main"} (h1 ($text "Title")) (p ($text "hello world")))
 
   )
@@ -162,8 +162,9 @@
                         attrs-noid) 
           children    (mapv dom (.-children n))]
       (-> $elem
-        (jq/attr attrs)
+        (jq/attr (into {} (mapv #(vec (list (name (first %)) (second %))) attrs))) 
         (jq/append children)))))
+
 
 (defn make-elem-node
   ([tag]
