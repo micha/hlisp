@@ -8,6 +8,22 @@
     [clojure.string :only [join]]
     [cljs.reader    :only [register-tag-parser!]]))
 
+(comment
+
+  ;; In the cljs repl you can do things like these and see the results in both
+  ;; the repl and the browser console.
+
+  (div ($comment "hey there") (p ($text "foo")) (p ($text "bar")))
+  ;; (div ($comment "hey there") (p ($text "foo")) (p ($text "bar")))
+
+  (defn foo [x] (div (h1 ($text "Title")) x))
+  ;; #<function foo(x){ ... }>
+
+  (foo (p ($text "hello world")))
+  ;; (div (h1 ($text "Title")) (p ($text "hello world")))
+
+  )
+
 (declare make-elem-node make-text-node)
 
 (defprotocol IDomNode
