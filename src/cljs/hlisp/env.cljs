@@ -38,23 +38,6 @@
 (defn make-comment-node [text]
   (TextNode. "$comment" text))
 
-(defn pr-text-node [n]
-  (str "(" (.-tag n) " " (pr-str (.-text n)) ")"))
-
-(defn pr-elem-node [n]
-  (let [tag       (.-tag n)
-        attrs     (.-attrs n) 
-        children  (.-children n)
-        o-paren   (if (seq children) "(" "")
-        c-paren   (if (seq children) ")" "")
-        attrs-str (if (< 0 (count attrs)) (pr-str attrs) "")
-        child-str (if (seq children) (join " " (map pr-elem-node children)) "")
-        str-parts (filter #(not= "" %) (list tag attrs-str child-str))
-        str-all   (if (< 1 (count str-parts))
-                    (concat '("(") str-parts '(")"))
-                    str-parts)]
-    (join " " str-all)))
-
 (deftype ElemNode [tag attrs children ids]
   IFn
   (-invoke [n & args]
