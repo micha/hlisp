@@ -24629,1289 +24629,6 @@ flapjax.core.filter_id = function filter_id(id) {
     return 0 < jayq.core.$.call(null, v.target).parentsUntil("body").andSelf().filter([cljs.core.str("[hl~='"), cljs.core.str(id), cljs.core.str("']")].join("")).size()
   }
 };
-goog.provide("clojure.set");
-goog.require("cljs.core");
-clojure.set.bubble_max_key = function bubble_max_key(k, coll) {
-  var max__12441 = cljs.core.apply.call(null, cljs.core.max_key, k, coll);
-  return cljs.core.cons.call(null, max__12441, cljs.core.remove.call(null, function(p1__12439_SHARP_) {
-    return max__12441 === p1__12439_SHARP_
-  }, coll))
-};
-clojure.set.union = function() {
-  var union = null;
-  var union__0 = function() {
-    return cljs.core.PersistentHashSet.EMPTY
-  };
-  var union__1 = function(s1) {
-    return s1
-  };
-  var union__2 = function(s1, s2) {
-    if(cljs.core.count.call(null, s1) < cljs.core.count.call(null, s2)) {
-      return cljs.core.reduce.call(null, cljs.core.conj, s2, s1)
-    }else {
-      return cljs.core.reduce.call(null, cljs.core.conj, s1, s2)
-    }
-  };
-  var union__3 = function() {
-    var G__12445__delegate = function(s1, s2, sets) {
-      var bubbled_sets__12444 = clojure.set.bubble_max_key.call(null, cljs.core.count, cljs.core.conj.call(null, sets, s2, s1));
-      return cljs.core.reduce.call(null, cljs.core.into, cljs.core.first.call(null, bubbled_sets__12444), cljs.core.rest.call(null, bubbled_sets__12444))
-    };
-    var G__12445 = function(s1, s2, var_args) {
-      var sets = null;
-      if(goog.isDef(var_args)) {
-        sets = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
-      }
-      return G__12445__delegate.call(this, s1, s2, sets)
-    };
-    G__12445.cljs$lang$maxFixedArity = 2;
-    G__12445.cljs$lang$applyTo = function(arglist__12446) {
-      var s1 = cljs.core.first(arglist__12446);
-      var s2 = cljs.core.first(cljs.core.next(arglist__12446));
-      var sets = cljs.core.rest(cljs.core.next(arglist__12446));
-      return G__12445__delegate(s1, s2, sets)
-    };
-    G__12445.cljs$lang$arity$variadic = G__12445__delegate;
-    return G__12445
-  }();
-  union = function(s1, s2, var_args) {
-    var sets = var_args;
-    switch(arguments.length) {
-      case 0:
-        return union__0.call(this);
-      case 1:
-        return union__1.call(this, s1);
-      case 2:
-        return union__2.call(this, s1, s2);
-      default:
-        return union__3.cljs$lang$arity$variadic(s1, s2, cljs.core.array_seq(arguments, 2))
-    }
-    throw"Invalid arity: " + arguments.length;
-  };
-  union.cljs$lang$maxFixedArity = 2;
-  union.cljs$lang$applyTo = union__3.cljs$lang$applyTo;
-  union.cljs$lang$arity$0 = union__0;
-  union.cljs$lang$arity$1 = union__1;
-  union.cljs$lang$arity$2 = union__2;
-  union.cljs$lang$arity$variadic = union__3.cljs$lang$arity$variadic;
-  return union
-}();
-clojure.set.intersection = function() {
-  var intersection = null;
-  var intersection__1 = function(s1) {
-    return s1
-  };
-  var intersection__2 = function(s1, s2) {
-    while(true) {
-      if(cljs.core.count.call(null, s2) < cljs.core.count.call(null, s1)) {
-        var G__12449 = s2;
-        var G__12450 = s1;
-        s1 = G__12449;
-        s2 = G__12450;
-        continue
-      }else {
-        return cljs.core.reduce.call(null, function(s1, s2) {
-          return function(result, item) {
-            if(cljs.core.contains_QMARK_.call(null, s2, item)) {
-              return result
-            }else {
-              return cljs.core.disj.call(null, result, item)
-            }
-          }
-        }(s1, s2), s1, s1)
-      }
-      break
-    }
-  };
-  var intersection__3 = function() {
-    var G__12451__delegate = function(s1, s2, sets) {
-      var bubbled_sets__12448 = clojure.set.bubble_max_key.call(null, function(p1__12442_SHARP_) {
-        return-cljs.core.count.call(null, p1__12442_SHARP_)
-      }, cljs.core.conj.call(null, sets, s2, s1));
-      return cljs.core.reduce.call(null, intersection, cljs.core.first.call(null, bubbled_sets__12448), cljs.core.rest.call(null, bubbled_sets__12448))
-    };
-    var G__12451 = function(s1, s2, var_args) {
-      var sets = null;
-      if(goog.isDef(var_args)) {
-        sets = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
-      }
-      return G__12451__delegate.call(this, s1, s2, sets)
-    };
-    G__12451.cljs$lang$maxFixedArity = 2;
-    G__12451.cljs$lang$applyTo = function(arglist__12452) {
-      var s1 = cljs.core.first(arglist__12452);
-      var s2 = cljs.core.first(cljs.core.next(arglist__12452));
-      var sets = cljs.core.rest(cljs.core.next(arglist__12452));
-      return G__12451__delegate(s1, s2, sets)
-    };
-    G__12451.cljs$lang$arity$variadic = G__12451__delegate;
-    return G__12451
-  }();
-  intersection = function(s1, s2, var_args) {
-    var sets = var_args;
-    switch(arguments.length) {
-      case 1:
-        return intersection__1.call(this, s1);
-      case 2:
-        return intersection__2.call(this, s1, s2);
-      default:
-        return intersection__3.cljs$lang$arity$variadic(s1, s2, cljs.core.array_seq(arguments, 2))
-    }
-    throw"Invalid arity: " + arguments.length;
-  };
-  intersection.cljs$lang$maxFixedArity = 2;
-  intersection.cljs$lang$applyTo = intersection__3.cljs$lang$applyTo;
-  intersection.cljs$lang$arity$1 = intersection__1;
-  intersection.cljs$lang$arity$2 = intersection__2;
-  intersection.cljs$lang$arity$variadic = intersection__3.cljs$lang$arity$variadic;
-  return intersection
-}();
-clojure.set.difference = function() {
-  var difference = null;
-  var difference__1 = function(s1) {
-    return s1
-  };
-  var difference__2 = function(s1, s2) {
-    if(cljs.core.count.call(null, s1) < cljs.core.count.call(null, s2)) {
-      return cljs.core.reduce.call(null, function(result, item) {
-        if(cljs.core.contains_QMARK_.call(null, s2, item)) {
-          return cljs.core.disj.call(null, result, item)
-        }else {
-          return result
-        }
-      }, s1, s1)
-    }else {
-      return cljs.core.reduce.call(null, cljs.core.disj, s1, s2)
-    }
-  };
-  var difference__3 = function() {
-    var G__12453__delegate = function(s1, s2, sets) {
-      return cljs.core.reduce.call(null, difference, s1, cljs.core.conj.call(null, sets, s2))
-    };
-    var G__12453 = function(s1, s2, var_args) {
-      var sets = null;
-      if(goog.isDef(var_args)) {
-        sets = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
-      }
-      return G__12453__delegate.call(this, s1, s2, sets)
-    };
-    G__12453.cljs$lang$maxFixedArity = 2;
-    G__12453.cljs$lang$applyTo = function(arglist__12454) {
-      var s1 = cljs.core.first(arglist__12454);
-      var s2 = cljs.core.first(cljs.core.next(arglist__12454));
-      var sets = cljs.core.rest(cljs.core.next(arglist__12454));
-      return G__12453__delegate(s1, s2, sets)
-    };
-    G__12453.cljs$lang$arity$variadic = G__12453__delegate;
-    return G__12453
-  }();
-  difference = function(s1, s2, var_args) {
-    var sets = var_args;
-    switch(arguments.length) {
-      case 1:
-        return difference__1.call(this, s1);
-      case 2:
-        return difference__2.call(this, s1, s2);
-      default:
-        return difference__3.cljs$lang$arity$variadic(s1, s2, cljs.core.array_seq(arguments, 2))
-    }
-    throw"Invalid arity: " + arguments.length;
-  };
-  difference.cljs$lang$maxFixedArity = 2;
-  difference.cljs$lang$applyTo = difference__3.cljs$lang$applyTo;
-  difference.cljs$lang$arity$1 = difference__1;
-  difference.cljs$lang$arity$2 = difference__2;
-  difference.cljs$lang$arity$variadic = difference__3.cljs$lang$arity$variadic;
-  return difference
-}();
-clojure.set.select = function select(pred, xset) {
-  return cljs.core.reduce.call(null, function(s, k) {
-    if(cljs.core.truth_(pred.call(null, k))) {
-      return s
-    }else {
-      return cljs.core.disj.call(null, s, k)
-    }
-  }, xset, xset)
-};
-clojure.set.project = function project(xrel, ks) {
-  return cljs.core.set.call(null, cljs.core.map.call(null, function(p1__12455_SHARP_) {
-    return cljs.core.select_keys.call(null, p1__12455_SHARP_, ks)
-  }, xrel))
-};
-clojure.set.rename_keys = function rename_keys(map, kmap) {
-  return cljs.core.reduce.call(null, function(m, p__12463) {
-    var vec__12464__12465 = p__12463;
-    var old__12466 = cljs.core.nth.call(null, vec__12464__12465, 0, null);
-    var new__12467 = cljs.core.nth.call(null, vec__12464__12465, 1, null);
-    if(function() {
-      var and__3822__auto____12468 = cljs.core.not_EQ_.call(null, old__12466, new__12467);
-      if(and__3822__auto____12468) {
-        return cljs.core.contains_QMARK_.call(null, m, old__12466)
-      }else {
-        return and__3822__auto____12468
-      }
-    }()) {
-      return cljs.core.dissoc.call(null, cljs.core.assoc.call(null, m, new__12467, cljs.core._lookup.call(null, m, old__12466, null)), old__12466)
-    }else {
-      return m
-    }
-  }, map, kmap)
-};
-clojure.set.rename = function rename(xrel, kmap) {
-  return cljs.core.set.call(null, cljs.core.map.call(null, function(p1__12456_SHARP_) {
-    return clojure.set.rename_keys.call(null, p1__12456_SHARP_, kmap)
-  }, xrel))
-};
-clojure.set.index = function index(xrel, ks) {
-  return cljs.core.reduce.call(null, function(m, x) {
-    var ik__12470 = cljs.core.select_keys.call(null, x, ks);
-    return cljs.core.assoc.call(null, m, ik__12470, cljs.core.conj.call(null, cljs.core._lookup.call(null, m, ik__12470, cljs.core.PersistentHashSet.EMPTY), x))
-  }, cljs.core.ObjMap.EMPTY, xrel)
-};
-clojure.set.map_invert = function map_invert(m) {
-  return cljs.core.reduce.call(null, function(m, p__12480) {
-    var vec__12481__12482 = p__12480;
-    var k__12483 = cljs.core.nth.call(null, vec__12481__12482, 0, null);
-    var v__12484 = cljs.core.nth.call(null, vec__12481__12482, 1, null);
-    return cljs.core.assoc.call(null, m, v__12484, k__12483)
-  }, cljs.core.ObjMap.EMPTY, m)
-};
-clojure.set.join = function() {
-  var join = null;
-  var join__2 = function(xrel, yrel) {
-    if(function() {
-      var and__3822__auto____12501 = cljs.core.seq.call(null, xrel);
-      if(and__3822__auto____12501) {
-        return cljs.core.seq.call(null, yrel)
-      }else {
-        return and__3822__auto____12501
-      }
-    }()) {
-      var ks__12503 = clojure.set.intersection.call(null, cljs.core.set.call(null, cljs.core.keys.call(null, cljs.core.first.call(null, xrel))), cljs.core.set.call(null, cljs.core.keys.call(null, cljs.core.first.call(null, yrel))));
-      var vec__12502__12504 = cljs.core.count.call(null, xrel) <= cljs.core.count.call(null, yrel) ? cljs.core.PersistentVector.fromArray([xrel, yrel], true) : cljs.core.PersistentVector.fromArray([yrel, xrel], true);
-      var r__12505 = cljs.core.nth.call(null, vec__12502__12504, 0, null);
-      var s__12506 = cljs.core.nth.call(null, vec__12502__12504, 1, null);
-      var idx__12507 = clojure.set.index.call(null, r__12505, ks__12503);
-      return cljs.core.reduce.call(null, function(ret, x) {
-        var found__12508 = idx__12507.call(null, cljs.core.select_keys.call(null, x, ks__12503));
-        if(cljs.core.truth_(found__12508)) {
-          return cljs.core.reduce.call(null, function(p1__12471_SHARP_, p2__12472_SHARP_) {
-            return cljs.core.conj.call(null, p1__12471_SHARP_, cljs.core.merge.call(null, p2__12472_SHARP_, x))
-          }, ret, found__12508)
-        }else {
-          return ret
-        }
-      }, cljs.core.PersistentHashSet.EMPTY, s__12506)
-    }else {
-      return cljs.core.PersistentHashSet.EMPTY
-    }
-  };
-  var join__3 = function(xrel, yrel, km) {
-    var vec__12509__12510 = cljs.core.count.call(null, xrel) <= cljs.core.count.call(null, yrel) ? cljs.core.PersistentVector.fromArray([xrel, yrel, clojure.set.map_invert.call(null, km)], true) : cljs.core.PersistentVector.fromArray([yrel, xrel, km], true);
-    var r__12511 = cljs.core.nth.call(null, vec__12509__12510, 0, null);
-    var s__12512 = cljs.core.nth.call(null, vec__12509__12510, 1, null);
-    var k__12513 = cljs.core.nth.call(null, vec__12509__12510, 2, null);
-    var idx__12514 = clojure.set.index.call(null, r__12511, cljs.core.vals.call(null, k__12513));
-    return cljs.core.reduce.call(null, function(ret, x) {
-      var found__12515 = idx__12514.call(null, clojure.set.rename_keys.call(null, cljs.core.select_keys.call(null, x, cljs.core.keys.call(null, k__12513)), k__12513));
-      if(cljs.core.truth_(found__12515)) {
-        return cljs.core.reduce.call(null, function(p1__12473_SHARP_, p2__12474_SHARP_) {
-          return cljs.core.conj.call(null, p1__12473_SHARP_, cljs.core.merge.call(null, p2__12474_SHARP_, x))
-        }, ret, found__12515)
-      }else {
-        return ret
-      }
-    }, cljs.core.PersistentHashSet.EMPTY, s__12512)
-  };
-  join = function(xrel, yrel, km) {
-    switch(arguments.length) {
-      case 2:
-        return join__2.call(this, xrel, yrel);
-      case 3:
-        return join__3.call(this, xrel, yrel, km)
-    }
-    throw"Invalid arity: " + arguments.length;
-  };
-  join.cljs$lang$arity$2 = join__2;
-  join.cljs$lang$arity$3 = join__3;
-  return join
-}();
-clojure.set.subset_QMARK_ = function subset_QMARK_(set1, set2) {
-  var and__3822__auto____12518 = cljs.core.count.call(null, set1) <= cljs.core.count.call(null, set2);
-  if(and__3822__auto____12518) {
-    return cljs.core.every_QMARK_.call(null, function(p1__12485_SHARP_) {
-      return cljs.core.contains_QMARK_.call(null, set2, p1__12485_SHARP_)
-    }, set1)
-  }else {
-    return and__3822__auto____12518
-  }
-};
-clojure.set.superset_QMARK_ = function superset_QMARK_(set1, set2) {
-  var and__3822__auto____12520 = cljs.core.count.call(null, set1) >= cljs.core.count.call(null, set2);
-  if(and__3822__auto____12520) {
-    return cljs.core.every_QMARK_.call(null, function(p1__12516_SHARP_) {
-      return cljs.core.contains_QMARK_.call(null, set1, p1__12516_SHARP_)
-    }, set2)
-  }else {
-    return and__3822__auto____12520
-  }
-};
-goog.provide("hlisp.hexp");
-goog.require("cljs.core");
-goog.require("clojure.set");
-hlisp.hexp.html_tags = cljs.core.PersistentHashSet.fromArray(["dd", "big", "col", "head", "sub", "tt", "basefont", "a", "output", "b", "figcaption", "body", "rt", "details", "tfoot", "nav", "acronym", "pre", "img", "form", "iframe", "figure", "meta", "section", "caption", "summary", "bdi", "small", "noframes", "wbr", "var", "dl", "em", "fieldset", "isindex", "datalist", "i", "h1", "meter", "h2", "hr", "span", "data", "input", "del", "h3", "script", "track", "command", "html", "dfn", "h4", "noscript", 
-"optgroup", "legend", "bdo", "dir", "param", "area", "h5", "frame", "kbd", "code", "progress", "header", "mark", "time", "h6", "sup", "table", "ins", "font", "blockquote", "br", "p", "dt", "td", "abbr", "q", "samp", "div", "keygen", "style", "base", "button", "strike", "s", "thead", "th", "label", "address", "center", "u", "option", "eventsource", "frameset", "tbody", "article", "audio", "cite", "ul", "strong", "hgroup", "aside", "canvas", "title", "embed", "applet", "ruby", "textarea", "link", "source", 
-"video", "footer", "select", "map", "li", "ol", "rp", "tr", "colgroup", "menu", "object"]);
-hlisp.hexp.html_text_tags = cljs.core.PersistentHashSet.fromArray(["#text", "#comment"]);
-hlisp.hexp.make_hexp = function make_hexp(tag) {
-  return cljs.core.ObjMap.fromObject(["\ufdd0'children", "\ufdd0'text", "\ufdd0'data", "\ufdd0'attr-params", "\ufdd0'proc", "\ufdd0'env", "\ufdd0'params", "\ufdd0'ids", "\ufdd0'attrs", "\ufdd0'tag"], {"\ufdd0'children":cljs.core.PersistentVector.EMPTY, "\ufdd0'text":"", "\ufdd0'data":null, "\ufdd0'attr-params":cljs.core.ObjMap.EMPTY, "\ufdd0'proc":null, "\ufdd0'env":cljs.core.ObjMap.EMPTY, "\ufdd0'params":cljs.core.PersistentVector.EMPTY, "\ufdd0'ids":cljs.core.contains_QMARK_.call(null, hlisp.hexp.html_tags, 
-  tag) ? cljs.core.PersistentVector.fromArray([cljs.core.gensym.call(null)], true) : cljs.core.PersistentVector.EMPTY, "\ufdd0'attrs":cljs.core.ObjMap.EMPTY, "\ufdd0'tag":tag})
-};
-hlisp.hexp.make_node_hexp = function make_node_hexp(tag, attrs, children) {
-  return cljs.core.assoc.call(null, hlisp.hexp.make_hexp.call(null, tag), "\ufdd0'attrs", attrs, "\ufdd0'children", children)
-};
-hlisp.hexp.make_list_hexp = function make_list_hexp(items) {
-  return hlisp.hexp.make_node_hexp.call(null, "list", cljs.core.ObjMap.EMPTY, cljs.core.vec.call(null, items))
-};
-hlisp.hexp.make_text_hexp = function make_text_hexp(tag, text) {
-  return cljs.core.assoc.call(null, hlisp.hexp.make_hexp.call(null, tag), "\ufdd0'text", [cljs.core.str(text)].join(""))
-};
-hlisp.hexp.make_prim_hexp = function make_prim_hexp(proc) {
-  return cljs.core.assoc.call(null, hlisp.hexp.make_hexp.call(null, "\ufdd0'prim"), "\ufdd0'proc", proc)
-};
-hlisp.hexp.make_proc_hexp = function make_proc_hexp(tag, attr_params, params, env, proc) {
-  return cljs.core.assoc.call(null, hlisp.hexp.make_hexp.call(null, tag), "\ufdd0'attr-params", attr_params, "\ufdd0'params", params, "\ufdd0'env", env, "\ufdd0'proc", proc)
-};
-hlisp.hexp.make_data_hexp = function make_data_hexp(data) {
-  return cljs.core.assoc.call(null, hlisp.hexp.make_hexp.call(null, "\ufdd0'data"), "\ufdd0'data", data)
-};
-hlisp.hexp.make_quote_hexp = function make_quote_hexp(hexp) {
-  return hlisp.hexp.make_node_hexp.call(null, "quote", cljs.core.ObjMap.EMPTY, cljs.core.PersistentVector.fromArray([hexp], true))
-};
-goog.provide("goog.net.xpc");
-goog.provide("goog.net.xpc.CfgFields");
-goog.provide("goog.net.xpc.ChannelStates");
-goog.provide("goog.net.xpc.TransportNames");
-goog.provide("goog.net.xpc.TransportTypes");
-goog.provide("goog.net.xpc.UriCfgFields");
-goog.require("goog.debug.Logger");
-goog.net.xpc.TransportTypes = {NATIVE_MESSAGING:1, FRAME_ELEMENT_METHOD:2, IFRAME_RELAY:3, IFRAME_POLLING:4, FLASH:5, NIX:6};
-goog.net.xpc.TransportNames = {1:"NativeMessagingTransport", 2:"FrameElementMethodTransport", 3:"IframeRelayTransport", 4:"IframePollingTransport", 5:"FlashTransport", 6:"NixTransport"};
-goog.net.xpc.CfgFields = {CHANNEL_NAME:"cn", AUTH_TOKEN:"at", REMOTE_AUTH_TOKEN:"rat", PEER_URI:"pu", IFRAME_ID:"ifrid", TRANSPORT:"tp", LOCAL_RELAY_URI:"lru", PEER_RELAY_URI:"pru", LOCAL_POLL_URI:"lpu", PEER_POLL_URI:"ppu", PEER_HOSTNAME:"ph"};
-goog.net.xpc.UriCfgFields = [goog.net.xpc.CfgFields.PEER_URI, goog.net.xpc.CfgFields.LOCAL_RELAY_URI, goog.net.xpc.CfgFields.PEER_RELAY_URI, goog.net.xpc.CfgFields.LOCAL_POLL_URI, goog.net.xpc.CfgFields.PEER_POLL_URI];
-goog.net.xpc.ChannelStates = {NOT_CONNECTED:1, CONNECTED:2, CLOSED:3};
-goog.net.xpc.TRANSPORT_SERVICE_ = "tp";
-goog.net.xpc.SETUP = "SETUP";
-goog.net.xpc.SETUP_ACK_ = "SETUP_ACK";
-goog.net.xpc.channels_ = {};
-goog.net.xpc.getRandomString = function(length, opt_characters) {
-  var chars = opt_characters || goog.net.xpc.randomStringCharacters_;
-  var charsLength = chars.length;
-  var s = "";
-  while(length-- > 0) {
-    s += chars.charAt(Math.floor(Math.random() * charsLength))
-  }
-  return s
-};
-goog.net.xpc.randomStringCharacters_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-goog.net.xpc.logger = goog.debug.Logger.getLogger("goog.net.xpc");
-goog.provide("goog.Uri");
-goog.provide("goog.Uri.QueryData");
-goog.require("goog.array");
-goog.require("goog.string");
-goog.require("goog.structs");
-goog.require("goog.structs.Map");
-goog.require("goog.uri.utils");
-goog.require("goog.uri.utils.ComponentIndex");
-goog.Uri = function(opt_uri, opt_ignoreCase) {
-  var m;
-  if(opt_uri instanceof goog.Uri) {
-    this.setIgnoreCase(opt_ignoreCase == null ? opt_uri.getIgnoreCase() : opt_ignoreCase);
-    this.setScheme(opt_uri.getScheme());
-    this.setUserInfo(opt_uri.getUserInfo());
-    this.setDomain(opt_uri.getDomain());
-    this.setPort(opt_uri.getPort());
-    this.setPath(opt_uri.getPath());
-    this.setQueryData(opt_uri.getQueryData().clone());
-    this.setFragment(opt_uri.getFragment())
-  }else {
-    if(opt_uri && (m = goog.uri.utils.split(String(opt_uri)))) {
-      this.setIgnoreCase(!!opt_ignoreCase);
-      this.setScheme(m[goog.uri.utils.ComponentIndex.SCHEME] || "", true);
-      this.setUserInfo(m[goog.uri.utils.ComponentIndex.USER_INFO] || "", true);
-      this.setDomain(m[goog.uri.utils.ComponentIndex.DOMAIN] || "", true);
-      this.setPort(m[goog.uri.utils.ComponentIndex.PORT]);
-      this.setPath(m[goog.uri.utils.ComponentIndex.PATH] || "", true);
-      this.setQuery(m[goog.uri.utils.ComponentIndex.QUERY_DATA] || "", true);
-      this.setFragment(m[goog.uri.utils.ComponentIndex.FRAGMENT] || "", true)
-    }else {
-      this.setIgnoreCase(!!opt_ignoreCase);
-      this.queryData_ = new goog.Uri.QueryData(null, this, this.ignoreCase_)
-    }
-  }
-};
-goog.Uri.RANDOM_PARAM = goog.uri.utils.StandardQueryParam.RANDOM;
-goog.Uri.prototype.scheme_ = "";
-goog.Uri.prototype.userInfo_ = "";
-goog.Uri.prototype.domain_ = "";
-goog.Uri.prototype.port_ = null;
-goog.Uri.prototype.path_ = "";
-goog.Uri.prototype.queryData_;
-goog.Uri.prototype.fragment_ = "";
-goog.Uri.prototype.isReadOnly_ = false;
-goog.Uri.prototype.ignoreCase_ = false;
-goog.Uri.prototype.toString = function() {
-  if(this.cachedToString_) {
-    return this.cachedToString_
-  }
-  var out = [];
-  if(this.scheme_) {
-    out.push(goog.Uri.encodeSpecialChars_(this.scheme_, goog.Uri.reDisallowedInSchemeOrUserInfo_), ":")
-  }
-  if(this.domain_) {
-    out.push("//");
-    if(this.userInfo_) {
-      out.push(goog.Uri.encodeSpecialChars_(this.userInfo_, goog.Uri.reDisallowedInSchemeOrUserInfo_), "@")
-    }
-    out.push(goog.Uri.encodeString_(this.domain_));
-    if(this.port_ != null) {
-      out.push(":", String(this.getPort()))
-    }
-  }
-  if(this.path_) {
-    if(this.hasDomain() && this.path_.charAt(0) != "/") {
-      out.push("/")
-    }
-    out.push(goog.Uri.encodeSpecialChars_(this.path_, this.path_.charAt(0) == "/" ? goog.Uri.reDisallowedInAbsolutePath_ : goog.Uri.reDisallowedInRelativePath_))
-  }
-  var query = String(this.queryData_);
-  if(query) {
-    out.push("?", query)
-  }
-  if(this.fragment_) {
-    out.push("#", goog.Uri.encodeSpecialChars_(this.fragment_, goog.Uri.reDisallowedInFragment_))
-  }
-  return this.cachedToString_ = out.join("")
-};
-goog.Uri.prototype.resolve = function(relativeUri) {
-  var absoluteUri = this.clone();
-  var overridden = relativeUri.hasScheme();
-  if(overridden) {
-    absoluteUri.setScheme(relativeUri.getScheme())
-  }else {
-    overridden = relativeUri.hasUserInfo()
-  }
-  if(overridden) {
-    absoluteUri.setUserInfo(relativeUri.getUserInfo())
-  }else {
-    overridden = relativeUri.hasDomain()
-  }
-  if(overridden) {
-    absoluteUri.setDomain(relativeUri.getDomain())
-  }else {
-    overridden = relativeUri.hasPort()
-  }
-  var path = relativeUri.getPath();
-  if(overridden) {
-    absoluteUri.setPort(relativeUri.getPort())
-  }else {
-    overridden = relativeUri.hasPath();
-    if(overridden) {
-      if(path.charAt(0) != "/") {
-        if(this.hasDomain() && !this.hasPath()) {
-          path = "/" + path
-        }else {
-          var lastSlashIndex = absoluteUri.getPath().lastIndexOf("/");
-          if(lastSlashIndex != -1) {
-            path = absoluteUri.getPath().substr(0, lastSlashIndex + 1) + path
-          }
-        }
-      }
-      path = goog.Uri.removeDotSegments(path)
-    }
-  }
-  if(overridden) {
-    absoluteUri.setPath(path)
-  }else {
-    overridden = relativeUri.hasQuery()
-  }
-  if(overridden) {
-    absoluteUri.setQuery(relativeUri.getDecodedQuery())
-  }else {
-    overridden = relativeUri.hasFragment()
-  }
-  if(overridden) {
-    absoluteUri.setFragment(relativeUri.getFragment())
-  }
-  return absoluteUri
-};
-goog.Uri.prototype.clone = function() {
-  return goog.Uri.create(this.scheme_, this.userInfo_, this.domain_, this.port_, this.path_, this.queryData_.clone(), this.fragment_, this.ignoreCase_)
-};
-goog.Uri.prototype.getScheme = function() {
-  return this.scheme_
-};
-goog.Uri.prototype.setScheme = function(newScheme, opt_decode) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  this.scheme_ = opt_decode ? goog.Uri.decodeOrEmpty_(newScheme) : newScheme;
-  if(this.scheme_) {
-    this.scheme_ = this.scheme_.replace(/:$/, "")
-  }
-  return this
-};
-goog.Uri.prototype.hasScheme = function() {
-  return!!this.scheme_
-};
-goog.Uri.prototype.getUserInfo = function() {
-  return this.userInfo_
-};
-goog.Uri.prototype.setUserInfo = function(newUserInfo, opt_decode) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  this.userInfo_ = opt_decode ? goog.Uri.decodeOrEmpty_(newUserInfo) : newUserInfo;
-  return this
-};
-goog.Uri.prototype.hasUserInfo = function() {
-  return!!this.userInfo_
-};
-goog.Uri.prototype.getDomain = function() {
-  return this.domain_
-};
-goog.Uri.prototype.setDomain = function(newDomain, opt_decode) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  this.domain_ = opt_decode ? goog.Uri.decodeOrEmpty_(newDomain) : newDomain;
-  return this
-};
-goog.Uri.prototype.hasDomain = function() {
-  return!!this.domain_
-};
-goog.Uri.prototype.getPort = function() {
-  return this.port_
-};
-goog.Uri.prototype.setPort = function(newPort) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  if(newPort) {
-    newPort = Number(newPort);
-    if(isNaN(newPort) || newPort < 0) {
-      throw Error("Bad port number " + newPort);
-    }
-    this.port_ = newPort
-  }else {
-    this.port_ = null
-  }
-  return this
-};
-goog.Uri.prototype.hasPort = function() {
-  return this.port_ != null
-};
-goog.Uri.prototype.getPath = function() {
-  return this.path_
-};
-goog.Uri.prototype.setPath = function(newPath, opt_decode) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  this.path_ = opt_decode ? goog.Uri.decodeOrEmpty_(newPath) : newPath;
-  return this
-};
-goog.Uri.prototype.hasPath = function() {
-  return!!this.path_
-};
-goog.Uri.prototype.hasQuery = function() {
-  return this.queryData_.toString() !== ""
-};
-goog.Uri.prototype.setQueryData = function(queryData, opt_decode) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  if(queryData instanceof goog.Uri.QueryData) {
-    this.queryData_ = queryData;
-    this.queryData_.uri_ = this;
-    this.queryData_.setIgnoreCase(this.ignoreCase_)
-  }else {
-    if(!opt_decode) {
-      queryData = goog.Uri.encodeSpecialChars_(queryData, goog.Uri.reDisallowedInQuery_)
-    }
-    this.queryData_ = new goog.Uri.QueryData(queryData, this, this.ignoreCase_)
-  }
-  return this
-};
-goog.Uri.prototype.setQuery = function(newQuery, opt_decode) {
-  return this.setQueryData(newQuery, opt_decode)
-};
-goog.Uri.prototype.getEncodedQuery = function() {
-  return this.queryData_.toString()
-};
-goog.Uri.prototype.getDecodedQuery = function() {
-  return this.queryData_.toDecodedString()
-};
-goog.Uri.prototype.getQueryData = function() {
-  return this.queryData_
-};
-goog.Uri.prototype.getQuery = function() {
-  return this.getEncodedQuery()
-};
-goog.Uri.prototype.setParameterValue = function(key, value) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  this.queryData_.set(key, value);
-  return this
-};
-goog.Uri.prototype.setParameterValues = function(key, values) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  if(!goog.isArray(values)) {
-    values = [String(values)]
-  }
-  this.queryData_.setValues(key, values);
-  return this
-};
-goog.Uri.prototype.getParameterValues = function(name) {
-  return this.queryData_.getValues(name)
-};
-goog.Uri.prototype.getParameterValue = function(paramName) {
-  return this.queryData_.get(paramName)
-};
-goog.Uri.prototype.getFragment = function() {
-  return this.fragment_
-};
-goog.Uri.prototype.setFragment = function(newFragment, opt_decode) {
-  this.enforceReadOnly();
-  delete this.cachedToString_;
-  this.fragment_ = opt_decode ? goog.Uri.decodeOrEmpty_(newFragment) : newFragment;
-  return this
-};
-goog.Uri.prototype.hasFragment = function() {
-  return!!this.fragment_
-};
-goog.Uri.prototype.hasSameDomainAs = function(uri2) {
-  return(!this.hasDomain() && !uri2.hasDomain() || this.getDomain() == uri2.getDomain()) && (!this.hasPort() && !uri2.hasPort() || this.getPort() == uri2.getPort())
-};
-goog.Uri.prototype.makeUnique = function() {
-  this.enforceReadOnly();
-  this.setParameterValue(goog.Uri.RANDOM_PARAM, goog.string.getRandomString());
-  return this
-};
-goog.Uri.prototype.removeParameter = function(key) {
-  this.enforceReadOnly();
-  this.queryData_.remove(key);
-  return this
-};
-goog.Uri.prototype.setReadOnly = function(isReadOnly) {
-  this.isReadOnly_ = isReadOnly;
-  return this
-};
-goog.Uri.prototype.isReadOnly = function() {
-  return this.isReadOnly_
-};
-goog.Uri.prototype.enforceReadOnly = function() {
-  if(this.isReadOnly_) {
-    throw Error("Tried to modify a read-only Uri");
-  }
-};
-goog.Uri.prototype.setIgnoreCase = function(ignoreCase) {
-  this.ignoreCase_ = ignoreCase;
-  if(this.queryData_) {
-    this.queryData_.setIgnoreCase(ignoreCase)
-  }
-  return this
-};
-goog.Uri.prototype.getIgnoreCase = function() {
-  return this.ignoreCase_
-};
-goog.Uri.parse = function(uri, opt_ignoreCase) {
-  return uri instanceof goog.Uri ? uri.clone() : new goog.Uri(uri, opt_ignoreCase)
-};
-goog.Uri.create = function(opt_scheme, opt_userInfo, opt_domain, opt_port, opt_path, opt_query, opt_fragment, opt_ignoreCase) {
-  var uri = new goog.Uri(null, opt_ignoreCase);
-  opt_scheme && uri.setScheme(opt_scheme);
-  opt_userInfo && uri.setUserInfo(opt_userInfo);
-  opt_domain && uri.setDomain(opt_domain);
-  opt_port && uri.setPort(opt_port);
-  opt_path && uri.setPath(opt_path);
-  opt_query && uri.setQueryData(opt_query);
-  opt_fragment && uri.setFragment(opt_fragment);
-  return uri
-};
-goog.Uri.resolve = function(base, rel) {
-  if(!(base instanceof goog.Uri)) {
-    base = goog.Uri.parse(base)
-  }
-  if(!(rel instanceof goog.Uri)) {
-    rel = goog.Uri.parse(rel)
-  }
-  return base.resolve(rel)
-};
-goog.Uri.removeDotSegments = function(path) {
-  if(path == ".." || path == ".") {
-    return""
-  }else {
-    if(!goog.string.contains(path, "./") && !goog.string.contains(path, "/.")) {
-      return path
-    }else {
-      var leadingSlash = goog.string.startsWith(path, "/");
-      var segments = path.split("/");
-      var out = [];
-      for(var pos = 0;pos < segments.length;) {
-        var segment = segments[pos++];
-        if(segment == ".") {
-          if(leadingSlash && pos == segments.length) {
-            out.push("")
-          }
-        }else {
-          if(segment == "..") {
-            if(out.length > 1 || out.length == 1 && out[0] != "") {
-              out.pop()
-            }
-            if(leadingSlash && pos == segments.length) {
-              out.push("")
-            }
-          }else {
-            out.push(segment);
-            leadingSlash = true
-          }
-        }
-      }
-      return out.join("/")
-    }
-  }
-};
-goog.Uri.decodeOrEmpty_ = function(val) {
-  return val ? decodeURIComponent(val) : ""
-};
-goog.Uri.encodeString_ = function(unescapedPart) {
-  if(goog.isString(unescapedPart)) {
-    return encodeURIComponent(unescapedPart)
-  }
-  return null
-};
-goog.Uri.encodeSpecialRegExp_ = /^[a-zA-Z0-9\-_.!~*'():\/;?]*$/;
-goog.Uri.encodeSpecialChars_ = function(unescapedPart, extra) {
-  var ret = null;
-  if(goog.isString(unescapedPart)) {
-    ret = unescapedPart;
-    if(!goog.Uri.encodeSpecialRegExp_.test(ret)) {
-      ret = encodeURI(unescapedPart)
-    }
-    if(ret.search(extra) >= 0) {
-      ret = ret.replace(extra, goog.Uri.encodeChar_)
-    }
-  }
-  return ret
-};
-goog.Uri.encodeChar_ = function(ch) {
-  var n = ch.charCodeAt(0);
-  return"%" + (n >> 4 & 15).toString(16) + (n & 15).toString(16)
-};
-goog.Uri.reDisallowedInSchemeOrUserInfo_ = /[#\/\?@]/g;
-goog.Uri.reDisallowedInRelativePath_ = /[\#\?:]/g;
-goog.Uri.reDisallowedInAbsolutePath_ = /[\#\?]/g;
-goog.Uri.reDisallowedInQuery_ = /[\#\?@]/g;
-goog.Uri.reDisallowedInFragment_ = /#/g;
-goog.Uri.haveSameDomain = function(uri1String, uri2String) {
-  var pieces1 = goog.uri.utils.split(uri1String);
-  var pieces2 = goog.uri.utils.split(uri2String);
-  return pieces1[goog.uri.utils.ComponentIndex.DOMAIN] == pieces2[goog.uri.utils.ComponentIndex.DOMAIN] && pieces1[goog.uri.utils.ComponentIndex.PORT] == pieces2[goog.uri.utils.ComponentIndex.PORT]
-};
-goog.Uri.QueryData = function(opt_query, opt_uri, opt_ignoreCase) {
-  this.encodedQuery_ = opt_query || null;
-  this.uri_ = opt_uri || null;
-  this.ignoreCase_ = !!opt_ignoreCase
-};
-goog.Uri.QueryData.prototype.ensureKeyMapInitialized_ = function() {
-  if(!this.keyMap_) {
-    this.keyMap_ = new goog.structs.Map;
-    this.count_ = 0;
-    if(this.encodedQuery_) {
-      var pairs = this.encodedQuery_.split("&");
-      for(var i = 0;i < pairs.length;i++) {
-        var indexOfEquals = pairs[i].indexOf("=");
-        var name = null;
-        var value = null;
-        if(indexOfEquals >= 0) {
-          name = pairs[i].substring(0, indexOfEquals);
-          value = pairs[i].substring(indexOfEquals + 1)
-        }else {
-          name = pairs[i]
-        }
-        name = goog.string.urlDecode(name);
-        name = this.getKeyName_(name);
-        this.add(name, value ? goog.string.urlDecode(value) : "")
-      }
-    }
-  }
-};
-goog.Uri.QueryData.createFromMap = function(map, opt_uri, opt_ignoreCase) {
-  var keys = goog.structs.getKeys(map);
-  if(typeof keys == "undefined") {
-    throw Error("Keys are undefined");
-  }
-  return goog.Uri.QueryData.createFromKeysValues(keys, goog.structs.getValues(map), opt_uri, opt_ignoreCase)
-};
-goog.Uri.QueryData.createFromKeysValues = function(keys, values, opt_uri, opt_ignoreCase) {
-  if(keys.length != values.length) {
-    throw Error("Mismatched lengths for keys/values");
-  }
-  var queryData = new goog.Uri.QueryData(null, opt_uri, opt_ignoreCase);
-  for(var i = 0;i < keys.length;i++) {
-    queryData.add(keys[i], values[i])
-  }
-  return queryData
-};
-goog.Uri.QueryData.prototype.keyMap_ = null;
-goog.Uri.QueryData.prototype.count_ = null;
-goog.Uri.QueryData.decodedQuery_ = null;
-goog.Uri.QueryData.prototype.getCount = function() {
-  this.ensureKeyMapInitialized_();
-  return this.count_
-};
-goog.Uri.QueryData.prototype.add = function(key, value) {
-  this.ensureKeyMapInitialized_();
-  this.invalidateCache_();
-  key = this.getKeyName_(key);
-  if(!this.containsKey(key)) {
-    this.keyMap_.set(key, value)
-  }else {
-    var current = this.keyMap_.get(key);
-    if(goog.isArray(current)) {
-      current.push(value)
-    }else {
-      this.keyMap_.set(key, [current, value])
-    }
-  }
-  this.count_++;
-  return this
-};
-goog.Uri.QueryData.prototype.remove = function(key) {
-  this.ensureKeyMapInitialized_();
-  key = this.getKeyName_(key);
-  if(this.keyMap_.containsKey(key)) {
-    this.invalidateCache_();
-    var old = this.keyMap_.get(key);
-    if(goog.isArray(old)) {
-      this.count_ -= old.length
-    }else {
-      this.count_--
-    }
-    return this.keyMap_.remove(key)
-  }
-  return false
-};
-goog.Uri.QueryData.prototype.clear = function() {
-  this.invalidateCache_();
-  if(this.keyMap_) {
-    this.keyMap_.clear()
-  }
-  this.count_ = 0
-};
-goog.Uri.QueryData.prototype.isEmpty = function() {
-  this.ensureKeyMapInitialized_();
-  return this.count_ == 0
-};
-goog.Uri.QueryData.prototype.containsKey = function(key) {
-  this.ensureKeyMapInitialized_();
-  key = this.getKeyName_(key);
-  return this.keyMap_.containsKey(key)
-};
-goog.Uri.QueryData.prototype.containsValue = function(value) {
-  var vals = this.getValues();
-  return goog.array.contains(vals, value)
-};
-goog.Uri.QueryData.prototype.getKeys = function() {
-  this.ensureKeyMapInitialized_();
-  var vals = this.keyMap_.getValues();
-  var keys = this.keyMap_.getKeys();
-  var rv = [];
-  for(var i = 0;i < keys.length;i++) {
-    var val = vals[i];
-    if(goog.isArray(val)) {
-      for(var j = 0;j < val.length;j++) {
-        rv.push(keys[i])
-      }
-    }else {
-      rv.push(keys[i])
-    }
-  }
-  return rv
-};
-goog.Uri.QueryData.prototype.getValues = function(opt_key) {
-  this.ensureKeyMapInitialized_();
-  var rv;
-  if(opt_key) {
-    var key = this.getKeyName_(opt_key);
-    if(this.containsKey(key)) {
-      var value = this.keyMap_.get(key);
-      if(goog.isArray(value)) {
-        return value
-      }else {
-        rv = [];
-        rv.push(value)
-      }
-    }else {
-      rv = []
-    }
-  }else {
-    var vals = this.keyMap_.getValues();
-    rv = [];
-    for(var i = 0;i < vals.length;i++) {
-      var val = vals[i];
-      if(goog.isArray(val)) {
-        goog.array.extend(rv, val)
-      }else {
-        rv.push(val)
-      }
-    }
-  }
-  return rv
-};
-goog.Uri.QueryData.prototype.set = function(key, value) {
-  this.ensureKeyMapInitialized_();
-  this.invalidateCache_();
-  key = this.getKeyName_(key);
-  if(this.containsKey(key)) {
-    var old = this.keyMap_.get(key);
-    if(goog.isArray(old)) {
-      this.count_ -= old.length
-    }else {
-      this.count_--
-    }
-  }
-  this.keyMap_.set(key, value);
-  this.count_++;
-  return this
-};
-goog.Uri.QueryData.prototype.get = function(key, opt_default) {
-  this.ensureKeyMapInitialized_();
-  key = this.getKeyName_(key);
-  if(this.containsKey(key)) {
-    var val = this.keyMap_.get(key);
-    if(goog.isArray(val)) {
-      return val[0]
-    }else {
-      return val
-    }
-  }else {
-    return opt_default
-  }
-};
-goog.Uri.QueryData.prototype.setValues = function(key, values) {
-  this.ensureKeyMapInitialized_();
-  this.invalidateCache_();
-  key = this.getKeyName_(key);
-  if(this.containsKey(key)) {
-    var old = this.keyMap_.get(key);
-    if(goog.isArray(old)) {
-      this.count_ -= old.length
-    }else {
-      this.count_--
-    }
-  }
-  if(values.length > 0) {
-    this.keyMap_.set(key, values);
-    this.count_ += values.length
-  }
-};
-goog.Uri.QueryData.prototype.toString = function() {
-  if(this.encodedQuery_) {
-    return this.encodedQuery_
-  }
-  if(!this.keyMap_) {
-    return""
-  }
-  var sb = [];
-  var count = 0;
-  var keys = this.keyMap_.getKeys();
-  for(var i = 0;i < keys.length;i++) {
-    var key = keys[i];
-    var encodedKey = goog.string.urlEncode(key);
-    var val = this.keyMap_.get(key);
-    if(goog.isArray(val)) {
-      for(var j = 0;j < val.length;j++) {
-        if(count > 0) {
-          sb.push("&")
-        }
-        sb.push(encodedKey);
-        if(val[j] !== "") {
-          sb.push("=", goog.string.urlEncode(val[j]))
-        }
-        count++
-      }
-    }else {
-      if(count > 0) {
-        sb.push("&")
-      }
-      sb.push(encodedKey);
-      if(val !== "") {
-        sb.push("=", goog.string.urlEncode(val))
-      }
-      count++
-    }
-  }
-  return this.encodedQuery_ = sb.join("")
-};
-goog.Uri.QueryData.prototype.toDecodedString = function() {
-  if(!this.decodedQuery_) {
-    this.decodedQuery_ = goog.Uri.decodeOrEmpty_(this.toString())
-  }
-  return this.decodedQuery_
-};
-goog.Uri.QueryData.prototype.invalidateCache_ = function() {
-  delete this.decodedQuery_;
-  delete this.encodedQuery_;
-  if(this.uri_) {
-    delete this.uri_.cachedToString_
-  }
-};
-goog.Uri.QueryData.prototype.filterKeys = function(keys) {
-  this.ensureKeyMapInitialized_();
-  goog.structs.forEach(this.keyMap_, function(value, key, map) {
-    if(!goog.array.contains(keys, key)) {
-      this.remove(key)
-    }
-  }, this);
-  return this
-};
-goog.Uri.QueryData.prototype.clone = function() {
-  var rv = new goog.Uri.QueryData;
-  if(this.decodedQuery_) {
-    rv.decodedQuery_ = this.decodedQuery_
-  }
-  if(this.encodedQuery_) {
-    rv.encodedQuery_ = this.encodedQuery_
-  }
-  if(this.keyMap_) {
-    rv.keyMap_ = this.keyMap_.clone()
-  }
-  return rv
-};
-goog.Uri.QueryData.prototype.getKeyName_ = function(arg) {
-  var keyName = String(arg);
-  if(this.ignoreCase_) {
-    keyName = keyName.toLowerCase()
-  }
-  return keyName
-};
-goog.Uri.QueryData.prototype.setIgnoreCase = function(ignoreCase) {
-  var resetKeys = ignoreCase && !this.ignoreCase_;
-  if(resetKeys) {
-    this.ensureKeyMapInitialized_();
-    this.invalidateCache_();
-    goog.structs.forEach(this.keyMap_, function(value, key, map) {
-      var lowerCase = key.toLowerCase();
-      if(key != lowerCase) {
-        this.remove(key);
-        this.add(lowerCase, value)
-      }
-    }, this)
-  }
-  this.ignoreCase_ = ignoreCase
-};
-goog.Uri.QueryData.prototype.extend = function(var_args) {
-  for(var i = 0;i < arguments.length;i++) {
-    var data = arguments[i];
-    goog.structs.forEach(data, function(value, key) {
-      this.add(key, value)
-    }, this)
-  }
-};
-goog.provide("hlisp.util");
-goog.require("cljs.core");
-hlisp.util.zipfn = cljs.core.partial.call(null, cljs.core.partial, cljs.core.map, function() {
-  var G__7833__delegate = function(p1__7831_SHARP_, rest__7832_SHARP_) {
-    return cljs.core.apply.call(null, p1__7831_SHARP_, rest__7832_SHARP_)
-  };
-  var G__7833 = function(p1__7831_SHARP_, var_args) {
-    var rest__7832_SHARP_ = null;
-    if(goog.isDef(var_args)) {
-      rest__7832_SHARP_ = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
-    }
-    return G__7833__delegate.call(this, p1__7831_SHARP_, rest__7832_SHARP_)
-  };
-  G__7833.cljs$lang$maxFixedArity = 1;
-  G__7833.cljs$lang$applyTo = function(arglist__7834) {
-    var p1__7831_SHARP_ = cljs.core.first(arglist__7834);
-    var rest__7832_SHARP_ = cljs.core.rest(arglist__7834);
-    return G__7833__delegate(p1__7831_SHARP_, rest__7832_SHARP_)
-  };
-  G__7833.cljs$lang$arity$variadic = G__7833__delegate;
-  return G__7833
-}());
-hlisp.util.trans = cljs.core.partial.call(null, cljs.core.apply, cljs.core.map, cljs.core.list);
-hlisp.util.funroll_body = cljs.core.partial.call(null, cljs.core.reduce, function(p1__7835_SHARP_, p2__7836_SHARP_) {
-  return function() {
-    var G__7838__delegate = function(args) {
-      cljs.core.apply.call(null, p1__7835_SHARP_, args);
-      return cljs.core.apply.call(null, p2__7836_SHARP_, args)
-    };
-    var G__7838 = function(var_args) {
-      var args = null;
-      if(goog.isDef(var_args)) {
-        args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
-      }
-      return G__7838__delegate.call(this, args)
-    };
-    G__7838.cljs$lang$maxFixedArity = 0;
-    G__7838.cljs$lang$applyTo = function(arglist__7839) {
-      var args = cljs.core.seq(arglist__7839);
-      return G__7838__delegate(args)
-    };
-    G__7838.cljs$lang$arity$variadic = G__7838__delegate;
-    return G__7838
-  }()
-});
-hlisp.util.funroll_seq = function funroll_seq(procs) {
-  return function() {
-    var G__7840__delegate = function(args) {
-      return cljs.core.map.call(null, function(p1__7837_SHARP_) {
-        return cljs.core.apply.call(null, p1__7837_SHARP_, args)
-      }, procs)
-    };
-    var G__7840 = function(var_args) {
-      var args = null;
-      if(goog.isDef(var_args)) {
-        args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
-      }
-      return G__7840__delegate.call(this, args)
-    };
-    G__7840.cljs$lang$maxFixedArity = 0;
-    G__7840.cljs$lang$applyTo = function(arglist__7841) {
-      var args = cljs.core.seq(arglist__7841);
-      return G__7840__delegate(args)
-    };
-    G__7840.cljs$lang$arity$variadic = G__7840__delegate;
-    return G__7840
-  }()
-};
-hlisp.util.tee = function() {
-  var tee__delegate = function(f, arg) {
-    var pre__7845 = cljs.core.seq.call(null, cljs.core.butlast.call(null, arg)) ? cljs.core.apply.call(null, cljs.core.str, cljs.core.butlast.call(null, arg)) : "--\>";
-    var ret__7846 = cljs.core.last.call(null, arg);
-    var out__7847 = [cljs.core.str(f.call(null, ret__7846))].join("");
-    console.log(";;", pre__7845, [cljs.core.str("\n"), cljs.core.str(out__7847)].join(""));
-    return ret__7846
-  };
-  var tee = function(f, var_args) {
-    var arg = null;
-    if(goog.isDef(var_args)) {
-      arg = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
-    }
-    return tee__delegate.call(this, f, arg)
-  };
-  tee.cljs$lang$maxFixedArity = 1;
-  tee.cljs$lang$applyTo = function(arglist__7848) {
-    var f = cljs.core.first(arglist__7848);
-    var arg = cljs.core.rest(arglist__7848);
-    return tee__delegate(f, arg)
-  };
-  tee.cljs$lang$arity$variadic = tee__delegate;
-  return tee
-}();
-goog.provide("hlisp.dom");
-goog.require("cljs.core");
-goog.require("hlisp.util");
-goog.require("jayq.util");
-goog.require("jayq.core");
-hlisp.dom.node_types = cljs.core.PersistentArrayMap.fromArrays([1], ["\ufdd0'element"]);
-hlisp.dom.branch_QMARK_ = function branch_QMARK_(node) {
-  var and__3822__auto____7640 = !(node == null);
-  if(and__3822__auto____7640) {
-    return cljs.core._EQ_.call(null, "\ufdd0'element", hlisp.dom.node_types.call(null, node.nodeType))
-  }else {
-    return and__3822__auto____7640
-  }
-};
-hlisp.dom.nodelist_seq = function nodelist_seq(nodelist) {
-  if(cljs.core.truth_(nodelist)) {
-    var len__7643 = nodelist.length;
-    return cljs.core.map.call(null, function(p1__7638_SHARP_) {
-      return nodelist.item(p1__7638_SHARP_)
-    }, cljs.core.range.call(null, 0, len__7643))
-  }else {
-    return null
-  }
-};
-hlisp.dom.specified_attr_nodes = function specified_attr_nodes(node) {
-  return cljs.core.filter.call(null, function(p1__7641_SHARP_) {
-    return p1__7641_SHARP_.specified
-  }, hlisp.dom.nodelist_seq.call(null, node.attributes))
-};
-hlisp.dom.attr_kv = function attr_kv(node, attr_node) {
-  var k__7651 = cljs.core.symbol.call(null, attr_node.nodeName.toLowerCase());
-  var v__7657 = function() {
-    var pred__7652__7655 = cljs.core._EQ_;
-    var expr__7653__7656 = k__7651;
-    if(pred__7652__7655.call(null, "style", expr__7653__7656)) {
-      return node.style.cssText
-    }else {
-      return attr_node.nodeValue
-    }
-  }();
-  return cljs.core.list.call(null, k__7651, v__7657)
-};
-hlisp.dom.ie7_value = function ie7_value(node) {
-  var temp__3971__auto____7662 = function() {
-    var and__3822__auto____7661 = hlisp.dom.branch_QMARK_.call(null, node);
-    if(cljs.core.truth_(and__3822__auto____7661)) {
-      return node.value
-    }else {
-      return and__3822__auto____7661
-    }
-  }();
-  if(cljs.core.truth_(temp__3971__auto____7662)) {
-    var v__7663 = temp__3971__auto____7662;
-    return cljs.core.list.call(null, "\ufdd1'value", node.value)
-  }else {
-    return cljs.core.List.EMPTY
-  }
-};
-hlisp.dom.build_attrs = function build_attrs(node) {
-  return cljs.core.list.call(null, cljs.core.list.call(null, cljs.core.concat.call(null, cljs.core.mapcat.call(null, cljs.core.partial.call(null, hlisp.dom.attr_kv, node), hlisp.dom.specified_attr_nodes.call(null, node)), hlisp.dom.ie7_value.call(null, node))))
-};
-hlisp.dom.dom__GT_list = function dom__GT_list(node) {
-  var tag__7667 = node.nodeName.toLowerCase();
-  if(cljs.core.not_EQ_.call(null, "script", tag__7667)) {
-    var attrs__7668 = cljs.core.not_EQ_.call(null, "#", cljs.core.first.call(null, tag__7667)) ? hlisp.dom.build_attrs.call(null, node) : cljs.core.List.EMPTY;
-    var children__7669 = cljs.core.truth_(hlisp.dom.branch_QMARK_.call(null, node)) ? cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map.call(null, dom__GT_list, hlisp.dom.nodelist_seq.call(null, node.childNodes))) : cljs.core.list.call(null, node.nodeValue);
-    return cljs.core.concat.call(null, cljs.core.list.call(null, cljs.core.symbol.call(null, tag__7667)), attrs__7668, children__7669)
-  }else {
-    return null
-  }
-};
-hlisp.dom.read_dom = function read_dom(root) {
-  return cljs.core.list.call(null, hlisp.dom.dom__GT_list.call(null, root))
-};
-hlisp.dom.create_elem = function create_elem(p__7670) {
-  var vec__7682__7683 = p__7670;
-  var tag__7684 = cljs.core.nth.call(null, vec__7682__7683, 0, null);
-  var text__7685 = cljs.core.nth.call(null, vec__7682__7683, 1, null);
-  var ___7686 = cljs.core.nthnext.call(null, vec__7682__7683, 2);
-  var t__7687 = [cljs.core.str(tag__7684)].join("");
-  var pred__7688__7691 = cljs.core._EQ_;
-  var expr__7689__7692 = t__7687;
-  if(pred__7688__7691.call(null, "#text", expr__7689__7692)) {
-    return document.createTextNode(text__7685)
-  }else {
-    if(pred__7688__7691.call(null, "#comment", expr__7689__7692)) {
-      return document.createComment(text__7685)
-    }else {
-      return document.createElement(t__7687)
-    }
-  }
-};
-hlisp.dom.write_dom = function write_dom(p__7693) {
-  var vec__7701__7702 = p__7693;
-  var tag__7703 = cljs.core.nth.call(null, vec__7701__7702, 0, null);
-  var attrs__7704 = cljs.core.nth.call(null, vec__7701__7702, 1, null);
-  var children__7705 = cljs.core.nthnext.call(null, vec__7701__7702, 2);
-  var hexp__7706 = vec__7701__7702;
-  var $elem__7707 = jayq.core.$.call(null, hlisp.dom.create_elem.call(null, hexp__7706));
-  if(cljs.core.list_QMARK_.call(null, attrs__7704)) {
-    return jayq.core.append.call(null, jayq.core.attr.call(null, $elem__7707, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, cljs.core.vec.call(null, cljs.core.map.call(null, cljs.core.vec, cljs.core.partition.call(null, 2, cljs.core.first.call(null, attrs__7704)))))), cljs.core.mapv.call(null, write_dom, children__7705))
-  }else {
-    return $elem__7707
-  }
-};
 goog.provide("cljs.reader");
 goog.require("cljs.core");
 goog.require("goog.string");
@@ -26936,762 +25653,1129 @@ cljs.reader.deregister_tag_parser_BANG_ = function deregister_tag_parser_BANG_(t
   cljs.core.swap_BANG_.call(null, cljs.reader._STAR_tag_table_STAR_, cljs.core.dissoc, tag__12793);
   return old_parser__12794
 };
-goog.provide("hlisp.reader");
+goog.provide("hlisp.env");
 goog.require("cljs.core");
 goog.require("cljs.reader");
-hlisp.reader.empty_attrs = cljs.core.with_meta(cljs.core.list(cljs.core.List.EMPTY), cljs.core.hash_map("\ufdd0'line", 7));
-hlisp.reader.valid_node_expr_QMARK_ = function valid_node_expr_QMARK_(expr) {
-  var and__3822__auto____10186 = cljs.core.seq_QMARK_.call(null, expr);
-  if(and__3822__auto____10186) {
-    return cljs.core.symbol_QMARK_.call(null, cljs.core.first.call(null, expr))
-  }else {
-    return and__3822__auto____10186
-  }
-};
-hlisp.reader.valid_attrlist_QMARK_ = function valid_attrlist_QMARK_(attrs) {
-  var and__3822__auto____10188 = cljs.core.seq_QMARK_.call(null, attrs);
-  if(and__3822__auto____10188) {
-    return cljs.core.seq_QMARK_.call(null, cljs.core.first.call(null, attrs))
-  }else {
-    return and__3822__auto____10188
-  }
-};
-hlisp.reader.text_node = function text_node(txt) {
-  return cljs.core.list.call(null, cljs.core.symbol.call(null, "#text"), [cljs.core.str(txt)].join(""))
-};
-hlisp.reader.parse_symbol = function parse_symbol(expr) {
-  if(cljs.core.symbol_QMARK_.call(null, expr)) {
-    return cljs.core.list.call(null, expr, hlisp.reader.empty_attrs)
-  }else {
-    return null
-  }
-};
-hlisp.reader.parse_seqable_literal = function parse_seqable_literal(pred, valtag) {
-  return function(expr) {
-    if(cljs.core.truth_(pred.call(null, expr))) {
-      var vec__10195__10196 = expr;
-      var head__10197 = cljs.core.nth.call(null, vec__10195__10196, 0, null);
-      var tail__10198 = cljs.core.nthnext.call(null, vec__10195__10196, 1);
-      var attrs__10199 = cljs.core.truth_(hlisp.reader.valid_attrlist_QMARK_.call(null, head__10197)) ? head__10197 : hlisp.reader.empty_attrs;
-      var items__10200 = cljs.core._EQ_.call(null, hlisp.reader.empty_attrs, attrs__10199) ? expr : tail__10198;
-      return cljs.core.concat.call(null, cljs.core.list.call(null, valtag, attrs__10199), cljs.core.map.call(null, hlisp.reader.read_form, items__10200))
-    }else {
-      return null
-    }
-  }
-};
-hlisp.reader.parse_atomic_literal = function parse_atomic_literal(pred, valtag) {
-  return function(expr) {
-    if(cljs.core.truth_(pred.call(null, expr))) {
-      return cljs.core.list.call(null, valtag, hlisp.reader.empty_attrs, hlisp.reader.text_node.call(null, [cljs.core.str(expr)].join("")))
-    }else {
-      return null
-    }
-  }
-};
-hlisp.reader.parse_bool_literal = function parse_bool_literal(expr) {
-  var or__3824__auto____10202 = hlisp.reader.parse_atomic_literal.call(null, cljs.core.true_QMARK_, "\ufdd1'val:true").call(null, expr);
-  if(cljs.core.truth_(or__3824__auto____10202)) {
-    return or__3824__auto____10202
-  }else {
-    return hlisp.reader.parse_atomic_literal.call(null, cljs.core.false_QMARK_, "\ufdd1'val:false").call(null, expr)
-  }
-};
-hlisp.reader.parse_nil_literal = function parse_nil_literal(expr) {
-  return hlisp.reader.parse_atomic_literal.call(null, cljs.core.nil_QMARK_, "\ufdd1'val:nil").call(null, expr)
-};
-hlisp.reader.parse_map_literal = function parse_map_literal(expr) {
-  var temp__3974__auto____10205 = hlisp.reader.parse_seqable_literal.call(null, cljs.core.map_QMARK_, "\ufdd1'val:map").call(null, expr);
-  if(cljs.core.truth_(temp__3974__auto____10205)) {
-    var m__10206 = temp__3974__auto____10205;
-    return cljs.core.concat.call(null, cljs.core.take.call(null, 2, m__10206), cljs.core.mapcat.call(null, cljs.core.partial.call(null, cljs.core.drop, 2), cljs.core.drop.call(null, 2, m__10206)))
-  }else {
-    return null
-  }
-};
-hlisp.reader.parse_set_literal = function parse_set_literal(expr) {
-  return hlisp.reader.parse_seqable_literal.call(null, cljs.core.set_QMARK_, "\ufdd1'val:set").call(null, expr)
-};
-hlisp.reader.parse_vector_literal = function parse_vector_literal(expr) {
-  return hlisp.reader.parse_seqable_literal.call(null, cljs.core.vector_QMARK_, "\ufdd1'list").call(null, expr)
-};
-hlisp.reader.parse_string_literal = function parse_string_literal(expr) {
-  return hlisp.reader.parse_atomic_literal.call(null, cljs.core.string_QMARK_, "\ufdd1'val:str").call(null, expr)
-};
-hlisp.reader.parse_number_literal = function parse_number_literal(expr) {
-  return hlisp.reader.parse_atomic_literal.call(null, cljs.core.number_QMARK_, "\ufdd1'val:num").call(null, expr)
-};
-hlisp.reader.parse_text_node = function parse_text_node(expr) {
-  var vec__10212__10213 = expr;
-  var text__10214 = cljs.core.nth.call(null, vec__10212__10213, 0, null);
-  var more__10215 = cljs.core.nthnext.call(null, vec__10212__10213, 1);
-  if(function() {
-    var and__3822__auto____10216 = cljs.core.string_QMARK_.call(null, text__10214);
-    if(and__3822__auto____10216) {
-      return cljs.core.seq.call(null, more__10215) == null
-    }else {
-      return and__3822__auto____10216
-    }
-  }()) {
-    return hlisp.reader.text_node.call(null, text__10214)
-  }else {
-    return null
-  }
-};
-hlisp.reader.parse_node = function parse_node(expr) {
-  if(cljs.core.truth_(hlisp.reader.valid_node_expr_QMARK_.call(null, expr))) {
-    var vec__10222__10223 = expr;
-    var tag__10224 = cljs.core.nth.call(null, vec__10222__10223, 0, null);
-    var attrs__10225 = cljs.core.nth.call(null, vec__10222__10223, 1, null);
-    var children__10226 = cljs.core.nthnext.call(null, vec__10222__10223, 2);
-    if(cljs.core.truth_(hlisp.reader.valid_attrlist_QMARK_.call(null, attrs__10225))) {
-      return cljs.core.concat.call(null, cljs.core.list.call(null, tag__10224, attrs__10225), cljs.core.map.call(null, hlisp.reader.read_form, children__10226))
-    }else {
-      return parse_node.call(null, cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.concat.call(null, cljs.core.list.call(null, tag__10224, hlisp.reader.empty_attrs, attrs__10225), children__10226)))
-    }
-  }else {
-    return null
-  }
-};
-hlisp.reader.read_form = function read_form(expr) {
-  var or__3824__auto____10237 = hlisp.reader.parse_symbol.call(null, expr);
-  if(cljs.core.truth_(or__3824__auto____10237)) {
-    return or__3824__auto____10237
-  }else {
-    var or__3824__auto____10238 = hlisp.reader.parse_bool_literal.call(null, expr);
-    if(cljs.core.truth_(or__3824__auto____10238)) {
-      return or__3824__auto____10238
-    }else {
-      var or__3824__auto____10239 = hlisp.reader.parse_nil_literal.call(null, expr);
-      if(cljs.core.truth_(or__3824__auto____10239)) {
-        return or__3824__auto____10239
-      }else {
-        var or__3824__auto____10240 = hlisp.reader.parse_map_literal.call(null, expr);
-        if(cljs.core.truth_(or__3824__auto____10240)) {
-          return or__3824__auto____10240
-        }else {
-          var or__3824__auto____10241 = hlisp.reader.parse_set_literal.call(null, expr);
-          if(cljs.core.truth_(or__3824__auto____10241)) {
-            return or__3824__auto____10241
-          }else {
-            var or__3824__auto____10242 = hlisp.reader.parse_vector_literal.call(null, expr);
-            if(cljs.core.truth_(or__3824__auto____10242)) {
-              return or__3824__auto____10242
-            }else {
-              var or__3824__auto____10243 = hlisp.reader.parse_string_literal.call(null, expr);
-              if(cljs.core.truth_(or__3824__auto____10243)) {
-                return or__3824__auto____10243
-              }else {
-                var or__3824__auto____10244 = hlisp.reader.parse_number_literal.call(null, expr);
-                if(cljs.core.truth_(or__3824__auto____10244)) {
-                  return or__3824__auto____10244
-                }else {
-                  var or__3824__auto____10245 = hlisp.reader.parse_text_node.call(null, expr);
-                  if(cljs.core.truth_(or__3824__auto____10245)) {
-                    return or__3824__auto____10245
-                  }else {
-                    var or__3824__auto____10246 = hlisp.reader.parse_node.call(null, expr);
-                    if(cljs.core.truth_(or__3824__auto____10246)) {
-                      return or__3824__auto____10246
-                    }else {
-                      if(false) {
-                        return null
-                      }else {
-                        throw new Error([cljs.core.str("Assert failed: "), cljs.core.str([cljs.core.str("read-form: "), cljs.core.str(expr), cljs.core.str(" isn't a valid expression")].join("")), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, false))].join(""));
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-};
-hlisp.reader.read_forms = function read_forms(forms) {
-  return cljs.core.map.call(null, hlisp.reader.read_form, forms)
-};
-hlisp.reader.read_string = function read_string(s) {
-  return hlisp.reader.read_forms.call(null, cljs.reader.read_string.call(null, [cljs.core.str("("), cljs.core.str(s), cljs.core.str("\n)")].join("")))
-};
-hlisp.reader.readit = function readit(s) {
-  return cljs.reader.read_string.call(null, s)
-};
-goog.provide("hlisp.compiler");
-goog.require("cljs.core");
-goog.require("hlisp.hexp");
-goog.require("hlisp.util");
-goog.require("hlisp.hexp");
-goog.require("hlisp.util");
+goog.require("clojure.string");
 goog.require("cljs.reader");
-hlisp.compiler.read_attrs_pairs = function read_attrs_pairs(s) {
-  return cljs.core.map.call(null, function(p1__7708_SHARP_) {
-    return cljs.core.list.call(null, cljs.core.first.call(null, p1__7708_SHARP_), cljs.core.string_QMARK_.call(null, cljs.core.second.call(null, p1__7708_SHARP_)) ? cljs.core.second.call(null, p1__7708_SHARP_) : "")
-  }, cljs.core.filter.call(null, function(p1__7709_SHARP_) {
-    return cljs.core.symbol_QMARK_.call(null, cljs.core.first.call(null, p1__7709_SHARP_))
-  }, cljs.core.partition.call(null, 2, cljs.core.interleave.call(null, s, cljs.core.concat.call(null, cljs.core.rest.call(null, s), cljs.core.list.call(null, cljs.core.last.call(null, s)))))))
-};
-hlisp.compiler.read_attrs = function read_attrs(s) {
-  return cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, cljs.core.vec.call(null, cljs.core.map.call(null, cljs.core.vec, hlisp.compiler.read_attrs_pairs.call(null, s))))
-};
-hlisp.compiler.compile_form = function compile_form(p__7710) {
-  var vec__7719__7720 = p__7710;
-  var tagsym__7721 = cljs.core.nth.call(null, vec__7719__7720, 0, null);
-  var attrs__7722 = cljs.core.nth.call(null, vec__7719__7720, 1, null);
-  var children__7723 = cljs.core.nthnext.call(null, vec__7719__7720, 2);
-  var s__7724 = vec__7719__7720;
-  var tag__7725 = [cljs.core.str(tagsym__7721)].join("");
-  var make_attrs__7726 = cljs.core.comp.call(null, hlisp.compiler.read_attrs, cljs.core.first);
-  if(cljs.core._EQ_.call(null, "#", cljs.core.first.call(null, tag__7725))) {
-    return hlisp.hexp.make_text_hexp.call(null, tag__7725, attrs__7722)
-  }else {
-    if(cljs.core._EQ_.call(null, "val:str", tag__7725)) {
-      return hlisp.hexp.make_data_hexp.call(null, cljs.core.apply.call(null, cljs.core.str, cljs.core.mapv.call(null, cljs.core.second, children__7723)))
-    }else {
-      if(cljs.core._EQ_.call(null, "val:num", tag__7725)) {
-        return hlisp.hexp.make_data_hexp.call(null, cljs.reader.read_string.call(null, cljs.core.second.call(null, cljs.core.first.call(null, children__7723))))
-      }else {
-        if(cljs.core._EQ_.call(null, "val:nil", tag__7725)) {
-          return hlisp.hexp.make_data_hexp.call(null, null)
-        }else {
-          if(cljs.core._EQ_.call(null, "val:true", tag__7725)) {
-            return hlisp.hexp.make_data_hexp.call(null, true)
-          }else {
-            if(cljs.core._EQ_.call(null, "val:false", tag__7725)) {
-              return hlisp.hexp.make_data_hexp.call(null, false)
-            }else {
-              if("\ufdd0'else") {
-                return hlisp.hexp.make_node_hexp.call(null, tag__7725, make_attrs__7726.call(null, attrs__7722), cljs.core.map.call(null, compile_form, children__7723))
-              }else {
-                return null
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-};
-hlisp.compiler.compile_forms = function compile_forms(forms) {
-  return cljs.core.map.call(null, hlisp.compiler.compile_form, forms)
-};
-hlisp.compiler.decompile_hexp = function decompile_hexp(p__7727) {
-  var map__7738__7739 = p__7727;
-  var map__7738__7740 = cljs.core.seq_QMARK_.call(null, map__7738__7739) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7738__7739) : map__7738__7739;
-  var hexp__7741 = map__7738__7740;
-  var ids__7742 = cljs.core._lookup.call(null, map__7738__7740, "\ufdd0'ids", null);
-  var text__7743 = cljs.core._lookup.call(null, map__7738__7740, "\ufdd0'text", null);
-  var children__7744 = cljs.core._lookup.call(null, map__7738__7740, "\ufdd0'children", null);
-  var attrs__7745 = cljs.core._lookup.call(null, map__7738__7740, "\ufdd0'attrs", null);
-  var tag__7746 = cljs.core._lookup.call(null, map__7738__7740, "\ufdd0'tag", null);
-  if(cljs.core._EQ_.call(null, "#", cljs.core.first.call(null, tag__7746))) {
-    return cljs.core.list.call(null, cljs.core.symbol.call(null, tag__7746), text__7743)
-  }else {
-    if(cljs.core.string_QMARK_.call(null, tag__7746)) {
-      var attrmap__7747 = cljs.core.seq.call(null, ids__7742) ? cljs.core.assoc.call(null, attrs__7745, "\ufdd0'hl", clojure.string.join.call(null, " ", ids__7742)) : attrs__7745;
-      return cljs.core.concat.call(null, cljs.core.list.call(null, cljs.core.symbol.call(null, tag__7746), cljs.core.list.call(null, cljs.core.mapcat.call(null, hlisp.util.zipfn.call(null, cljs.core.PersistentVector.fromArray([cljs.core.symbol, cljs.core.str], true)), attrmap__7747))), cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map.call(null, decompile_hexp, children__7744)))
-    }else {
-      return null
-    }
-  }
-};
-hlisp.compiler.decompile_hexps = function decompile_hexps(hexps) {
-  return cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map.call(null, hlisp.compiler.decompile_hexp, hexps))
-};
-hlisp.compiler.dc = function dc(p__7748) {
-  var map__7759__7760 = p__7748;
-  var map__7759__7761 = cljs.core.seq_QMARK_.call(null, map__7759__7760) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7759__7760) : map__7759__7760;
-  var hexp__7762 = map__7759__7761;
-  var data__7763 = cljs.core._lookup.call(null, map__7759__7761, "\ufdd0'data", null);
-  var ids__7764 = cljs.core._lookup.call(null, map__7759__7761, "\ufdd0'ids", null);
-  var text__7765 = cljs.core._lookup.call(null, map__7759__7761, "\ufdd0'text", null);
-  var children__7766 = cljs.core._lookup.call(null, map__7759__7761, "\ufdd0'children", null);
-  var attrs__7767 = cljs.core._lookup.call(null, map__7759__7761, "\ufdd0'attrs", null);
-  var tag__7768 = cljs.core._lookup.call(null, map__7759__7761, "\ufdd0'tag", null);
-  if(cljs.core._EQ_.call(null, "#", cljs.core.first.call(null, tag__7768))) {
-    return cljs.core.list.call(null, cljs.core.symbol.call(null, tag__7768), text__7765)
-  }else {
-    if(cljs.core._EQ_.call(null, "\ufdd0'data", tag__7768)) {
-      return cljs.core.list.call(null, tag__7768, data__7763)
-    }else {
-      if(cljs.core.seq.call(null, children__7766)) {
-        return cljs.core.concat.call(null, cljs.core.list.call(null, cljs.core.symbol.call(null, tag__7768)), cljs.core.remove.call(null, cljs.core.nil_QMARK_, cljs.core.map.call(null, dc, children__7766)))
-      }else {
-        if("\ufdd0'else") {
-          return cljs.core.symbol.call(null, tag__7768)
-        }else {
-          return null
-        }
-      }
-    }
-  }
-};
-hlisp.compiler.dcs = cljs.core.partial.call(null, cljs.core.map, hlisp.compiler.dc);
-goog.provide("hlisp.interpreter");
-goog.require("cljs.core");
-goog.require("hlisp.util");
-goog.require("hlisp.hexp");
-goog.require("hlisp.compiler");
-goog.require("hlisp.reader");
-goog.require("hlisp.hexp");
-goog.require("hlisp.reader");
-goog.require("hlisp.compiler");
-goog.require("hlisp.util");
-goog.require("clojure.set");
-hlisp.interpreter._STAR_global_env_STAR_ = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
-hlisp.interpreter.bind_env = cljs.core.into;
-hlisp.interpreter.bind_global_BANG_ = cljs.core.partial.call(null, cljs.core.swap_BANG_, hlisp.interpreter._STAR_global_env_STAR_, cljs.core.into);
-hlisp.interpreter.resolve_env = function resolve_env(env, name) {
-  var or__3824__auto____7850 = cljs.core._lookup.call(null, env, name, null);
-  if(cljs.core.truth_(or__3824__auto____7850)) {
-    return or__3824__auto____7850
-  }else {
-    return cljs.core._lookup.call(null, cljs.core.deref.call(null, hlisp.interpreter._STAR_global_env_STAR_), name, null)
-  }
-};
-hlisp.interpreter.hlisp_tags = cljs.core.PersistentHashSet.fromArray(["list"]);
-hlisp.interpreter.hlisp_boxed_tags = cljs.core.PersistentHashSet.fromArray(["val:map", "val:seq", "val:true", "val:set", "val:false", "val:num", "val:nil", "val:str", "val:vec"]);
-hlisp.interpreter.self_evaluating_tags = clojure.set.union.call(null, hlisp.hexp.html_tags, hlisp.hexp.html_text_tags, hlisp.interpreter.hlisp_tags, hlisp.interpreter.hlisp_boxed_tags);
-hlisp.interpreter.elems = function elems(hexps) {
-  return cljs.core.remove.call(null, hlisp.interpreter.text_hexp_QMARK_, hexps)
-};
-hlisp.interpreter.text_hexp_QMARK_ = function text_hexp_QMARK_(hexp) {
-  return cljs.core._EQ_.call(null, "#", cljs.core.first.call(null, (new cljs.core.Keyword("\ufdd0'tag")).call(null, hexp)))
-};
-hlisp.interpreter.self_evaluating_hexp_QMARK_ = function self_evaluating_hexp_QMARK_(hexp) {
-  var or__3824__auto____7853 = cljs.core.contains_QMARK_.call(null, hlisp.interpreter.self_evaluating_tags, (new cljs.core.Keyword("\ufdd0'tag")).call(null, hexp));
-  if(or__3824__auto____7853) {
-    return or__3824__auto____7853
-  }else {
-    var or__3824__auto____7854 = hlisp.interpreter.text_hexp_QMARK_.call(null, hexp);
-    if(cljs.core.truth_(or__3824__auto____7854)) {
-      return or__3824__auto____7854
-    }else {
-      return hlisp.interpreter.data_hexp_QMARK_.call(null, hexp)
-    }
-  }
-};
-hlisp.interpreter.has_tag_QMARK_ = function has_tag_QMARK_(tag, hexp) {
-  return cljs.core._EQ_.call(null, tag, (new cljs.core.Keyword("\ufdd0'tag")).call(null, hexp))
-};
-hlisp.interpreter.quoted_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "quote");
-hlisp.interpreter.syntax_quoted_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "syntax-quote");
-hlisp.interpreter.defvalues_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "defvalues");
-hlisp.interpreter.def_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "def");
-hlisp.interpreter.if_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "if");
-hlisp.interpreter.apply_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "apply");
-hlisp.interpreter.eval_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "eval");
-hlisp.interpreter.do_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "do");
-hlisp.interpreter.macro_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "macro");
-hlisp.interpreter.data_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "\ufdd0'data");
-hlisp.interpreter.let_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "let");
-hlisp.interpreter.fn_hexp_QMARK_ = cljs.core.partial.call(null, hlisp.interpreter.has_tag_QMARK_, "fn");
-hlisp.interpreter.truthy_hexp_QMARK_ = function truthy_hexp_QMARK_(hexp) {
-  var map__7862__7863 = hexp;
-  var map__7862__7864 = cljs.core.seq_QMARK_.call(null, map__7862__7863) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7862__7863) : map__7862__7863;
-  var data__7865 = cljs.core._lookup.call(null, map__7862__7864, "\ufdd0'data", null);
-  var tag__7866 = cljs.core._lookup.call(null, map__7862__7864, "\ufdd0'tag", null);
-  var or__3824__auto____7867 = !cljs.core._EQ_.call(null, "\ufdd0'data", tag__7866);
-  if(or__3824__auto____7867) {
-    return or__3824__auto____7867
-  }else {
-    var and__3822__auto____7868 = cljs.core.not_EQ_.call(null, null, data__7865);
-    if(and__3822__auto____7868) {
-      return cljs.core.not_EQ_.call(null, false, data__7865)
-    }else {
-      return and__3822__auto____7868
-    }
-  }
-};
-hlisp.interpreter.analyze_quoted = function analyze_quoted(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.quoted_hexp_QMARK_.call(null, hexp))) {
-    return function(env) {
-      return cljs.core.first.call(null, hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp)))
-    }
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_syntax_quoted = function analyze_syntax_quoted(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.syntax_quoted_hexp_QMARK_.call(null, hexp))) {
-    var form__7872 = cljs.core.first.call(null, hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp)));
-    return hlisp.interpreter.analyze.call(null, cljs.core.first.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hlisp.interpreter.syntax_quote.call(null, form__7872))))
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_defvalues = function analyze_defvalues(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.defvalues_hexp_QMARK_.call(null, hexp))) {
-    var args__7878 = hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp));
-    var syms__7879 = cljs.core.butlast.call(null, args__7878);
-    var proc__7880 = hlisp.interpreter.analyze.call(null, cljs.core.last.call(null, args__7878));
-    var ks__7881 = cljs.core.map.call(null, "\ufdd0'tag", syms__7879);
-    return function(env) {
-      var vs__7882 = hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, proc__7880.call(null, env)));
-      cljs.core.doall.call(null, cljs.core.map.call(null, function(p1__7869_SHARP_, p2__7870_SHARP_) {
-        return hlisp.interpreter.bind_global_BANG_.call(null, cljs.core.PersistentArrayMap.fromArrays([p1__7869_SHARP_], [p2__7870_SHARP_]))
-      }, ks__7881, vs__7882));
-      return hlisp.hexp.make_data_hexp.call(null, null)
-    }
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_def = function analyze_def(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.def_hexp_QMARK_.call(null, hexp))) {
-    var vec__7892__7894 = hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp));
-    var map__7893__7895 = cljs.core.nth.call(null, vec__7892__7894, 0, null);
-    var map__7893__7896 = cljs.core.seq_QMARK_.call(null, map__7893__7895) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7893__7895) : map__7893__7895;
-    var tag__7897 = cljs.core._lookup.call(null, map__7893__7896, "\ufdd0'tag", null);
-    var expr__7898 = cljs.core.nth.call(null, vec__7892__7894, 1, null);
-    var proc__7899 = hlisp.interpreter.analyze.call(null, expr__7898);
-    var bind_now__7900 = hlisp.interpreter.macro_hexp_QMARK_.call(null, expr__7898);
-    if(cljs.core.truth_(bind_now__7900)) {
-      hlisp.interpreter.bind_global_BANG_.call(null, cljs.core.PersistentArrayMap.fromArrays([tag__7897], [proc__7899.call(null, cljs.core.ObjMap.EMPTY)]))
-    }else {
-    }
-    return function(env) {
-      if(cljs.core.truth_(bind_now__7900)) {
-      }else {
-        hlisp.interpreter.bind_global_BANG_.call(null, cljs.core.PersistentArrayMap.fromArrays([tag__7897], [proc__7899.call(null, env)]))
-      }
-      return hlisp.hexp.make_data_hexp.call(null, null)
-    }
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_if = function analyze_if(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.if_hexp_QMARK_.call(null, hexp))) {
-    var vec__7906__7907 = hlisp.interpreter.analyze_all.call(null, hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp)));
-    var pred__7908 = cljs.core.nth.call(null, vec__7906__7907, 0, null);
-    var consq__7909 = cljs.core.nth.call(null, vec__7906__7907, 1, null);
-    var alt__7910 = cljs.core.nth.call(null, vec__7906__7907, 2, null);
-    return function(env) {
-      if(cljs.core.truth_(hlisp.interpreter.truthy_hexp_QMARK_.call(null, pred__7908.call(null, env)))) {
-        return consq__7909.call(null, env)
-      }else {
-        if(cljs.core.truth_(alt__7910)) {
-          return alt__7910.call(null, env)
-        }else {
-          return hlisp.hexp.make_data_hexp.call(null, null)
-        }
-      }
-    }
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_eval = function analyze_eval(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.eval_hexp_QMARK_.call(null, hexp))) {
-    var proc__7912 = hlisp.interpreter.analyze.call(null, cljs.core.first.call(null, hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp))));
-    return function(env) {
-      return hlisp.interpreter.analyze.call(null, proc__7912.call(null, env)).call(null, cljs.core.ObjMap.EMPTY)
-    }
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_apply = function analyze_apply(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.apply_hexp_QMARK_.call(null, hexp))) {
-    var vec__7921__7922 = hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp));
-    var f__7923 = cljs.core.nth.call(null, vec__7921__7922, 0, null);
-    var v__7924 = cljs.core.nth.call(null, vec__7921__7922, 1, null);
-    var proc__7925 = hlisp.interpreter.analyze.call(null, f__7923);
-    var args__7926 = hlisp.interpreter.analyze.call(null, v__7924);
-    return function(env) {
-      var p__7927 = proc__7925.call(null, env);
-      var a__7928 = args__7926.call(null, env);
-      return hlisp.interpreter.apply_STAR_.call(null, p__7927, cljs.core.ObjMap.EMPTY, hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, a__7928)))
-    }
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_do = function analyze_do(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.do_hexp_QMARK_.call(null, hexp))) {
-    return hlisp.interpreter.analyze_body.call(null, hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp)))
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_let = function analyze_let(hexp) {
-  if(cljs.core.truth_(hlisp.interpreter.let_hexp_QMARK_.call(null, hexp))) {
-    var map__7946__7949 = hexp;
-    var map__7946__7950 = cljs.core.seq_QMARK_.call(null, map__7946__7949) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7946__7949) : map__7946__7949;
-    var children__7951 = cljs.core._lookup.call(null, map__7946__7950, "\ufdd0'children", null);
-    var vec__7947__7952 = hlisp.interpreter.elems.call(null, children__7951);
-    var map__7948__7953 = cljs.core.nth.call(null, vec__7947__7952, 0, null);
-    var map__7948__7954 = cljs.core.seq_QMARK_.call(null, map__7948__7953) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7948__7953) : map__7948__7953;
-    var bind_pairs__7955 = cljs.core._lookup.call(null, map__7948__7954, "\ufdd0'children", null);
-    var body__7956 = cljs.core.nthnext.call(null, vec__7947__7952, 1);
-    var nbind__7957 = cljs.core.count.call(null, bind_pairs__7955);
-    if(cljs.core.even_QMARK_.call(null, nbind__7957)) {
-    }else {
-      throw new Error([cljs.core.str("Assert failed: "), cljs.core.str("odd number of bindings for let"), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'even?", "\ufdd1'nbind"), cljs.core.hash_map("\ufdd0'line", 153))))].join(""));
-    }
-    if(0 < nbind__7957) {
-      var wrap_param__7958 = cljs.core.PersistentVector.fromArray([hlisp.hexp.make_list_hexp.call(null, cljs.core.PersistentVector.fromArray([cljs.core.first.call(null, bind_pairs__7955)], true))], true);
-      var wrap_arg__7959 = cljs.core.PersistentVector.fromArray([cljs.core.second.call(null, bind_pairs__7955)], true);
-      var next_bind__7960 = cljs.core.PersistentVector.fromArray([hlisp.hexp.make_list_hexp.call(null, cljs.core.vec.call(null, cljs.core.drop.call(null, 2, bind_pairs__7955)))], true);
-      var next_let__7961 = cljs.core.PersistentVector.fromArray([hlisp.hexp.make_node_hexp.call(null, "let", cljs.core.ObjMap.EMPTY, cljs.core.into.call(null, next_bind__7960, cljs.core.vec.call(null, body__7956)))], true);
-      var wrap_fn__7962 = cljs.core.PersistentVector.fromArray([hlisp.hexp.make_node_hexp.call(null, "fn", cljs.core.ObjMap.EMPTY, cljs.core.into.call(null, wrap_param__7958, next_let__7961))], true);
-      return hlisp.interpreter.analyze.call(null, hlisp.hexp.make_node_hexp.call(null, "call", cljs.core.ObjMap.EMPTY, cljs.core.into.call(null, wrap_fn__7962, wrap_arg__7959)))
-    }else {
-      return hlisp.interpreter.analyze_body.call(null, body__7956)
-    }
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_fn = function analyze_fn(hexp) {
-  var temp__3974__auto____7973 = cljs.core.truth_(hlisp.interpreter.fn_hexp_QMARK_.call(null, hexp)) ? "\ufdd0'proc" : cljs.core.truth_(hlisp.interpreter.macro_hexp_QMARK_.call(null, hexp)) ? "\ufdd0'macro" : null;
-  if(cljs.core.truth_(temp__3974__auto____7973)) {
-    var fn_type__7974 = temp__3974__auto____7973;
-    var vec__7975__7976 = hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hexp));
-    var c_params__7977 = cljs.core.nth.call(null, vec__7975__7976, 0, null);
-    var body__7978 = cljs.core.nthnext.call(null, vec__7975__7976, 1);
-    var params__7979 = cljs.core.mapv.call(null, "\ufdd0'tag", (new cljs.core.Keyword("\ufdd0'children")).call(null, c_params__7977));
-    var attr_params__7980 = (new cljs.core.Keyword("\ufdd0'attrs")).call(null, c_params__7977);
-    var proc__7981 = hlisp.interpreter.analyze_body.call(null, body__7978);
-    if(cljs.core.seq.call(null, body__7978)) {
-    }else {
-      throw new Error([cljs.core.str("Assert failed: "), cljs.core.str("empty body"), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'seq", "\ufdd1'body"), cljs.core.hash_map("\ufdd0'line", 170))))].join(""));
-    }
-    return function(env) {
-      return hlisp.hexp.make_proc_hexp.call(null, fn_type__7974, attr_params__7980, params__7979, env, proc__7981)
-    }
-  }else {
-    return null
-  }
-};
-hlisp.interpreter.analyze_node = function analyze_node(hexp) {
-  var map__7992__7993 = hexp;
-  var map__7992__7994 = cljs.core.seq_QMARK_.call(null, map__7992__7993) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7992__7993) : map__7992__7993;
-  var children__7995 = cljs.core._lookup.call(null, map__7992__7994, "\ufdd0'children", null);
-  var attrs__7996 = cljs.core._lookup.call(null, map__7992__7994, "\ufdd0'attrs", null);
-  var tag__7997 = cljs.core._lookup.call(null, map__7992__7994, "\ufdd0'tag", null);
-  var form__7998 = hlisp.interpreter.resolve_env.call(null, cljs.core.ObjMap.EMPTY, tag__7997);
-  if(cljs.core._EQ_.call(null, "\ufdd0'macro", (new cljs.core.Keyword("\ufdd0'tag")).call(null, form__7998))) {
-    return hlisp.interpreter.analyze.call(null, hlisp.interpreter.apply_STAR_.call(null, form__7998, attrs__7996, children__7995))
-  }else {
-    var args1__7999 = hlisp.interpreter.analyze_all.call(null, children__7995);
-    var args2__8000 = hlisp.util.funroll_seq.call(null, args1__7999);
-    return function(env) {
-      var proc__8001 = hlisp.interpreter.resolve_env.call(null, env, tag__7997);
-      if(cljs.core.truth_(proc__8001)) {
-        return hlisp.interpreter.apply_STAR_.call(null, proc__8001, attrs__7996, args2__8000.call(null, env))
-      }else {
-        if(cljs.core.truth_(hlisp.interpreter.self_evaluating_hexp_QMARK_.call(null, hexp))) {
-          return cljs.core.assoc.call(null, hexp, "\ufdd0'children", cljs.core.mapv.call(null, function(p1__7963_SHARP_) {
-            return p1__7963_SHARP_.call(null, env)
-          }, args1__7999))
-        }else {
-          return null
-        }
-      }
-    }
-  }
-};
-hlisp.interpreter.analyze = function analyze(hexp) {
-  var or__3824__auto____8013 = hlisp.interpreter.analyze_quoted.call(null, hexp);
-  if(cljs.core.truth_(or__3824__auto____8013)) {
-    return or__3824__auto____8013
-  }else {
-    var or__3824__auto____8014 = hlisp.interpreter.analyze_syntax_quoted.call(null, hexp);
-    if(cljs.core.truth_(or__3824__auto____8014)) {
-      return or__3824__auto____8014
-    }else {
-      var or__3824__auto____8015 = hlisp.interpreter.analyze_defvalues.call(null, hexp);
-      if(cljs.core.truth_(or__3824__auto____8015)) {
-        return or__3824__auto____8015
-      }else {
-        var or__3824__auto____8016 = hlisp.interpreter.analyze_def.call(null, hexp);
-        if(cljs.core.truth_(or__3824__auto____8016)) {
-          return or__3824__auto____8016
-        }else {
-          var or__3824__auto____8017 = hlisp.interpreter.analyze_if.call(null, hexp);
-          if(cljs.core.truth_(or__3824__auto____8017)) {
-            return or__3824__auto____8017
-          }else {
-            var or__3824__auto____8018 = hlisp.interpreter.analyze_eval.call(null, hexp);
-            if(cljs.core.truth_(or__3824__auto____8018)) {
-              return or__3824__auto____8018
-            }else {
-              var or__3824__auto____8019 = hlisp.interpreter.analyze_apply.call(null, hexp);
-              if(cljs.core.truth_(or__3824__auto____8019)) {
-                return or__3824__auto____8019
-              }else {
-                var or__3824__auto____8020 = hlisp.interpreter.analyze_do.call(null, hexp);
-                if(cljs.core.truth_(or__3824__auto____8020)) {
-                  return or__3824__auto____8020
-                }else {
-                  var or__3824__auto____8021 = hlisp.interpreter.analyze_let.call(null, hexp);
-                  if(cljs.core.truth_(or__3824__auto____8021)) {
-                    return or__3824__auto____8021
-                  }else {
-                    var or__3824__auto____8022 = hlisp.interpreter.analyze_fn.call(null, hexp);
-                    if(cljs.core.truth_(or__3824__auto____8022)) {
-                      return or__3824__auto____8022
-                    }else {
-                      var or__3824__auto____8023 = hlisp.interpreter.analyze_node.call(null, hexp);
-                      if(cljs.core.truth_(or__3824__auto____8023)) {
-                        return or__3824__auto____8023
-                      }else {
-                        if(false) {
-                          return null
-                        }else {
-                          throw new Error([cljs.core.str("Assert failed: "), cljs.core.str([cljs.core.str("unbound variable "), cljs.core.str((new cljs.core.Keyword("\ufdd0'tag")).call(null, hexp))].join("")), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, false))].join(""));
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-};
-hlisp.interpreter.analyze_all = cljs.core.partial.call(null, cljs.core.map, hlisp.interpreter.analyze);
-hlisp.interpreter.analyze_body = cljs.core.comp.call(null, hlisp.util.funroll_body, hlisp.interpreter.analyze_all);
-hlisp.interpreter.analyze_seq = cljs.core.comp.call(null, hlisp.util.funroll_seq, hlisp.interpreter.analyze_all);
-hlisp.interpreter.analyze_forms = cljs.core.comp.call(null, hlisp.interpreter.analyze_seq, hlisp.compiler.compile_forms);
-hlisp.interpreter.syntax_quote_list = function syntax_quote_list(p__8024) {
-  var map__8034__8035 = p__8024;
-  var map__8034__8036 = cljs.core.seq_QMARK_.call(null, map__8034__8035) ? cljs.core.apply.call(null, cljs.core.hash_map, map__8034__8035) : map__8034__8035;
-  var hexp__8037 = map__8034__8036;
-  var children__8038 = cljs.core._lookup.call(null, map__8034__8036, "\ufdd0'children", null);
-  var tag__8039 = cljs.core._lookup.call(null, map__8034__8036, "\ufdd0'tag", null);
-  var wrap__8040 = hlisp.hexp.make_hexp.call(null, "concat");
-  var head__8041 = cljs.core.PersistentVector.fromArray([hlisp.hexp.make_quote_hexp.call(null, hlisp.hexp.make_hexp.call(null, tag__8039))], true);
-  var tail__8042 = cljs.core.mapv.call(null, hlisp.interpreter.syntax_quote, hlisp.interpreter.elems.call(null, children__8038));
-  return hlisp.hexp.make_node_hexp.call(null, "concat", cljs.core.ObjMap.EMPTY, cljs.core.into.call(null, head__8041, tail__8042))
-};
-hlisp.interpreter.syntax_quote = function syntax_quote(p__8043) {
-  var map__8051__8052 = p__8043;
-  var map__8051__8053 = cljs.core.seq_QMARK_.call(null, map__8051__8052) ? cljs.core.apply.call(null, cljs.core.hash_map, map__8051__8052) : map__8051__8052;
-  var hexp__8054 = map__8051__8053;
-  var children__8055 = cljs.core._lookup.call(null, map__8051__8053, "\ufdd0'children", null);
-  var tag__8056 = cljs.core._lookup.call(null, map__8051__8053, "\ufdd0'tag", null);
-  var child_args__8057 = hlisp.interpreter.elems.call(null, children__8055);
-  if(cljs.core._EQ_.call(null, "unquote-splicing", tag__8056)) {
-    return cljs.core.first.call(null, child_args__8057)
-  }else {
-    if(cljs.core._EQ_.call(null, "unquote", tag__8056)) {
-      return hlisp.hexp.make_list_hexp.call(null, cljs.core.PersistentVector.fromArray([cljs.core.first.call(null, child_args__8057)], true))
-    }else {
-      if(cljs.core.not.call(null, cljs.core.seq.call(null, child_args__8057))) {
-        return hlisp.hexp.make_list_hexp.call(null, cljs.core.PersistentVector.fromArray([hlisp.hexp.make_quote_hexp.call(null, hexp__8054)], true))
-      }else {
-        if("\ufdd0'else") {
-          return hlisp.hexp.make_list_hexp.call(null, cljs.core.PersistentVector.fromArray([hlisp.interpreter.syntax_quote_list.call(null, hexp__8054)], true))
-        }else {
-          return null
-        }
-      }
-    }
-  }
-};
-hlisp.interpreter.sq_test = function sq_test(form) {
-  return hlisp.util.tee.call(null, hlisp.compiler.dc, "~~[st]~~", cljs.core.first.call(null, hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, hlisp.interpreter.syntax_quote.call(null, hlisp.compiler.compile_form.call(null, hlisp.reader.read_form.call(null, form)))))))
-};
-hlisp.interpreter.filter_ids = function filter_ids(hexps) {
-  return cljs.core.map.call(null, function(p1__8058_SHARP_) {
-    if(cljs.core.truth_(hlisp.interpreter.self_evaluating_hexp_QMARK_.call(null, p1__8058_SHARP_))) {
-      return p1__8058_SHARP_
-    }else {
-      return cljs.core.assoc.call(null, p1__8058_SHARP_, "\ufdd0'ids", cljs.core.PersistentVector.EMPTY)
-    }
-  }, hexps)
-};
-hlisp.interpreter.eval_STAR_ = function eval_STAR_(forms) {
-  return hlisp.compiler.decompile_hexps.call(null, hlisp.interpreter.filter_ids.call(null, hlisp.interpreter.analyze_forms.call(null, forms).call(null, cljs.core.ObjMap.EMPTY)))
-};
-hlisp.interpreter.eval_string_STAR_ = function eval_string_STAR_(s) {
-  return hlisp.util.tee.call(null, hlisp.compiler.dcs, ">>", hlisp.interpreter.filter_ids.call(null, hlisp.interpreter.analyze_forms.call(null, hlisp.reader.read_string.call(null, s)).call(null, cljs.core.ObjMap.EMPTY)))
-};
-hlisp.interpreter.parse_bindings = function parse_bindings(params, args) {
-  var k__8063 = cljs.core.first.call(null, params);
-  var v__8064 = cljs.core.first.call(null, args);
-  if(cljs.core._EQ_.call(null, "&", k__8063)) {
-    return parse_bindings.call(null, cljs.core.rest.call(null, params), cljs.core.list.call(null, hlisp.hexp.make_list_hexp.call(null, args)))
-  }else {
-    if(cljs.core.truth_(function() {
-      var and__3822__auto____8065 = k__8063;
-      if(cljs.core.truth_(and__3822__auto____8065)) {
-        return v__8064
-      }else {
-        return and__3822__auto____8065
-      }
-    }())) {
-      return cljs.core.into.call(null, cljs.core.PersistentArrayMap.fromArrays([k__8063], [v__8064]), parse_bindings.call(null, cljs.core.rest.call(null, params), cljs.core.rest.call(null, args)))
-    }else {
-      if(cljs.core.truth_(function() {
-        var or__3824__auto____8066 = k__8063;
-        if(cljs.core.truth_(or__3824__auto____8066)) {
-          return or__3824__auto____8066
-        }else {
-          return v__8064
-        }
-      }())) {
-        if(false) {
-          return null
-        }else {
-          throw new Error([cljs.core.str("Assert failed: "), cljs.core.str("arity mismatch"), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, false))].join(""));
-        }
-      }else {
-        return null
-      }
-    }
-  }
-};
-hlisp.interpreter.apply_STAR_ = function apply_STAR_(hexp, attr_args, args) {
-  var map__8078__8079 = hexp;
-  var map__8078__8080 = cljs.core.seq_QMARK_.call(null, map__8078__8079) ? cljs.core.apply.call(null, cljs.core.hash_map, map__8078__8079) : map__8078__8079;
-  var env__8081 = cljs.core._lookup.call(null, map__8078__8080, "\ufdd0'env", null);
-  var attr_params__8082 = cljs.core._lookup.call(null, map__8078__8080, "\ufdd0'attr-params", null);
-  var params__8083 = cljs.core._lookup.call(null, map__8078__8080, "\ufdd0'params", null);
-  var proc__8084 = cljs.core._lookup.call(null, map__8078__8080, "\ufdd0'proc", null);
-  var attrs__8085 = cljs.core._lookup.call(null, map__8078__8080, "\ufdd0'attrs", null);
-  var tag__8086 = cljs.core._lookup.call(null, map__8078__8080, "\ufdd0'tag", null);
+goog.require("clojure.string");
+goog.require("jayq.util");
+goog.require("jayq.core");
+hlisp.env.IDomNode = {};
+hlisp.env.dom = function dom(n) {
   if(function() {
-    var or__3824__auto____8087 = cljs.core.string_QMARK_.call(null, tag__8086);
-    if(or__3824__auto____8087) {
-      return or__3824__auto____8087
+    var and__3822__auto____54579 = n;
+    if(and__3822__auto____54579) {
+      return n.hlisp$env$IDomNode$dom$arity$1
     }else {
-      return cljs.core.seq.call(null, args) == null
+      return and__3822__auto____54579
     }
   }()) {
-    return cljs.core.update_in.call(null, cljs.core.update_in.call(null, hexp, cljs.core.PersistentVector.fromArray(["\ufdd0'children"], true), cljs.core.into, args), cljs.core.PersistentVector.fromArray(["\ufdd0'attrs"], true), cljs.core.into, attr_args)
+    return n.hlisp$env$IDomNode$dom$arity$1(n)
   }else {
-    if(cljs.core._EQ_.call(null, "\ufdd0'prim", tag__8086)) {
-      return proc__8084.call(null, attr_args, hlisp.interpreter.elems.call(null, args))
-    }else {
+    var x__2363__auto____54580 = n == null ? null : n;
+    return function() {
+      var or__3824__auto____54581 = hlisp.env.dom[goog.typeOf(x__2363__auto____54580)];
+      if(or__3824__auto____54581) {
+        return or__3824__auto____54581
+      }else {
+        var or__3824__auto____54582 = hlisp.env.dom["_"];
+        if(or__3824__auto____54582) {
+          return or__3824__auto____54582
+        }else {
+          throw cljs.core.missing_protocol.call(null, "IDomNode.dom", n);
+        }
+      }
+    }().call(null, n)
+  }
+};
+hlisp.env.TextNode = function(tag, text) {
+  this.tag = tag;
+  this.text = text;
+  this.cljs$lang$protocol_mask$partition1$ = 0;
+  this.cljs$lang$protocol_mask$partition0$ = 536870913
+};
+hlisp.env.TextNode.cljs$lang$type = true;
+hlisp.env.TextNode.cljs$lang$ctorPrSeq = function(this__2309__auto__) {
+  return cljs.core.list.call(null, "hlisp.env/TextNode")
+};
+hlisp.env.TextNode.prototype.hlisp$env$IDomNode$ = true;
+hlisp.env.TextNode.prototype.hlisp$env$IDomNode$dom$arity$1 = function(n) {
+  var this__54586 = this;
+  return jayq.core.$.call(null, cljs.core._EQ_.call(null, "$text", n.tag) ? document.createTextNode(n.text) : document.createComment(n.text))
+};
+hlisp.env.TextNode.prototype.cljs$core$IPrintable$_pr_seq$arity$2 = function(n, opts) {
+  var this__54587 = this;
+  return[cljs.core.str("("), cljs.core.str(n.tag), cljs.core.str(" "), cljs.core.str(cljs.core.pr_str.call(null, n.text)), cljs.core.str(")")].join("")
+};
+hlisp.env.TextNode.prototype.call = function(this_sym54588) {
+  var this__54589 = this;
+  var this_sym54588__54590 = this;
+  var n__54591 = this_sym54588__54590;
+  return n__54591
+};
+hlisp.env.TextNode.prototype.apply = function(this_sym54584, args54585) {
+  var this__54592 = this;
+  return this_sym54584.call.apply(this_sym54584, [this_sym54584].concat(args54585.slice()))
+};
+hlisp.env.TextNode;
+hlisp.env.ElemNode = function(tag, attrs, children, ids) {
+  this.tag = tag;
+  this.attrs = attrs;
+  this.children = children;
+  this.ids = ids;
+  this.cljs$lang$protocol_mask$partition1$ = 0;
+  this.cljs$lang$protocol_mask$partition0$ = 679479263
+};
+hlisp.env.ElemNode.cljs$lang$type = true;
+hlisp.env.ElemNode.cljs$lang$ctorPrSeq = function(this__2309__auto__) {
+  return cljs.core.list.call(null, "hlisp.env/ElemNode")
+};
+hlisp.env.ElemNode.prototype.cljs$core$ILookup$_lookup$arity$2 = function(n, k) {
+  var this__54595 = this;
+  return k.call(null, n.attrs)
+};
+hlisp.env.ElemNode.prototype.cljs$core$ILookup$_lookup$arity$3 = function(n, k, not_found) {
+  var this__54596 = this;
+  return k.call(null, n.attrs, not_found)
+};
+hlisp.env.ElemNode.prototype.cljs$core$IAssociative$_contains_key_QMARK_$arity$2 = function(n, k) {
+  var this__54597 = this;
+  return cljs.core.contains_QMARK_.call(null, n.attrs, k)
+};
+hlisp.env.ElemNode.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(n, k, v) {
+  var this__54598 = this;
+  if(cljs.core.integer_QMARK_.call(null, k)) {
+    return hlisp.env.make_elem_node.call(null, n.tag, n.attrs, cljs.core.assoc.call(null, n.children, k, v), n.ids)
+  }else {
+    return hlisp.env.make_elem_node.call(null, n.tag, cljs.core.assoc.call(null, n.attrs, k, v), n.children, n.ids)
+  }
+};
+hlisp.env.ElemNode.prototype.call = function() {
+  var G__54642__delegate = function(this_sym54599, args) {
+    var this_sym54599__54601 = this;
+    var n__54602 = this_sym54599__54601;
+    var ntag__54603 = n__54602.tag;
+    var nattrs__54604 = n__54602.attrs;
+    var nchildren__54605 = n__54602.children;
+    var nids__54606 = n__54602.ids;
+    if(cljs.core.seq.call(null, args)) {
+      var vec__54607__54608 = args;
+      var head__54609 = cljs.core.nth.call(null, vec__54607__54608, 0, null);
+      var tail__54610 = cljs.core.nthnext.call(null, vec__54607__54608, 1);
+      var typ__54611 = cljs.core.type.call(null, head__54609);
       if(function() {
-        var or__3824__auto____8088 = cljs.core._EQ_.call(null, "\ufdd0'macro", tag__8086);
-        if(or__3824__auto____8088) {
-          return or__3824__auto____8088
+        var or__3824__auto____54612 = cljs.core._EQ_.call(null, typ__54611, hlisp.env.ElemNode);
+        if(or__3824__auto____54612) {
+          return or__3824__auto____54612
         }else {
-          return cljs.core._EQ_.call(null, "\ufdd0'proc", tag__8086)
+          return cljs.core._EQ_.call(null, typ__54611, hlisp.env.TextNode)
         }
       }()) {
-        return proc__8084.call(null, hlisp.interpreter.bind_env.call(null, env__8081, hlisp.interpreter.parse_bindings.call(null, params__8083, hlisp.interpreter.elems.call(null, args))))
+        return hlisp.env.make_elem_node.call(null, ntag__54603, nattrs__54604, cljs.core.vec.call(null, args), nids__54606)
       }else {
-        return null
+        return hlisp.env.make_elem_node.call(null, ntag__54603, cljs.core.into.call(null, nattrs__54604, head__54609), cljs.core.into.call(null, nchildren__54605, cljs.core.vec.call(null, tail__54610)), nids__54606)
+      }
+    }else {
+      return n__54602
+    }
+  };
+  var G__54642 = function(this_sym54599, var_args) {
+    var this__54600 = this;
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
+    }
+    return G__54642__delegate.call(this, this_sym54599, args)
+  };
+  G__54642.cljs$lang$maxFixedArity = 1;
+  G__54642.cljs$lang$applyTo = function(arglist__54643) {
+    var this_sym54599 = cljs.core.first(arglist__54643);
+    var args = cljs.core.rest(arglist__54643);
+    return G__54642__delegate(this_sym54599, args)
+  };
+  G__54642.cljs$lang$arity$variadic = G__54642__delegate;
+  return G__54642
+}();
+hlisp.env.ElemNode.prototype.apply = function(this_sym54593, args54594) {
+  var this__54613 = this;
+  return this_sym54593.call.apply(this_sym54593, [this_sym54593].concat(args54594.slice()))
+};
+hlisp.env.ElemNode.prototype.cljs$core$INext$_next$arity$1 = function(n) {
+  var this__54614 = this;
+  var nx__54615 = cljs.core.next.call(null, n.children);
+  if(cljs.core.seq.call(null, nx__54615)) {
+    return hlisp.env.make_elem_node.call(null, "$list", cljs.core.ObjMap.EMPTY, nx__54615, cljs.core.PersistentVector.EMPTY)
+  }else {
+    return nx__54615
+  }
+};
+hlisp.env.ElemNode.prototype.cljs$core$ICollection$_conj$arity$2 = function(n, o) {
+  var this__54616 = this;
+  return hlisp.env.make_elem_node.call(null, n.tag, n.attrs, cljs.core.conj.call(null, cljs.core.vec.call(null, n.children), o), n.ids)
+};
+hlisp.env.ElemNode.prototype.cljs$core$IReversible$_rseq$arity$1 = function(n) {
+  var this__54617 = this;
+  return hlisp.env.make_elem_node.call(null, n.tag, n.attrs, cljs.core.vec.call(null, cljs.core.reverse.call(null, n.children)), n.ids)
+};
+hlisp.env.ElemNode.prototype.hlisp$env$IDomNode$ = true;
+hlisp.env.ElemNode.prototype.hlisp$env$IDomNode$dom$arity$1 = function(n) {
+  var this__54618 = this;
+  var $elem__54619 = jayq.core.$.call(null, document.createElement(n.tag));
+  var ids__54620 = n.ids;
+  var attrs_noid__54621 = n.attrs;
+  var attrs__54622 = cljs.core.seq.call(null, ids__54620) ? cljs.core.assoc.call(null, attrs_noid__54621, "\ufdd0'data-hl", clojure.string.join.call(null, " ", ids__54620)) : attrs_noid__54621;
+  var children__54623 = cljs.core.mapv.call(null, hlisp.env.dom, n.children);
+  return jayq.core.append.call(null, jayq.core.attr.call(null, $elem__54619, attrs__54622), children__54623)
+};
+hlisp.env.ElemNode.prototype.cljs$core$ISeqable$_seq$arity$1 = function(n) {
+  var this__54624 = this;
+  if(cljs.core.seq.call(null, n.children)) {
+    return n
+  }else {
+    return null
+  }
+};
+hlisp.env.ElemNode.prototype.cljs$core$IPrintable$_pr_seq$arity$2 = function(n, opts) {
+  var this__54625 = this;
+  var tag__54626 = n.tag;
+  var attrs__54627 = n.attrs;
+  var children__54628 = n.children;
+  var o_paren__54629 = cljs.core.seq.call(null, children__54628) ? "(" : "";
+  var c_paren__54630 = cljs.core.seq.call(null, children__54628) ? ")" : "";
+  var attrs_str__54631 = 0 < cljs.core.count.call(null, attrs__54627) ? cljs.core.pr_str.call(null, attrs__54627) : "";
+  var child_str__54632 = cljs.core.seq.call(null, children__54628) ? clojure.string.join.call(null, " ", cljs.core.map.call(null, cljs.core.pr_str, children__54628)) : "";
+  var str_parts__54633 = cljs.core.filter.call(null, function(p1__54583_SHARP_) {
+    return cljs.core.not_EQ_.call(null, "", p1__54583_SHARP_)
+  }, cljs.core.list.call(null, tag__54626, attrs_str__54631, child_str__54632));
+  var str_all__54634 = 1 < cljs.core.count.call(null, str_parts__54633) ? cljs.core.concat.call(null, cljs.core.with_meta(cljs.core.list("("), cljs.core.hash_map("\ufdd0'line", 116)), str_parts__54633, cljs.core.with_meta(cljs.core.list(")"), cljs.core.hash_map("\ufdd0'line", 116))) : str_parts__54633;
+  return clojure.string.join.call(null, " ", str_all__54634)
+};
+hlisp.env.ElemNode.prototype.cljs$core$ICounted$_count$arity$1 = function(n) {
+  var this__54635 = this;
+  return cljs.core.count.call(null, n.children)
+};
+hlisp.env.ElemNode.prototype.cljs$core$ISeq$_first$arity$1 = function(n) {
+  var this__54636 = this;
+  return cljs.core.first.call(null, n.children)
+};
+hlisp.env.ElemNode.prototype.cljs$core$ISeq$_rest$arity$1 = function(n) {
+  var this__54637 = this;
+  return hlisp.env.make_elem_node.call(null, "$list", cljs.core.ObjMap.EMPTY, cljs.core.rest.call(null, n.children), cljs.core.PersistentVector.EMPTY)
+};
+hlisp.env.ElemNode.prototype.cljs$core$IIndexed$_nth$arity$2 = function(n, i) {
+  var this__54638 = this;
+  return cljs.core.nth.call(null, n.children, i)
+};
+hlisp.env.ElemNode.prototype.cljs$core$IIndexed$_nth$arity$3 = function(n, i, not_found) {
+  var this__54639 = this;
+  return cljs.core.nth.call(null, n.children, i, not_found)
+};
+hlisp.env.ElemNode.prototype.cljs$core$IEmptyableCollection$_empty$arity$1 = function(n) {
+  var this__54640 = this;
+  return hlisp.env.make_elem_node.call(null, n.tag, n.attrs, cljs.core.PersistentVector.EMPTY, n.ids)
+};
+hlisp.env.ElemNode.prototype.cljs$core$IMap$_dissoc$arity$2 = function(n, k) {
+  var this__54641 = this;
+  if(!cljs.core.integer_QMARK_.call(null, k)) {
+  }else {
+    throw new Error([cljs.core.str("Assert failed: "), cljs.core.str("Can't dissoc children"), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'not", cljs.core.with_meta(cljs.core.list("\ufdd1'integer?", "\ufdd1'k"), cljs.core.hash_map("\ufdd0'line", 94))), cljs.core.hash_map("\ufdd0'line", 94))))].join(""));
+  }
+  return hlisp.env.make_elem_node.call(null, n.tag, cljs.core.dissoc.call(null, n.attrs, k), n.children, n.ids)
+};
+hlisp.env.ElemNode;
+hlisp.env.make_elem_node = function() {
+  var make_elem_node = null;
+  var make_elem_node__1 = function(tag) {
+    return new hlisp.env.ElemNode(tag, cljs.core.ObjMap.EMPTY, cljs.core.PersistentVector.EMPTY, cljs.core.PersistentVector.EMPTY)
+  };
+  var make_elem_node__2 = function(tag, attrs) {
+    return new hlisp.env.ElemNode(tag, attrs, cljs.core.PersistentVector.EMPTY, cljs.core.PersistentVector.EMPTY)
+  };
+  var make_elem_node__3 = function(tag, attrs, kids) {
+    return new hlisp.env.ElemNode(tag, attrs, kids, cljs.core.PersistentVector.EMPTY)
+  };
+  var make_elem_node__4 = function(tag, attrs, kids, ids) {
+    return new hlisp.env.ElemNode(tag, attrs, kids, ids)
+  };
+  make_elem_node = function(tag, attrs, kids, ids) {
+    switch(arguments.length) {
+      case 1:
+        return make_elem_node__1.call(this, tag);
+      case 2:
+        return make_elem_node__2.call(this, tag, attrs);
+      case 3:
+        return make_elem_node__3.call(this, tag, attrs, kids);
+      case 4:
+        return make_elem_node__4.call(this, tag, attrs, kids, ids)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  make_elem_node.cljs$lang$arity$1 = make_elem_node__1;
+  make_elem_node.cljs$lang$arity$2 = make_elem_node__2;
+  make_elem_node.cljs$lang$arity$3 = make_elem_node__3;
+  make_elem_node.cljs$lang$arity$4 = make_elem_node__4;
+  return make_elem_node
+}();
+hlisp.env.make_text_node = function make_text_node(text) {
+  return new hlisp.env.TextNode("$text", text)
+};
+hlisp.env.clone = function clone(n) {
+  return hlisp.env.make_elem_node.call(null, n.tag, n.attrs, n.children, cljs.core.conj.call(null, n.ids, cljs.core.gensym.call(null)))
+};
+hlisp.env.a = hlisp.env.make_elem_node.call(null, "a");
+hlisp.env.abbr = hlisp.env.make_elem_node.call(null, "abbr");
+hlisp.env.acronym = hlisp.env.make_elem_node.call(null, "acronym");
+hlisp.env.address = hlisp.env.make_elem_node.call(null, "address");
+hlisp.env.applet = hlisp.env.make_elem_node.call(null, "applet");
+hlisp.env.area = hlisp.env.make_elem_node.call(null, "area");
+hlisp.env.article = hlisp.env.make_elem_node.call(null, "article");
+hlisp.env.aside = hlisp.env.make_elem_node.call(null, "aside");
+hlisp.env.audio = hlisp.env.make_elem_node.call(null, "audio");
+hlisp.env.b = hlisp.env.make_elem_node.call(null, "b");
+hlisp.env.base = hlisp.env.make_elem_node.call(null, "base");
+hlisp.env.basefont = hlisp.env.make_elem_node.call(null, "basefont");
+hlisp.env.bdi = hlisp.env.make_elem_node.call(null, "bdi");
+hlisp.env.bdo = hlisp.env.make_elem_node.call(null, "bdo");
+hlisp.env.big = hlisp.env.make_elem_node.call(null, "big");
+hlisp.env.blockquote = hlisp.env.make_elem_node.call(null, "blockquote");
+hlisp.env.body = hlisp.env.make_elem_node.call(null, "body");
+hlisp.env.br = hlisp.env.make_elem_node.call(null, "br");
+hlisp.env.button = hlisp.env.make_elem_node.call(null, "button");
+hlisp.env.canvas = hlisp.env.make_elem_node.call(null, "canvas");
+hlisp.env.caption = hlisp.env.make_elem_node.call(null, "caption");
+hlisp.env.center = hlisp.env.make_elem_node.call(null, "center");
+hlisp.env.cite = hlisp.env.make_elem_node.call(null, "cite");
+hlisp.env.code = hlisp.env.make_elem_node.call(null, "code");
+hlisp.env.col = hlisp.env.make_elem_node.call(null, "col");
+hlisp.env.colgroup = hlisp.env.make_elem_node.call(null, "colgroup");
+hlisp.env.command = hlisp.env.make_elem_node.call(null, "command");
+hlisp.env.data = hlisp.env.make_elem_node.call(null, "data");
+hlisp.env.datalist = hlisp.env.make_elem_node.call(null, "datalist");
+hlisp.env.dd = hlisp.env.make_elem_node.call(null, "dd");
+hlisp.env.del = hlisp.env.make_elem_node.call(null, "del");
+hlisp.env.details = hlisp.env.make_elem_node.call(null, "details");
+hlisp.env.dfn = hlisp.env.make_elem_node.call(null, "dfn");
+hlisp.env.dir = hlisp.env.make_elem_node.call(null, "dir");
+hlisp.env.div = hlisp.env.make_elem_node.call(null, "div");
+hlisp.env.dl = hlisp.env.make_elem_node.call(null, "dl");
+hlisp.env.dt = hlisp.env.make_elem_node.call(null, "dt");
+hlisp.env.em = hlisp.env.make_elem_node.call(null, "em");
+hlisp.env.embed = hlisp.env.make_elem_node.call(null, "embed");
+hlisp.env.eventsource = hlisp.env.make_elem_node.call(null, "eventsource");
+hlisp.env.fieldset = hlisp.env.make_elem_node.call(null, "fieldset");
+hlisp.env.figcaption = hlisp.env.make_elem_node.call(null, "figcaption");
+hlisp.env.figure = hlisp.env.make_elem_node.call(null, "figure");
+hlisp.env.font = hlisp.env.make_elem_node.call(null, "font");
+hlisp.env.footer = hlisp.env.make_elem_node.call(null, "footer");
+hlisp.env.form = hlisp.env.make_elem_node.call(null, "form");
+hlisp.env.frame = hlisp.env.make_elem_node.call(null, "frame");
+hlisp.env.frameset = hlisp.env.make_elem_node.call(null, "frameset");
+hlisp.env.h1 = hlisp.env.make_elem_node.call(null, "h1");
+hlisp.env.h2 = hlisp.env.make_elem_node.call(null, "h2");
+hlisp.env.h3 = hlisp.env.make_elem_node.call(null, "h3");
+hlisp.env.h4 = hlisp.env.make_elem_node.call(null, "h4");
+hlisp.env.h5 = hlisp.env.make_elem_node.call(null, "h5");
+hlisp.env.h6 = hlisp.env.make_elem_node.call(null, "h6");
+hlisp.env.head = hlisp.env.make_elem_node.call(null, "head");
+hlisp.env.header = hlisp.env.make_elem_node.call(null, "header");
+hlisp.env.hgroup = hlisp.env.make_elem_node.call(null, "hgroup");
+hlisp.env.hr = hlisp.env.make_elem_node.call(null, "hr");
+hlisp.env.html = hlisp.env.make_elem_node.call(null, "html");
+hlisp.env.i = hlisp.env.make_elem_node.call(null, "i");
+hlisp.env.iframe = hlisp.env.make_elem_node.call(null, "iframe");
+hlisp.env.img = hlisp.env.make_elem_node.call(null, "img");
+hlisp.env.input = hlisp.env.make_elem_node.call(null, "input");
+hlisp.env.ins = hlisp.env.make_elem_node.call(null, "ins");
+hlisp.env.isindex = hlisp.env.make_elem_node.call(null, "isindex");
+hlisp.env.kbd = hlisp.env.make_elem_node.call(null, "kbd");
+hlisp.env.keygen = hlisp.env.make_elem_node.call(null, "keygen");
+hlisp.env.label = hlisp.env.make_elem_node.call(null, "label");
+hlisp.env.legend = hlisp.env.make_elem_node.call(null, "legend");
+hlisp.env.li = hlisp.env.make_elem_node.call(null, "li");
+hlisp.env.link = hlisp.env.make_elem_node.call(null, "link");
+hlisp.env.html_map = hlisp.env.make_elem_node.call(null, "map");
+hlisp.env.mark = hlisp.env.make_elem_node.call(null, "mark");
+hlisp.env.menu = hlisp.env.make_elem_node.call(null, "menu");
+hlisp.env.html_meta = hlisp.env.make_elem_node.call(null, "meta");
+hlisp.env.meter = hlisp.env.make_elem_node.call(null, "meter");
+hlisp.env.nav = hlisp.env.make_elem_node.call(null, "nav");
+hlisp.env.noframes = hlisp.env.make_elem_node.call(null, "noframes");
+hlisp.env.noscript = hlisp.env.make_elem_node.call(null, "noscript");
+hlisp.env.object = hlisp.env.make_elem_node.call(null, "object");
+hlisp.env.ol = hlisp.env.make_elem_node.call(null, "ol");
+hlisp.env.optgroup = hlisp.env.make_elem_node.call(null, "optgroup");
+hlisp.env.option = hlisp.env.make_elem_node.call(null, "option");
+hlisp.env.output = hlisp.env.make_elem_node.call(null, "output");
+hlisp.env.p = hlisp.env.make_elem_node.call(null, "p");
+hlisp.env.param = hlisp.env.make_elem_node.call(null, "param");
+hlisp.env.pre = hlisp.env.make_elem_node.call(null, "pre");
+hlisp.env.progress = hlisp.env.make_elem_node.call(null, "progress");
+hlisp.env.q = hlisp.env.make_elem_node.call(null, "q");
+hlisp.env.rp = hlisp.env.make_elem_node.call(null, "rp");
+hlisp.env.rt = hlisp.env.make_elem_node.call(null, "rt");
+hlisp.env.ruby = hlisp.env.make_elem_node.call(null, "ruby");
+hlisp.env.s = hlisp.env.make_elem_node.call(null, "s");
+hlisp.env.samp = hlisp.env.make_elem_node.call(null, "samp");
+hlisp.env.script = hlisp.env.make_elem_node.call(null, "script");
+hlisp.env.section = hlisp.env.make_elem_node.call(null, "section");
+hlisp.env.select = hlisp.env.make_elem_node.call(null, "select");
+hlisp.env.small = hlisp.env.make_elem_node.call(null, "small");
+hlisp.env.source = hlisp.env.make_elem_node.call(null, "source");
+hlisp.env.span = hlisp.env.make_elem_node.call(null, "span");
+hlisp.env.strike = hlisp.env.make_elem_node.call(null, "strike");
+hlisp.env.strong = hlisp.env.make_elem_node.call(null, "strong");
+hlisp.env.style = hlisp.env.make_elem_node.call(null, "style");
+hlisp.env.sub = hlisp.env.make_elem_node.call(null, "sub");
+hlisp.env.summary = hlisp.env.make_elem_node.call(null, "summary");
+hlisp.env.sup = hlisp.env.make_elem_node.call(null, "sup");
+hlisp.env.table = hlisp.env.make_elem_node.call(null, "table");
+hlisp.env.tbody = hlisp.env.make_elem_node.call(null, "tbody");
+hlisp.env.td = hlisp.env.make_elem_node.call(null, "td");
+hlisp.env.textarea = hlisp.env.make_elem_node.call(null, "textarea");
+hlisp.env.tfoot = hlisp.env.make_elem_node.call(null, "tfoot");
+hlisp.env.th = hlisp.env.make_elem_node.call(null, "th");
+hlisp.env.thead = hlisp.env.make_elem_node.call(null, "thead");
+hlisp.env.time = hlisp.env.make_elem_node.call(null, "time");
+hlisp.env.title = hlisp.env.make_elem_node.call(null, "title");
+hlisp.env.tr = hlisp.env.make_elem_node.call(null, "tr");
+hlisp.env.track = hlisp.env.make_elem_node.call(null, "track");
+hlisp.env.tt = hlisp.env.make_elem_node.call(null, "tt");
+hlisp.env.u = hlisp.env.make_elem_node.call(null, "u");
+hlisp.env.ul = hlisp.env.make_elem_node.call(null, "ul");
+hlisp.env.var$ = hlisp.env.make_elem_node.call(null, "var");
+hlisp.env.video = hlisp.env.make_elem_node.call(null, "video");
+hlisp.env.wbr = hlisp.env.make_elem_node.call(null, "wbr");
+hlisp.env.$list = hlisp.env.make_elem_node.call(null, "$list");
+hlisp.env.$text = function $text(s) {
+  return hlisp.env.make_text_node.call(null, s)
+};
+goog.provide("goog.net.xpc");
+goog.provide("goog.net.xpc.CfgFields");
+goog.provide("goog.net.xpc.ChannelStates");
+goog.provide("goog.net.xpc.TransportNames");
+goog.provide("goog.net.xpc.TransportTypes");
+goog.provide("goog.net.xpc.UriCfgFields");
+goog.require("goog.debug.Logger");
+goog.net.xpc.TransportTypes = {NATIVE_MESSAGING:1, FRAME_ELEMENT_METHOD:2, IFRAME_RELAY:3, IFRAME_POLLING:4, FLASH:5, NIX:6};
+goog.net.xpc.TransportNames = {1:"NativeMessagingTransport", 2:"FrameElementMethodTransport", 3:"IframeRelayTransport", 4:"IframePollingTransport", 5:"FlashTransport", 6:"NixTransport"};
+goog.net.xpc.CfgFields = {CHANNEL_NAME:"cn", AUTH_TOKEN:"at", REMOTE_AUTH_TOKEN:"rat", PEER_URI:"pu", IFRAME_ID:"ifrid", TRANSPORT:"tp", LOCAL_RELAY_URI:"lru", PEER_RELAY_URI:"pru", LOCAL_POLL_URI:"lpu", PEER_POLL_URI:"ppu", PEER_HOSTNAME:"ph"};
+goog.net.xpc.UriCfgFields = [goog.net.xpc.CfgFields.PEER_URI, goog.net.xpc.CfgFields.LOCAL_RELAY_URI, goog.net.xpc.CfgFields.PEER_RELAY_URI, goog.net.xpc.CfgFields.LOCAL_POLL_URI, goog.net.xpc.CfgFields.PEER_POLL_URI];
+goog.net.xpc.ChannelStates = {NOT_CONNECTED:1, CONNECTED:2, CLOSED:3};
+goog.net.xpc.TRANSPORT_SERVICE_ = "tp";
+goog.net.xpc.SETUP = "SETUP";
+goog.net.xpc.SETUP_ACK_ = "SETUP_ACK";
+goog.net.xpc.channels_ = {};
+goog.net.xpc.getRandomString = function(length, opt_characters) {
+  var chars = opt_characters || goog.net.xpc.randomStringCharacters_;
+  var charsLength = chars.length;
+  var s = "";
+  while(length-- > 0) {
+    s += chars.charAt(Math.floor(Math.random() * charsLength))
+  }
+  return s
+};
+goog.net.xpc.randomStringCharacters_ = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+goog.net.xpc.logger = goog.debug.Logger.getLogger("goog.net.xpc");
+goog.provide("goog.Uri");
+goog.provide("goog.Uri.QueryData");
+goog.require("goog.array");
+goog.require("goog.string");
+goog.require("goog.structs");
+goog.require("goog.structs.Map");
+goog.require("goog.uri.utils");
+goog.require("goog.uri.utils.ComponentIndex");
+goog.Uri = function(opt_uri, opt_ignoreCase) {
+  var m;
+  if(opt_uri instanceof goog.Uri) {
+    this.setIgnoreCase(opt_ignoreCase == null ? opt_uri.getIgnoreCase() : opt_ignoreCase);
+    this.setScheme(opt_uri.getScheme());
+    this.setUserInfo(opt_uri.getUserInfo());
+    this.setDomain(opt_uri.getDomain());
+    this.setPort(opt_uri.getPort());
+    this.setPath(opt_uri.getPath());
+    this.setQueryData(opt_uri.getQueryData().clone());
+    this.setFragment(opt_uri.getFragment())
+  }else {
+    if(opt_uri && (m = goog.uri.utils.split(String(opt_uri)))) {
+      this.setIgnoreCase(!!opt_ignoreCase);
+      this.setScheme(m[goog.uri.utils.ComponentIndex.SCHEME] || "", true);
+      this.setUserInfo(m[goog.uri.utils.ComponentIndex.USER_INFO] || "", true);
+      this.setDomain(m[goog.uri.utils.ComponentIndex.DOMAIN] || "", true);
+      this.setPort(m[goog.uri.utils.ComponentIndex.PORT]);
+      this.setPath(m[goog.uri.utils.ComponentIndex.PATH] || "", true);
+      this.setQuery(m[goog.uri.utils.ComponentIndex.QUERY_DATA] || "", true);
+      this.setFragment(m[goog.uri.utils.ComponentIndex.FRAGMENT] || "", true)
+    }else {
+      this.setIgnoreCase(!!opt_ignoreCase);
+      this.queryData_ = new goog.Uri.QueryData(null, this, this.ignoreCase_)
+    }
+  }
+};
+goog.Uri.RANDOM_PARAM = goog.uri.utils.StandardQueryParam.RANDOM;
+goog.Uri.prototype.scheme_ = "";
+goog.Uri.prototype.userInfo_ = "";
+goog.Uri.prototype.domain_ = "";
+goog.Uri.prototype.port_ = null;
+goog.Uri.prototype.path_ = "";
+goog.Uri.prototype.queryData_;
+goog.Uri.prototype.fragment_ = "";
+goog.Uri.prototype.isReadOnly_ = false;
+goog.Uri.prototype.ignoreCase_ = false;
+goog.Uri.prototype.toString = function() {
+  if(this.cachedToString_) {
+    return this.cachedToString_
+  }
+  var out = [];
+  if(this.scheme_) {
+    out.push(goog.Uri.encodeSpecialChars_(this.scheme_, goog.Uri.reDisallowedInSchemeOrUserInfo_), ":")
+  }
+  if(this.domain_) {
+    out.push("//");
+    if(this.userInfo_) {
+      out.push(goog.Uri.encodeSpecialChars_(this.userInfo_, goog.Uri.reDisallowedInSchemeOrUserInfo_), "@")
+    }
+    out.push(goog.Uri.encodeString_(this.domain_));
+    if(this.port_ != null) {
+      out.push(":", String(this.getPort()))
+    }
+  }
+  if(this.path_) {
+    if(this.hasDomain() && this.path_.charAt(0) != "/") {
+      out.push("/")
+    }
+    out.push(goog.Uri.encodeSpecialChars_(this.path_, this.path_.charAt(0) == "/" ? goog.Uri.reDisallowedInAbsolutePath_ : goog.Uri.reDisallowedInRelativePath_))
+  }
+  var query = String(this.queryData_);
+  if(query) {
+    out.push("?", query)
+  }
+  if(this.fragment_) {
+    out.push("#", goog.Uri.encodeSpecialChars_(this.fragment_, goog.Uri.reDisallowedInFragment_))
+  }
+  return this.cachedToString_ = out.join("")
+};
+goog.Uri.prototype.resolve = function(relativeUri) {
+  var absoluteUri = this.clone();
+  var overridden = relativeUri.hasScheme();
+  if(overridden) {
+    absoluteUri.setScheme(relativeUri.getScheme())
+  }else {
+    overridden = relativeUri.hasUserInfo()
+  }
+  if(overridden) {
+    absoluteUri.setUserInfo(relativeUri.getUserInfo())
+  }else {
+    overridden = relativeUri.hasDomain()
+  }
+  if(overridden) {
+    absoluteUri.setDomain(relativeUri.getDomain())
+  }else {
+    overridden = relativeUri.hasPort()
+  }
+  var path = relativeUri.getPath();
+  if(overridden) {
+    absoluteUri.setPort(relativeUri.getPort())
+  }else {
+    overridden = relativeUri.hasPath();
+    if(overridden) {
+      if(path.charAt(0) != "/") {
+        if(this.hasDomain() && !this.hasPath()) {
+          path = "/" + path
+        }else {
+          var lastSlashIndex = absoluteUri.getPath().lastIndexOf("/");
+          if(lastSlashIndex != -1) {
+            path = absoluteUri.getPath().substr(0, lastSlashIndex + 1) + path
+          }
+        }
+      }
+      path = goog.Uri.removeDotSegments(path)
+    }
+  }
+  if(overridden) {
+    absoluteUri.setPath(path)
+  }else {
+    overridden = relativeUri.hasQuery()
+  }
+  if(overridden) {
+    absoluteUri.setQuery(relativeUri.getDecodedQuery())
+  }else {
+    overridden = relativeUri.hasFragment()
+  }
+  if(overridden) {
+    absoluteUri.setFragment(relativeUri.getFragment())
+  }
+  return absoluteUri
+};
+goog.Uri.prototype.clone = function() {
+  return goog.Uri.create(this.scheme_, this.userInfo_, this.domain_, this.port_, this.path_, this.queryData_.clone(), this.fragment_, this.ignoreCase_)
+};
+goog.Uri.prototype.getScheme = function() {
+  return this.scheme_
+};
+goog.Uri.prototype.setScheme = function(newScheme, opt_decode) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  this.scheme_ = opt_decode ? goog.Uri.decodeOrEmpty_(newScheme) : newScheme;
+  if(this.scheme_) {
+    this.scheme_ = this.scheme_.replace(/:$/, "")
+  }
+  return this
+};
+goog.Uri.prototype.hasScheme = function() {
+  return!!this.scheme_
+};
+goog.Uri.prototype.getUserInfo = function() {
+  return this.userInfo_
+};
+goog.Uri.prototype.setUserInfo = function(newUserInfo, opt_decode) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  this.userInfo_ = opt_decode ? goog.Uri.decodeOrEmpty_(newUserInfo) : newUserInfo;
+  return this
+};
+goog.Uri.prototype.hasUserInfo = function() {
+  return!!this.userInfo_
+};
+goog.Uri.prototype.getDomain = function() {
+  return this.domain_
+};
+goog.Uri.prototype.setDomain = function(newDomain, opt_decode) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  this.domain_ = opt_decode ? goog.Uri.decodeOrEmpty_(newDomain) : newDomain;
+  return this
+};
+goog.Uri.prototype.hasDomain = function() {
+  return!!this.domain_
+};
+goog.Uri.prototype.getPort = function() {
+  return this.port_
+};
+goog.Uri.prototype.setPort = function(newPort) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  if(newPort) {
+    newPort = Number(newPort);
+    if(isNaN(newPort) || newPort < 0) {
+      throw Error("Bad port number " + newPort);
+    }
+    this.port_ = newPort
+  }else {
+    this.port_ = null
+  }
+  return this
+};
+goog.Uri.prototype.hasPort = function() {
+  return this.port_ != null
+};
+goog.Uri.prototype.getPath = function() {
+  return this.path_
+};
+goog.Uri.prototype.setPath = function(newPath, opt_decode) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  this.path_ = opt_decode ? goog.Uri.decodeOrEmpty_(newPath) : newPath;
+  return this
+};
+goog.Uri.prototype.hasPath = function() {
+  return!!this.path_
+};
+goog.Uri.prototype.hasQuery = function() {
+  return this.queryData_.toString() !== ""
+};
+goog.Uri.prototype.setQueryData = function(queryData, opt_decode) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  if(queryData instanceof goog.Uri.QueryData) {
+    this.queryData_ = queryData;
+    this.queryData_.uri_ = this;
+    this.queryData_.setIgnoreCase(this.ignoreCase_)
+  }else {
+    if(!opt_decode) {
+      queryData = goog.Uri.encodeSpecialChars_(queryData, goog.Uri.reDisallowedInQuery_)
+    }
+    this.queryData_ = new goog.Uri.QueryData(queryData, this, this.ignoreCase_)
+  }
+  return this
+};
+goog.Uri.prototype.setQuery = function(newQuery, opt_decode) {
+  return this.setQueryData(newQuery, opt_decode)
+};
+goog.Uri.prototype.getEncodedQuery = function() {
+  return this.queryData_.toString()
+};
+goog.Uri.prototype.getDecodedQuery = function() {
+  return this.queryData_.toDecodedString()
+};
+goog.Uri.prototype.getQueryData = function() {
+  return this.queryData_
+};
+goog.Uri.prototype.getQuery = function() {
+  return this.getEncodedQuery()
+};
+goog.Uri.prototype.setParameterValue = function(key, value) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  this.queryData_.set(key, value);
+  return this
+};
+goog.Uri.prototype.setParameterValues = function(key, values) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  if(!goog.isArray(values)) {
+    values = [String(values)]
+  }
+  this.queryData_.setValues(key, values);
+  return this
+};
+goog.Uri.prototype.getParameterValues = function(name) {
+  return this.queryData_.getValues(name)
+};
+goog.Uri.prototype.getParameterValue = function(paramName) {
+  return this.queryData_.get(paramName)
+};
+goog.Uri.prototype.getFragment = function() {
+  return this.fragment_
+};
+goog.Uri.prototype.setFragment = function(newFragment, opt_decode) {
+  this.enforceReadOnly();
+  delete this.cachedToString_;
+  this.fragment_ = opt_decode ? goog.Uri.decodeOrEmpty_(newFragment) : newFragment;
+  return this
+};
+goog.Uri.prototype.hasFragment = function() {
+  return!!this.fragment_
+};
+goog.Uri.prototype.hasSameDomainAs = function(uri2) {
+  return(!this.hasDomain() && !uri2.hasDomain() || this.getDomain() == uri2.getDomain()) && (!this.hasPort() && !uri2.hasPort() || this.getPort() == uri2.getPort())
+};
+goog.Uri.prototype.makeUnique = function() {
+  this.enforceReadOnly();
+  this.setParameterValue(goog.Uri.RANDOM_PARAM, goog.string.getRandomString());
+  return this
+};
+goog.Uri.prototype.removeParameter = function(key) {
+  this.enforceReadOnly();
+  this.queryData_.remove(key);
+  return this
+};
+goog.Uri.prototype.setReadOnly = function(isReadOnly) {
+  this.isReadOnly_ = isReadOnly;
+  return this
+};
+goog.Uri.prototype.isReadOnly = function() {
+  return this.isReadOnly_
+};
+goog.Uri.prototype.enforceReadOnly = function() {
+  if(this.isReadOnly_) {
+    throw Error("Tried to modify a read-only Uri");
+  }
+};
+goog.Uri.prototype.setIgnoreCase = function(ignoreCase) {
+  this.ignoreCase_ = ignoreCase;
+  if(this.queryData_) {
+    this.queryData_.setIgnoreCase(ignoreCase)
+  }
+  return this
+};
+goog.Uri.prototype.getIgnoreCase = function() {
+  return this.ignoreCase_
+};
+goog.Uri.parse = function(uri, opt_ignoreCase) {
+  return uri instanceof goog.Uri ? uri.clone() : new goog.Uri(uri, opt_ignoreCase)
+};
+goog.Uri.create = function(opt_scheme, opt_userInfo, opt_domain, opt_port, opt_path, opt_query, opt_fragment, opt_ignoreCase) {
+  var uri = new goog.Uri(null, opt_ignoreCase);
+  opt_scheme && uri.setScheme(opt_scheme);
+  opt_userInfo && uri.setUserInfo(opt_userInfo);
+  opt_domain && uri.setDomain(opt_domain);
+  opt_port && uri.setPort(opt_port);
+  opt_path && uri.setPath(opt_path);
+  opt_query && uri.setQueryData(opt_query);
+  opt_fragment && uri.setFragment(opt_fragment);
+  return uri
+};
+goog.Uri.resolve = function(base, rel) {
+  if(!(base instanceof goog.Uri)) {
+    base = goog.Uri.parse(base)
+  }
+  if(!(rel instanceof goog.Uri)) {
+    rel = goog.Uri.parse(rel)
+  }
+  return base.resolve(rel)
+};
+goog.Uri.removeDotSegments = function(path) {
+  if(path == ".." || path == ".") {
+    return""
+  }else {
+    if(!goog.string.contains(path, "./") && !goog.string.contains(path, "/.")) {
+      return path
+    }else {
+      var leadingSlash = goog.string.startsWith(path, "/");
+      var segments = path.split("/");
+      var out = [];
+      for(var pos = 0;pos < segments.length;) {
+        var segment = segments[pos++];
+        if(segment == ".") {
+          if(leadingSlash && pos == segments.length) {
+            out.push("")
+          }
+        }else {
+          if(segment == "..") {
+            if(out.length > 1 || out.length == 1 && out[0] != "") {
+              out.pop()
+            }
+            if(leadingSlash && pos == segments.length) {
+              out.push("")
+            }
+          }else {
+            out.push(segment);
+            leadingSlash = true
+          }
+        }
+      }
+      return out.join("/")
+    }
+  }
+};
+goog.Uri.decodeOrEmpty_ = function(val) {
+  return val ? decodeURIComponent(val) : ""
+};
+goog.Uri.encodeString_ = function(unescapedPart) {
+  if(goog.isString(unescapedPart)) {
+    return encodeURIComponent(unescapedPart)
+  }
+  return null
+};
+goog.Uri.encodeSpecialRegExp_ = /^[a-zA-Z0-9\-_.!~*'():\/;?]*$/;
+goog.Uri.encodeSpecialChars_ = function(unescapedPart, extra) {
+  var ret = null;
+  if(goog.isString(unescapedPart)) {
+    ret = unescapedPart;
+    if(!goog.Uri.encodeSpecialRegExp_.test(ret)) {
+      ret = encodeURI(unescapedPart)
+    }
+    if(ret.search(extra) >= 0) {
+      ret = ret.replace(extra, goog.Uri.encodeChar_)
+    }
+  }
+  return ret
+};
+goog.Uri.encodeChar_ = function(ch) {
+  var n = ch.charCodeAt(0);
+  return"%" + (n >> 4 & 15).toString(16) + (n & 15).toString(16)
+};
+goog.Uri.reDisallowedInSchemeOrUserInfo_ = /[#\/\?@]/g;
+goog.Uri.reDisallowedInRelativePath_ = /[\#\?:]/g;
+goog.Uri.reDisallowedInAbsolutePath_ = /[\#\?]/g;
+goog.Uri.reDisallowedInQuery_ = /[\#\?@]/g;
+goog.Uri.reDisallowedInFragment_ = /#/g;
+goog.Uri.haveSameDomain = function(uri1String, uri2String) {
+  var pieces1 = goog.uri.utils.split(uri1String);
+  var pieces2 = goog.uri.utils.split(uri2String);
+  return pieces1[goog.uri.utils.ComponentIndex.DOMAIN] == pieces2[goog.uri.utils.ComponentIndex.DOMAIN] && pieces1[goog.uri.utils.ComponentIndex.PORT] == pieces2[goog.uri.utils.ComponentIndex.PORT]
+};
+goog.Uri.QueryData = function(opt_query, opt_uri, opt_ignoreCase) {
+  this.encodedQuery_ = opt_query || null;
+  this.uri_ = opt_uri || null;
+  this.ignoreCase_ = !!opt_ignoreCase
+};
+goog.Uri.QueryData.prototype.ensureKeyMapInitialized_ = function() {
+  if(!this.keyMap_) {
+    this.keyMap_ = new goog.structs.Map;
+    this.count_ = 0;
+    if(this.encodedQuery_) {
+      var pairs = this.encodedQuery_.split("&");
+      for(var i = 0;i < pairs.length;i++) {
+        var indexOfEquals = pairs[i].indexOf("=");
+        var name = null;
+        var value = null;
+        if(indexOfEquals >= 0) {
+          name = pairs[i].substring(0, indexOfEquals);
+          value = pairs[i].substring(indexOfEquals + 1)
+        }else {
+          name = pairs[i]
+        }
+        name = goog.string.urlDecode(name);
+        name = this.getKeyName_(name);
+        this.add(name, value ? goog.string.urlDecode(value) : "")
       }
     }
   }
 };
-hlisp.interpreter.bindp_BANG_ = function bindp_BANG_(name, f) {
-  return hlisp.interpreter.bind_global_BANG_.call(null, cljs.core.PersistentArrayMap.fromArrays([[cljs.core.str(name)].join("")], [hlisp.hexp.make_prim_hexp.call(null, f)]))
+goog.Uri.QueryData.createFromMap = function(map, opt_uri, opt_ignoreCase) {
+  var keys = goog.structs.getKeys(map);
+  if(typeof keys == "undefined") {
+    throw Error("Keys are undefined");
+  }
+  return goog.Uri.QueryData.createFromKeysValues(keys, goog.structs.getValues(map), opt_uri, opt_ignoreCase)
 };
-hlisp.interpreter.bind_primitive_BANG_ = function bind_primitive_BANG_(prims) {
-  return hlisp.interpreter.bind_global_BANG_.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, cljs.core.mapv.call(null, cljs.core.comp.call(null, cljs.core.vec, hlisp.util.zipfn.call(null, cljs.core.PersistentVector.fromArray([cljs.core.str, hlisp.hexp.make_prim_hexp], true))), cljs.core.partition.call(null, 2, prims))))
+goog.Uri.QueryData.createFromKeysValues = function(keys, values, opt_uri, opt_ignoreCase) {
+  if(keys.length != values.length) {
+    throw Error("Mismatched lengths for keys/values");
+  }
+  var queryData = new goog.Uri.QueryData(null, opt_uri, opt_ignoreCase);
+  for(var i = 0;i < keys.length;i++) {
+    queryData.add(keys[i], values[i])
+  }
+  return queryData
+};
+goog.Uri.QueryData.prototype.keyMap_ = null;
+goog.Uri.QueryData.prototype.count_ = null;
+goog.Uri.QueryData.decodedQuery_ = null;
+goog.Uri.QueryData.prototype.getCount = function() {
+  this.ensureKeyMapInitialized_();
+  return this.count_
+};
+goog.Uri.QueryData.prototype.add = function(key, value) {
+  this.ensureKeyMapInitialized_();
+  this.invalidateCache_();
+  key = this.getKeyName_(key);
+  if(!this.containsKey(key)) {
+    this.keyMap_.set(key, value)
+  }else {
+    var current = this.keyMap_.get(key);
+    if(goog.isArray(current)) {
+      current.push(value)
+    }else {
+      this.keyMap_.set(key, [current, value])
+    }
+  }
+  this.count_++;
+  return this
+};
+goog.Uri.QueryData.prototype.remove = function(key) {
+  this.ensureKeyMapInitialized_();
+  key = this.getKeyName_(key);
+  if(this.keyMap_.containsKey(key)) {
+    this.invalidateCache_();
+    var old = this.keyMap_.get(key);
+    if(goog.isArray(old)) {
+      this.count_ -= old.length
+    }else {
+      this.count_--
+    }
+    return this.keyMap_.remove(key)
+  }
+  return false
+};
+goog.Uri.QueryData.prototype.clear = function() {
+  this.invalidateCache_();
+  if(this.keyMap_) {
+    this.keyMap_.clear()
+  }
+  this.count_ = 0
+};
+goog.Uri.QueryData.prototype.isEmpty = function() {
+  this.ensureKeyMapInitialized_();
+  return this.count_ == 0
+};
+goog.Uri.QueryData.prototype.containsKey = function(key) {
+  this.ensureKeyMapInitialized_();
+  key = this.getKeyName_(key);
+  return this.keyMap_.containsKey(key)
+};
+goog.Uri.QueryData.prototype.containsValue = function(value) {
+  var vals = this.getValues();
+  return goog.array.contains(vals, value)
+};
+goog.Uri.QueryData.prototype.getKeys = function() {
+  this.ensureKeyMapInitialized_();
+  var vals = this.keyMap_.getValues();
+  var keys = this.keyMap_.getKeys();
+  var rv = [];
+  for(var i = 0;i < keys.length;i++) {
+    var val = vals[i];
+    if(goog.isArray(val)) {
+      for(var j = 0;j < val.length;j++) {
+        rv.push(keys[i])
+      }
+    }else {
+      rv.push(keys[i])
+    }
+  }
+  return rv
+};
+goog.Uri.QueryData.prototype.getValues = function(opt_key) {
+  this.ensureKeyMapInitialized_();
+  var rv;
+  if(opt_key) {
+    var key = this.getKeyName_(opt_key);
+    if(this.containsKey(key)) {
+      var value = this.keyMap_.get(key);
+      if(goog.isArray(value)) {
+        return value
+      }else {
+        rv = [];
+        rv.push(value)
+      }
+    }else {
+      rv = []
+    }
+  }else {
+    var vals = this.keyMap_.getValues();
+    rv = [];
+    for(var i = 0;i < vals.length;i++) {
+      var val = vals[i];
+      if(goog.isArray(val)) {
+        goog.array.extend(rv, val)
+      }else {
+        rv.push(val)
+      }
+    }
+  }
+  return rv
+};
+goog.Uri.QueryData.prototype.set = function(key, value) {
+  this.ensureKeyMapInitialized_();
+  this.invalidateCache_();
+  key = this.getKeyName_(key);
+  if(this.containsKey(key)) {
+    var old = this.keyMap_.get(key);
+    if(goog.isArray(old)) {
+      this.count_ -= old.length
+    }else {
+      this.count_--
+    }
+  }
+  this.keyMap_.set(key, value);
+  this.count_++;
+  return this
+};
+goog.Uri.QueryData.prototype.get = function(key, opt_default) {
+  this.ensureKeyMapInitialized_();
+  key = this.getKeyName_(key);
+  if(this.containsKey(key)) {
+    var val = this.keyMap_.get(key);
+    if(goog.isArray(val)) {
+      return val[0]
+    }else {
+      return val
+    }
+  }else {
+    return opt_default
+  }
+};
+goog.Uri.QueryData.prototype.setValues = function(key, values) {
+  this.ensureKeyMapInitialized_();
+  this.invalidateCache_();
+  key = this.getKeyName_(key);
+  if(this.containsKey(key)) {
+    var old = this.keyMap_.get(key);
+    if(goog.isArray(old)) {
+      this.count_ -= old.length
+    }else {
+      this.count_--
+    }
+  }
+  if(values.length > 0) {
+    this.keyMap_.set(key, values);
+    this.count_ += values.length
+  }
+};
+goog.Uri.QueryData.prototype.toString = function() {
+  if(this.encodedQuery_) {
+    return this.encodedQuery_
+  }
+  if(!this.keyMap_) {
+    return""
+  }
+  var sb = [];
+  var count = 0;
+  var keys = this.keyMap_.getKeys();
+  for(var i = 0;i < keys.length;i++) {
+    var key = keys[i];
+    var encodedKey = goog.string.urlEncode(key);
+    var val = this.keyMap_.get(key);
+    if(goog.isArray(val)) {
+      for(var j = 0;j < val.length;j++) {
+        if(count > 0) {
+          sb.push("&")
+        }
+        sb.push(encodedKey);
+        if(val[j] !== "") {
+          sb.push("=", goog.string.urlEncode(val[j]))
+        }
+        count++
+      }
+    }else {
+      if(count > 0) {
+        sb.push("&")
+      }
+      sb.push(encodedKey);
+      if(val !== "") {
+        sb.push("=", goog.string.urlEncode(val))
+      }
+      count++
+    }
+  }
+  return this.encodedQuery_ = sb.join("")
+};
+goog.Uri.QueryData.prototype.toDecodedString = function() {
+  if(!this.decodedQuery_) {
+    this.decodedQuery_ = goog.Uri.decodeOrEmpty_(this.toString())
+  }
+  return this.decodedQuery_
+};
+goog.Uri.QueryData.prototype.invalidateCache_ = function() {
+  delete this.decodedQuery_;
+  delete this.encodedQuery_;
+  if(this.uri_) {
+    delete this.uri_.cachedToString_
+  }
+};
+goog.Uri.QueryData.prototype.filterKeys = function(keys) {
+  this.ensureKeyMapInitialized_();
+  goog.structs.forEach(this.keyMap_, function(value, key, map) {
+    if(!goog.array.contains(keys, key)) {
+      this.remove(key)
+    }
+  }, this);
+  return this
+};
+goog.Uri.QueryData.prototype.clone = function() {
+  var rv = new goog.Uri.QueryData;
+  if(this.decodedQuery_) {
+    rv.decodedQuery_ = this.decodedQuery_
+  }
+  if(this.encodedQuery_) {
+    rv.encodedQuery_ = this.encodedQuery_
+  }
+  if(this.keyMap_) {
+    rv.keyMap_ = this.keyMap_.clone()
+  }
+  return rv
+};
+goog.Uri.QueryData.prototype.getKeyName_ = function(arg) {
+  var keyName = String(arg);
+  if(this.ignoreCase_) {
+    keyName = keyName.toLowerCase()
+  }
+  return keyName
+};
+goog.Uri.QueryData.prototype.setIgnoreCase = function(ignoreCase) {
+  var resetKeys = ignoreCase && !this.ignoreCase_;
+  if(resetKeys) {
+    this.ensureKeyMapInitialized_();
+    this.invalidateCache_();
+    goog.structs.forEach(this.keyMap_, function(value, key, map) {
+      var lowerCase = key.toLowerCase();
+      if(key != lowerCase) {
+        this.remove(key);
+        this.add(lowerCase, value)
+      }
+    }, this)
+  }
+  this.ignoreCase_ = ignoreCase
+};
+goog.Uri.QueryData.prototype.extend = function(var_args) {
+  for(var i = 0;i < arguments.length;i++) {
+    var data = arguments[i];
+    goog.structs.forEach(data, function(value, key) {
+      this.add(key, value)
+    }, this)
+  }
 };
 goog.provide("goog.dom.BrowserFeature");
 goog.require("goog.userAgent");
@@ -28777,274 +27861,6 @@ goog.dom.DomHelper.prototype.getNodeTextOffset = goog.dom.getNodeTextOffset;
 goog.dom.DomHelper.prototype.getAncestorByTagNameAndClass = goog.dom.getAncestorByTagNameAndClass;
 goog.dom.DomHelper.prototype.getAncestorByClass = goog.dom.getAncestorByClass;
 goog.dom.DomHelper.prototype.getAncestor = goog.dom.getAncestor;
-goog.provide("hlisp.primitives");
-goog.require("cljs.core");
-goog.require("hlisp.util");
-goog.require("hlisp.hexp");
-goog.require("hlisp.compiler");
-goog.require("hlisp.interpreter");
-goog.require("hlisp.hexp");
-goog.require("hlisp.compiler");
-goog.require("hlisp.interpreter");
-goog.require("hlisp.util");
-goog.require("flapjax.core");
-goog.require("jayq.util");
-goog.require("jayq.core");
-hlisp.primitives.dom_assoc_BANG_ = function dom_assoc_BANG_(_, p__7412) {
-  var vec__7421__7422 = p__7412;
-  var elem__7423 = cljs.core.nth.call(null, vec__7421__7422, 0, null);
-  var attr_name__7424 = cljs.core.nth.call(null, vec__7421__7422, 1, null);
-  var attr_val__7425 = cljs.core.nth.call(null, vec__7421__7422, 2, null);
-  var id__7426 = cljs.core.peek.call(null, (new cljs.core.Keyword("\ufdd0'ids")).call(null, elem__7423));
-  var k__7427 = (new cljs.core.Keyword("\ufdd0'data")).call(null, attr_name__7424);
-  var v__7428 = (new cljs.core.Keyword("\ufdd0'data")).call(null, attr_val__7425);
-  jayq.core.$.call(null, [cljs.core.str("[hl~='"), cljs.core.str(id__7426), cljs.core.str("']")].join("")).attr(k__7427, v__7428);
-  return elem__7423
-};
-hlisp.primitives.dom_dissoc_BANG_ = function dom_dissoc_BANG_(_, p__7429) {
-  var vec__7436__7437 = p__7429;
-  var elem__7438 = cljs.core.nth.call(null, vec__7436__7437, 0, null);
-  var attr_name__7439 = cljs.core.nth.call(null, vec__7436__7437, 1, null);
-  var id__7440 = cljs.core.peek.call(null, (new cljs.core.Keyword("\ufdd0'ids")).call(null, elem__7438));
-  var k__7441 = (new cljs.core.Keyword("\ufdd0'data")).call(null, attr_name__7439);
-  jayq.core.$.call(null, [cljs.core.str("[hl~='"), cljs.core.str(id__7440), cljs.core.str("']")].join("")).removeAttr(k__7441);
-  return elem__7438
-};
-hlisp.primitives.dom_css_BANG_ = function dom_css_BANG_(_, p__7442) {
-  var vec__7451__7452 = p__7442;
-  var elem__7453 = cljs.core.nth.call(null, vec__7451__7452, 0, null);
-  var prop__7454 = cljs.core.nth.call(null, vec__7451__7452, 1, null);
-  var val__7455 = cljs.core.nth.call(null, vec__7451__7452, 2, null);
-  var id__7456 = cljs.core.peek.call(null, (new cljs.core.Keyword("\ufdd0'ids")).call(null, elem__7453));
-  var k__7457 = (new cljs.core.Keyword("\ufdd0'data")).call(null, prop__7454);
-  var v__7458 = (new cljs.core.Keyword("\ufdd0'data")).call(null, val__7455);
-  jayq.core.$.call(null, [cljs.core.str("[hl~='"), cljs.core.str(id__7456), cljs.core.str("']")].join("")).css(k__7457, v__7458);
-  return elem__7453
-};
-hlisp.primitives.x_map = function x_map(_, p__7459) {
-  var vec__7464__7465 = p__7459;
-  var f__7466 = cljs.core.nth.call(null, vec__7464__7465, 0, null);
-  var coll__7467 = cljs.core.nth.call(null, vec__7464__7465, 1, null);
-  return hlisp.hexp.make_list_hexp.call(null, cljs.core.mapv.call(null, function(x) {
-    return hlisp.interpreter.apply_STAR_.call(null, f__7466, cljs.core.ObjMap.EMPTY, cljs.core.PersistentVector.fromArray([x], true))
-  }, hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, coll__7467))))
-};
-hlisp.primitives.x_mapcat = function x_mapcat(_, p__7469) {
-  var vec__7474__7475 = p__7469;
-  var f__7476 = cljs.core.nth.call(null, vec__7474__7475, 0, null);
-  var coll__7477 = cljs.core.nth.call(null, vec__7474__7475, 1, null);
-  return hlisp.hexp.make_list_hexp.call(null, cljs.core.vec.call(null, cljs.core.mapcat.call(null, "\ufdd0'children", (new cljs.core.Keyword("\ufdd0'children")).call(null, hlisp.primitives.x_map.call(null, cljs.core.ObjMap.EMPTY, cljs.core.PersistentVector.fromArray([f__7476, coll__7477], true))))))
-};
-hlisp.primitives.x_partition = function x_partition(_, p__7478) {
-  var vec__7485__7486 = p__7478;
-  var n__7487 = cljs.core.nth.call(null, vec__7485__7486, 0, null);
-  var coll__7488 = cljs.core.nth.call(null, vec__7485__7486, 1, null);
-  var p__7489 = cljs.core.partition.call(null, (new cljs.core.Keyword("\ufdd0'data")).call(null, n__7487), hlisp.interpreter.elems.call(null, (new cljs.core.Keyword("\ufdd0'children")).call(null, coll__7488)));
-  var pp__7490 = cljs.core.mapv.call(null, function(p1__7468_SHARP_) {
-    return hlisp.hexp.make_list_hexp.call(null, cljs.core.vec.call(null, p1__7468_SHARP_))
-  }, p__7489);
-  return hlisp.hexp.make_list_hexp.call(null, pp__7490)
-};
-hlisp.primitives.filterRepeatsE = function filterRepeatsE(_, p__7491) {
-  var vec__7495__7496 = p__7491;
-  var e__7497 = cljs.core.nth.call(null, vec__7495__7496, 0, null);
-  return hlisp.hexp.make_data_hexp.call(null, filterRepeatsE((new cljs.core.Keyword("\ufdd0'data")).call(null, e__7497)))
-};
-hlisp.primitives.sync_e = function sync_e(_, p__7498) {
-  var vec__7507__7508 = p__7498;
-  var stream1__7509 = cljs.core.nth.call(null, vec__7507__7508, 0, null);
-  var stream2__7510 = cljs.core.nth.call(null, vec__7507__7508, 1, null);
-  var s1__7511 = (new cljs.core.Keyword("\ufdd0'data")).call(null, stream1__7509);
-  var s2__7512 = (new cljs.core.Keyword("\ufdd0'data")).call(null, stream2__7510);
-  var e1__7513 = filterRepeatsE(s1__7511);
-  var e2__7514 = filterRepeatsE(s2__7512);
-  mapE(function(v) {
-    return s2__7512.sendEvent(v)
-  }, e1__7513);
-  mapE(function(v) {
-    return s1__7511.sendEvent(v)
-  }, e2__7514);
-  return hlisp.hexp.make_data_hexp.call(null, null)
-};
-hlisp.primitives.prims = cljs.core.PersistentVector.fromArray(["dom-add-class!", function prims(_, p__7515) {
-  var vec__7522__7523 = p__7515;
-  var elem__7524 = cljs.core.nth.call(null, vec__7522__7523, 0, null);
-  var class_name__7525 = cljs.core.nth.call(null, vec__7522__7523, 1, null);
-  var id__7526 = cljs.core.peek.call(null, (new cljs.core.Keyword("\ufdd0'ids")).call(null, elem__7524));
-  var c__7527 = (new cljs.core.Keyword("\ufdd0'data")).call(null, class_name__7525);
-  jayq.core.$.call(null, [cljs.core.str("[hl~='"), cljs.core.str(id__7526), cljs.core.str("']")].join("")).addClass(c__7527);
-  return elem__7524
-}, "dom-remove-class!", function prims(_, p__7528) {
-  var vec__7535__7536 = p__7528;
-  var elem__7537 = cljs.core.nth.call(null, vec__7535__7536, 0, null);
-  var class_name__7538 = cljs.core.nth.call(null, vec__7535__7536, 1, null);
-  var id__7539 = cljs.core.peek.call(null, (new cljs.core.Keyword("\ufdd0'ids")).call(null, elem__7537));
-  var c__7540 = (new cljs.core.Keyword("\ufdd0'data")).call(null, class_name__7538);
-  jayq.core.$.call(null, [cljs.core.str("[hl~='"), cljs.core.str(id__7539), cljs.core.str("']")].join("")).removeClass(c__7540);
-  return elem__7537
-}, "dom-toggle!", function prims(_, p__7541) {
-  var vec__7547__7548 = p__7541;
-  var elem__7549 = cljs.core.nth.call(null, vec__7547__7548, 0, null);
-  var val__7550 = cljs.core.nth.call(null, vec__7547__7548, 1, null);
-  var id__7551 = cljs.core.peek.call(null, (new cljs.core.Keyword("\ufdd0'ids")).call(null, elem__7549));
-  return jayq.core.$.call(null, [cljs.core.str("[hl~='"), cljs.core.str(id__7551), cljs.core.str("']")].join("")).toggle(hlisp.interpreter.truthy_hexp_QMARK_.call(null, val__7550))
-}, "=", function prims(_, args) {
-  return hlisp.hexp.make_data_hexp.call(null, cljs.core.apply.call(null, cljs.core._EQ_, args))
-}, "not=", function prims(_, args) {
-  return hlisp.hexp.make_data_hexp.call(null, cljs.core.apply.call(null, cljs.core.not_EQ_, args))
-}, "concat", function prims(_, args) {
-  var children__7553 = cljs.core.vec.call(null, cljs.core.mapcat.call(null, "\ufdd0'children", args));
-  return cljs.core.assoc.call(null, cljs.core.first.call(null, args), "\ufdd0'children", children__7553)
-}, "call", function prims(_, p__7554) {
-  var vec__7559__7560 = p__7554;
-  var f__7561 = cljs.core.nth.call(null, vec__7559__7560, 0, null);
-  var args__7562 = cljs.core.nthnext.call(null, vec__7559__7560, 1);
-  if(cljs.core.not.call(null, cljs.core.seq.call(null, args__7562))) {
-    return f__7561
-  }else {
-    return hlisp.interpreter.apply_STAR_.call(null, f__7561, cljs.core.ObjMap.EMPTY, args__7562)
-  }
-}, "gensym", function prims(_7564, _) {
-  return hlisp.hexp.make_data_hexp.call(null, [cljs.core.str(cljs.core.gensym.call(null))].join(""))
-}, "log", function prims(_, args) {
-  console.log(cljs.core.apply.call(null, cljs.core.str, cljs.core.map.call(null, "\ufdd0'data", args)));
-  return hlisp.hexp.make_data_hexp.call(null, null)
-}, "log-obj", function prims(_, args) {
-  hlisp.util.tee.call(null, hlisp.compiler.dcs, "[log-obj]", args);
-  return hlisp.hexp.make_data_hexp.call(null, null)
-}, "str", function prims(_, args) {
-  return hlisp.hexp.make_data_hexp.call(null, cljs.core.apply.call(null, cljs.core.str, cljs.core.map.call(null, "\ufdd0'data", args)))
-}, "clone", function prims(_, p__7565) {
-  var vec__7573__7575 = p__7565;
-  var map__7574__7576 = cljs.core.nth.call(null, vec__7573__7575, 0, null);
-  var map__7574__7577 = cljs.core.seq_QMARK_.call(null, map__7574__7576) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7574__7576) : map__7574__7576;
-  var hexp__7578 = map__7574__7577;
-  var ids__7579 = cljs.core._lookup.call(null, map__7574__7577, "\ufdd0'ids", null);
-  return cljs.core.assoc.call(null, hexp__7578, "\ufdd0'ids", cljs.core.conj.call(null, ids__7579, cljs.core.gensym.call(null)))
-}, "clicks-e", function prims(_, p__7580) {
-  var vec__7588__7590 = p__7580;
-  var map__7589__7591 = cljs.core.nth.call(null, vec__7588__7590, 0, null);
-  var map__7589__7592 = cljs.core.seq_QMARK_.call(null, map__7589__7591) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7589__7591) : map__7589__7591;
-  var hexp__7593 = map__7589__7592;
-  var ids__7594 = cljs.core._lookup.call(null, map__7589__7592, "\ufdd0'ids", null);
-  return hlisp.hexp.make_data_hexp.call(null, filterE(clicksE(document.body), flapjax.core.filter_id.call(null, cljs.core.peek.call(null, ids__7594))))
-}, "one-e", function prims(_, p__7595) {
-  var vec__7599__7600 = p__7595;
-  var e__7601 = cljs.core.nth.call(null, vec__7599__7600, 0, null);
-  return hlisp.hexp.make_data_hexp.call(null, oneE((new cljs.core.Keyword("\ufdd0'data")).call(null, e__7601)))
-}, "map-e", function prims(_, p__7602) {
-  var vec__7607__7608 = p__7602;
-  var f__7609 = cljs.core.nth.call(null, vec__7607__7608, 0, null);
-  var e__7610 = cljs.core.nth.call(null, vec__7607__7608, 1, null);
-  return hlisp.hexp.make_data_hexp.call(null, mapE(function(v) {
-    return hlisp.interpreter.apply_STAR_.call(null, f__7609, cljs.core.ObjMap.EMPTY, cljs.core.PersistentVector.fromArray([hlisp.hexp.make_data_hexp.call(null, v)], true))
-  }, (new cljs.core.Keyword("\ufdd0'data")).call(null, e__7610)))
-}, "filter-e", function prims(_, p__7611) {
-  var vec__7616__7617 = p__7611;
-  var pred__7618 = cljs.core.nth.call(null, vec__7616__7617, 0, null);
-  var src__7619 = cljs.core.nth.call(null, vec__7616__7617, 1, null);
-  return hlisp.hexp.make_data_hexp.call(null, filterE((new cljs.core.Keyword("\ufdd0'data")).call(null, src__7619), function(v) {
-    return hlisp.interpreter.truthy_hexp_QMARK_.call(null, hlisp.interpreter.apply_STAR_.call(null, pred__7618, cljs.core.ObjMap.EMPTY, cljs.core.PersistentVector.fromArray([hlisp.hexp.make_data_hexp.call(null, v)], true)))
-  }))
-}, "receiver-e", function prims(_, p__7620) {
-  var vec__7625__7626 = p__7620;
-  var init__7627 = cljs.core.nth.call(null, vec__7625__7626, 0, null);
-  var r__7628 = receiverE();
-  flapjax.core.init_BANG_.call(null, function() {
-    return r__7628.sendEvent((new cljs.core.Keyword("\ufdd0'data")).call(null, init__7627))
-  });
-  return hlisp.hexp.make_data_hexp.call(null, r__7628)
-}, "send-e", function prims(_, p__7629) {
-  var vec__7634__7635 = p__7629;
-  var rcv__7636 = cljs.core.nth.call(null, vec__7634__7635, 0, null);
-  var e__7637 = cljs.core.nth.call(null, vec__7634__7635, 1, null);
-  (new cljs.core.Keyword("\ufdd0'data")).call(null, rcv__7636).sendEvent((new cljs.core.Keyword("\ufdd0'data")).call(null, e__7637));
-  return hlisp.hexp.make_data_hexp.call(null, null)
-}], true);
-goog.provide("hlisp.main");
-goog.require("cljs.core");
-goog.require("jayq.util");
-goog.require("hlisp.dom");
-goog.require("hlisp.reader");
-goog.require("hlisp.util");
-goog.require("hlisp.interpreter");
-goog.require("hlisp.interpreter");
-goog.require("hlisp.reader");
-goog.require("hlisp.dom");
-goog.require("hlisp.util");
-goog.require("jayq.util");
-goog.require("goog.dom");
-goog.require("jayq.core");
-goog.require("flapjax.core");
-goog.require("hlisp.primitives");
-hlisp.main.xhr_opts = cljs.core.ObjMap.fromObject(["\ufdd0'async", "\ufdd0'dataType", "\ufdd0'type"], {"\ufdd0'async":false, "\ufdd0'dataType":"text", "\ufdd0'type":"GET"});
-hlisp.main.status_ok_QMARK_ = function status_ok_QMARK_(status) {
-  var and__3822__auto____7382 = status >= 200;
-  if(and__3822__auto____7382) {
-    return status < 300
-  }else {
-    return and__3822__auto____7382
-  }
-};
-hlisp.main.xhr = function() {
-  var xhr__delegate = function(uri, p__7384) {
-    var map__7393__7394 = p__7384;
-    var map__7393__7395 = cljs.core.seq_QMARK_.call(null, map__7393__7394) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7393__7394) : map__7393__7394;
-    var opt__7396 = cljs.core._lookup.call(null, map__7393__7395, "\ufdd0'opt", null);
-    var ret__7397 = jQuery.ajax([cljs.core.str(uri)].join(""), jayq.util.clj__GT_js.call(null, cljs.core.into.call(null, hlisp.main.xhr_opts, opt__7396)));
-    var status__7398 = ret__7397.status;
-    var message__7399 = ret__7397.statusText;
-    var text__7400 = ret__7397.responseText;
-    if(cljs.core.truth_(hlisp.main.status_ok_QMARK_.call(null, status__7398))) {
-    }else {
-      throw new Error([cljs.core.str("Assert failed: "), cljs.core.str([cljs.core.str(status__7398), cljs.core.str(" "), cljs.core.str(message__7399)].join("")), cljs.core.str("\n"), cljs.core.str(cljs.core.pr_str.call(null, cljs.core.with_meta(cljs.core.list("\ufdd1'status-ok?", "\ufdd1'status"), cljs.core.hash_map("\ufdd0'line", 35))))].join(""));
-    }
-    return text__7400
-  };
-  var xhr = function(uri, var_args) {
-    var p__7384 = null;
-    if(goog.isDef(var_args)) {
-      p__7384 = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1), 0)
-    }
-    return xhr__delegate.call(this, uri, p__7384)
-  };
-  xhr.cljs$lang$maxFixedArity = 1;
-  xhr.cljs$lang$applyTo = function(arglist__7401) {
-    var uri = cljs.core.first(arglist__7401);
-    var p__7384 = cljs.core.rest(arglist__7401);
-    return xhr__delegate(uri, p__7384)
-  };
-  xhr.cljs$lang$arity$variadic = xhr__delegate;
-  return xhr
-}();
-hlisp.main.load_remote_scripts = function load_remote_scripts() {
-  return cljs.core.mapv.call(null, function(p1__7383_SHARP_) {
-    if(cljs.core.truth_(p1__7383_SHARP_.is("[src]"))) {
-      return hlisp.main.xhr.call(null, jayq.core.attr.call(null, p1__7383_SHARP_, "src"))
-    }else {
-      return jayq.core.text.call(null, p1__7383_SHARP_)
-    }
-  }, jayq.core.find.call(null, jayq.core.$.call(null, "head"), "script[type='text/hlisp']"))
-};
-hlisp.main.init = function init() {
-  var body__7408 = document.body;
-  var $body__7409 = jayq.core.$.call(null, body__7408);
-  var scrp_src__7410 = cljs.core.map.call(null, hlisp.reader.read_string, hlisp.main.load_remote_scripts.call(null));
-  var body_src__7411 = cljs.core.drop.call(null, 2, cljs.core.vec.call(null, cljs.core.first.call(null, hlisp.dom.read_dom.call(null, body__7408))));
-  console.time("init");
-  jayq.core.empty.call(null, $body__7409);
-  cljs.core.mapv.call(null, function(p1__7402_SHARP_) {
-    return jayq.core.append.call(null, $body__7409, p1__7402_SHARP_)
-  }, cljs.core.concat.call(null, cljs.core.mapcat.call(null, function(p1__7403_SHARP_) {
-    return cljs.core.map.call(null, hlisp.dom.write_dom, hlisp.interpreter.eval_STAR_.call(null, p1__7403_SHARP_))
-  }, scrp_src__7410), cljs.core.map.call(null, hlisp.dom.write_dom, hlisp.interpreter.eval_STAR_.call(null, body_src__7411))));
-  flapjax.core.initialize.call(null);
-  return console.timeEnd("init")
-};
-hlisp.interpreter.bind_primitive_BANG_.call(null, hlisp.primitives.prims);
-hlisp.interpreter.bind_primitive_BANG_.call(null, cljs.core.PersistentVector.fromArray(["dom-assoc!", hlisp.primitives.dom_assoc_BANG_, "dom-dissoc!", hlisp.primitives.dom_dissoc_BANG_, "dom-css!", hlisp.primitives.dom_css_BANG_, "map", hlisp.primitives.x_map, "mapcat", hlisp.primitives.x_mapcat, "partition", hlisp.primitives.x_partition, "sync-e", hlisp.primitives.sync_e], true));
-hl = hlisp.interpreter.eval_string_STAR_;
-jayq.core.document_ready.call(null, hlisp.main.init);
 goog.provide("goog.net.xpc.Transport");
 goog.require("goog.Disposable");
 goog.require("goog.dom");
@@ -31016,3 +29832,7 @@ goog.provide("hlisp.repl");
 goog.require("cljs.core");
 goog.require("clojure.browser.repl");
 clojure.browser.repl.connect.call(null, "http://localhost:9000/repl");
+goog.provide("hlisp.test");
+goog.require("cljs.core");
+goog.require("hlisp.env");
+goog.require("hlisp.env");
