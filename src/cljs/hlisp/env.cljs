@@ -47,15 +47,16 @@
     (div {:id "main"}
       (div
         (p ($text "whoa"))))
-    (foo (p ($text "hello world"))))
+    (map #(assoc % :foo (gensym "thing"))
+         (foo (p ($text "hello world")))))
 
   ;; (div {:id "main"} (h1 ($text "Title")) (p ($text "hello world")))
   ;; <div id="main">
   ;;   <div>
   ;;     <p>whoa</p>
   ;;   </div>
-  ;;   <h1>Title</h1>
-  ;;   <p>hello world</p>
+  ;;   <h1 foo="thing7">Title</h1>
+  ;;   <p foo="thing8">hello world</p>
   ;; </div>
 
   )
@@ -195,7 +196,7 @@
                         attrs-noid) 
           children    (mapv dom (.-children n))]
       (-> $elem
-        (jq/attr (into {} (mapv #(vec (list (name (first %)) (second %))) attrs))) 
+        (jq/attr attrs)
         (jq/append children)))))
 
 
