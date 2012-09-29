@@ -1,11 +1,11 @@
 (ns hlisp.env
   (:require-macros
-    [hlisp.macros :as m])
+    [hlisp.macros     :as m])
   (:require
-    [jayq.core  :as jq]
-    [jayq.util  :as ju])
+    [jayq.core        :as jq]
+    [jayq.util        :as ju])
   (:use
-    [clojure.string :only [join]]))
+    [clojure.string   :only [join]]))
 
 (comment
 
