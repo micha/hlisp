@@ -17,9 +17,6 @@
   (dom [n] "Produce DOM tree for this node (and children)."))
 
 (deftype TextNode [tag text]
-  IFn
-  (-invoke [n] n)
-  
   IPrintable
   (-pr-seq [n opts]
     (js/console.log (dom n))
