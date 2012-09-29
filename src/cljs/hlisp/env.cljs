@@ -301,5 +301,5 @@
 (def wbr            (make-elem-node "wbr"))
 
 (def $list          (make-elem-node "$list"))
-(def $text          #(make-text-node %))
-(def $comment       #(make-comment-node %))
+(def $text          make-text-node)
+(def $comment       make-comment-node)
