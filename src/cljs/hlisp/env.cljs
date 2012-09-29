@@ -22,6 +22,9 @@
   (foo (p ($text "hello world")))
   ;; (div (h1 ($text "Title")) (p ($text "hello world")))
 
+  (reduce conj (div {"id" "main"}) (foo (p ($text "hello world"))))
+  ;; (div {"id" "main"} (h1 ($text "Title")) (p ($text "hello world")))
+
   )
 
 (declare make-elem-node make-text-node)
