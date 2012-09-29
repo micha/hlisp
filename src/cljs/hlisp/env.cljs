@@ -5,8 +5,7 @@
     [jayq.core  :as jq]
     [jayq.util  :as ju])
   (:use
-    [clojure.string :only [join]]
-    [cljs.reader    :only [register-tag-parser!]]))
+    [clojure.string :only [join]]))
 
 (comment
 
