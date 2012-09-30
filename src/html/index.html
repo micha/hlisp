@@ -3,24 +3,13 @@
   <meta charset="utf-8" />
   <title>hlisp test</title>
 
-  <script type="text/hlisp" src="js/test.hl"></script>
-
   <script type="text/hlisp">
-    (defvalues mytabs
-      question-tab  question
-      answer-tab    answer
-      (make-tabs "one"
-        li div "one"
-        li div "two"))
-
-    (defvalues myradio
-      show-question
-      show-answer
-      (make-radio "one"
-        (a ((href "javascript:void(0)"))) "one"
-        (a ((href "javascript:void(0)"))) "two"))
-
-    (sync-e mytabs myradio)
+    (def question-tab li)
+    (def answer-tab li)
+    (def question div)
+    (def answer div)
+    (def show-question (a {:href "#"}))
+    (def show-answer (a {:href "#"}))
   </script>
 
   <style type="text/css">
@@ -36,6 +25,8 @@
     <answer-tab>answer</answer-tab>
   </ul>
 
+  <!--here is a coment!-->
+
   <div>
     <question>
       <p>
@@ -49,7 +40,7 @@
     </answer>
   </div>
 
-  <script type="text/javascript" src="js/libs.js"></script>
-  <script type="text/javascript" src="js/hlisp.js"></script>
+  <!--__HLISP__-->
+
 </body>
 </html>

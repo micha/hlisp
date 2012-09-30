@@ -1,6 +1,4 @@
 (ns hlisp.env
-  (:require-macros
-    [hlisp.macros     :as m])
   (:require
     [jayq.core        :as jq]
     [jayq.util        :as ju])
@@ -55,7 +53,7 @@
     (map #(assoc % :foo (gensym "thing"))
          (foo (p ($text "hello world")))))
 
-  ;; (div {:id "main"} (div (p ($text "whoa"))) (h1 {:foo "thing7"} ($text "Title")) (p {:foo "thing8"} ($text "hello world")))
+  ;; (div {:id "main"} (h1 ($text "Title")) (p ($text "hello world")))
   ;; <div id="main">
   ;;   <div>
   ;;     <p>whoa</p>
@@ -345,3 +343,10 @@
 (def $list          (make-elem-node "$list"))
 (def $text          make-text-node)
 (def $comment       make-comment-node)
+
+(defn replace-body [forms]
+  (let [$body (jq/$ "body")]
+    (jq/empty $body)
+    (mapv #(jq/append $body (dom %)) forms)
+    ))
+

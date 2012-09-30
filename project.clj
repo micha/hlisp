@@ -1,13 +1,13 @@
-(defproject cljs-starter "0.0.1"
+(defproject cljs-test "0.1.0-SNAPSHOT"
   :description "Hlisp"
-  :source-paths ["src/clj"]
+  :url "http://example.com/FIXME"
+  :license {:name "Eclipse Public License"
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :source-paths  ["src/clj"]
+  :plugins [[lein-ring "0.7.1"]]
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [compojure "1.0.4"]]
-  :plugins [[lein-cljsbuild "0.2.7"]
-            [lein-ring "0.7.1"]]
-  :cljsbuild {
-    :builds [{:source-path "src/cljs"
-              :compiler {:output-to "resources/public/js/hlisp.js"
-                         :optimizations :whitespace
-                         :pretty-print true}}]}
+                 [hiccup "1.0.1"]
+                 [compojure "1.0.4"]
+                 [clj-tagsoup "0.3.0"]
+                 [org.clojure/clojurescript "0.0-1450"]]
   :ring {:handler example.routes/app})
