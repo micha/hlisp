@@ -55,7 +55,7 @@
     (map #(assoc % :foo (gensym "thing"))
          (foo (p ($text "hello world")))))
 
-  ;; (div {:id "main"} (h1 {:foo "thing7"} ($text "Title")) (p {:foo "thing8"} ($text "hello world")))
+  ;; (div {:id "main"} (div (p ($text "whoa"))) (h1 {:foo "thing7"} ($text "Title")) (p {:foo "thing8"} ($text "hello world")))
   ;; <div id="main">
   ;;   <div>
   ;;     <p>whoa</p>
