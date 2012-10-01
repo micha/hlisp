@@ -84,13 +84,13 @@
                        :externs externs
                        :output-to outfile}))
 
-(defn compile-html [srcfile outfile & {:keys [externs includes]}]
+(defn compile-html [srcfile outfile cljsdir & {:keys [externs includes]}]
   (let [hl-src    (get-hlisp-str srcfile)
         html-src  (slurp srcfile)
         page-cljs (page-cljs-file)
         cljs-out  (tmpfile)]
     (spit page-cljs hl-src)
-    (compile-cljs (.getPath cljs-srcdir) (.getPath cljs-out) :externs externs)
+    (compile-cljs cljsdir (.getPath cljs-out) :externs externs)
     (let [compiled-str  (slurp cljs-out)
           incs          (string/join "\n" (map slurp includes))
           js-str        (string/join "\n" [incs compiled-str])
@@ -117,6 +117,7 @@
 
   (compile-html "src/html/index.html"
                 "resources/public/index.html"
+                "src/cljs"
                 :externs ["src/extern/jquery.js"]
                 :includes ["src/jslib/jquery.js"]
                 )
