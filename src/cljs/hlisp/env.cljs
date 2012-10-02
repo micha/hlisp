@@ -344,9 +344,10 @@
 (def $text          make-text-node)
 (def $comment       make-comment-node)
 
-(defn replace-body [forms]
-  (let [$body (jq/$ "body")]
-    (jq/empty $body)
-    (mapv #(jq/append $body (dom %)) forms)
-    ))
+(defn init [forms]
+  (jq/$
+    (fn []
+      (let [$body (jq/$ "body")]
+        (jq/empty $body)
+        (mapv #(jq/append $body (dom %)) forms)))))
 

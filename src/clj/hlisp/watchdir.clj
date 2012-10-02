@@ -55,6 +55,12 @@
     (add-watch* b (fn [_ cur] (when (f cur) (swap! ret (constantly cur)))))
     ret))
 
+(defn merge-b [b1 b2]
+  (let [ret (atom nil)]
+    (add-watch* b1 (fn [_ cur] (swap! ret (constantly cur))))
+    (add-watch* b2 (fn [_ cur] (swap! ret (constantly cur))))
+    ret))
+
 (defn process-b [f b]
   (let [ret (atom nil)
         q   (java.util.concurrent.PriorityBlockingQueue.)]
@@ -62,6 +68,18 @@
     (future
       (loop []
         (swap! ret (constantly (f (.take q))))
+        (recur)))
+    ret))
+
+(defn process-last-b [f b]
+  (let [ret (atom nil)
+        q   (java.util.concurrent.PriorityBlockingQueue.)]
+    (add-watch* b (fn [_ cur] (.add q cur)))
+    (future
+      (loop []
+        (let [x (.take q)]
+          (when (= 0 (.size q))
+            (swap! ret (constantly (f x))))) 
         (recur)))
     ret))
 
