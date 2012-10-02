@@ -1,7 +1,12 @@
 (ns hlisp.core
   (:use
+    [criterium.core         :only [time-body]]
+    [hlisp.watchdir         :only [watch-dir-ext process-b]]
+    [hlisp.colors           :only [style pr-ok]]
     [pl.danieljanus.tagsoup :only [parse tag attributes children]]
     [clojure.java.io        :only [file]]
+    [clojure.stacktrace     :only [print-stack-trace]]
+    [clojure.pprint         :only [pprint]]
     [hiccup.core            :only [html]]
     [hiccup.element         :only [javascript-tag]])
   (:require
@@ -37,14 +42,19 @@
     first))
 
 (defn extract-script [elem]
-  (-> (children elem)
-    (filter-tag :head)
-    first
-    children
-    (filter-tag :script)
-    (filter-attr :type "text/hlisp")
-    first
-    (nth 2)))
+  (let [forms-str           (-> (children elem)
+                              (filter-tag :head)
+                              first
+                              children
+                              (filter-tag :script)
+                              (filter-attr :type "text/hlisp")
+                              first
+                              (nth 2))
+        [ns-decl & forms]   (read-string (str "(" forms-str ")"))
+        prelude-str         (slurp "src/template/prelude.cljs")
+        prelude             (read-string (str "(" prelude-str ")"))
+        complete            (concat (list ns-decl) prelude forms)]
+    (string/join "\n" (map pr-str complete))))
 
 (defn tagsoup->hlisp [elem]
   (if (string? elem)
@@ -56,15 +66,12 @@
 
 (defn body->hlisp-str [body]
   (let [forms (cons 'list (drop 2 (-> (tagsoup->hlisp body))))]
-    (str (list 'replace-body forms)) 
-    ) 
-  )
+    (str (list 'hlisp.env/replace-body forms))))
 
 (defn build-page-hlisp [page]
   (let [s1  (extract-script page)
-        s2  (-> (get-body page) body->hlisp-str)
-        env (slurp "hlisp/env.cljs")]
-    (string/join "\n" [env s1 s2])))
+        s2  (-> (get-body page) body->hlisp-str)]
+    (string/join "\n" [s1 s2])))
 
 (defn get-hlisp-str [srcfile]
   (-> (parse srcfile) build-page-hlisp))
@@ -98,42 +105,47 @@
       (.delete page-cljs) 
       (.delete cljs-out)
       (spit outfile
-            (string/replace html-src "<!--__HLISP__-->" js-tag))
-      )))
+            (string/replace html-src "<!--__HLISP__-->" js-tag)))))
 
+(defn outfile [srcdir outdir infile]
+  (let [rel (subs infile (inc (count srcdir)))]
+    (str outdir "/" rel)))
 
+(defn elapsed-ms [f & args]
+  (int (/ (first (time-body (apply f args)))
+          1000000)))
 
+(defn compile-watch [srcdir outdir cljsdir & {:keys [externs includes]}]
+  (->>
+    (watch-dir-ext srcdir "html" 100)
+    (process-b
+      (fn [infile]
+        (try
+          (let [out (outfile srcdir outdir (.getPath infile))]
+            (println (style (java.util.Date.) :blue)
+                     "\n   "
+                     (style infile :bold-blue)
+                     (style "->" :blue)
+                     (style out :bold-blue)) 
+            (flush)
+            (pr-ok
+              true
+              (format
+                "    Elapsed time: %d ms.\n"
+                (elapsed-ms
+                  compile-html infile out cljsdir :externs externs :includes includes)))
+            (flush)
+            true)
+          (catch Throwable e
+            (pr-ok false (format "%s" (with-out-str (print-stack-trace e))))
+            (flush)
+            false))))))
 
+(defn -main [& args]
+  (do
+    (compile-watch "src/html" "resources/public" "src/cljs"
+                   :externs ["src/extern/jquery.js"]
+                   :includes ["src/jslib/jquery.js"])
+    (println "\nCompiling html files in 'src/html' to 'resources/public'.")))
 
-
-
-(comment
-  
-  (ext-filter (file-seq (file "src")) "cljs")
-
-  (string/replace (slurp "src/html/index.html") #"</body>" "FOO\n</body>")
-
-  (html (javascript-tag "window.foo = 1;")) 
-
-  (compile-html "src/html/index.html"
-                "resources/public/index.html"
-                "src/cljs"
-                :externs ["src/extern/jquery.js"]
-                :includes ["src/jslib/jquery.js"]
-                )
-
-  (get-hlisp-str "src/html/index.html")
-  
-  (->
-    (parse "src/html/index.html")
-    build-page-hlisp
-    )
-
-  (->
-    (parse "src/html/index.html")
-    get-body
-    body->hlisp-str
-    ) 
-
-  )
 
