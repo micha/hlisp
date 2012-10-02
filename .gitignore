@@ -5,6 +5,7 @@
 *.swn
 *.swo
 *.swp
+src/cljs/___page___.cljs
 out/
 lib/
 classes/

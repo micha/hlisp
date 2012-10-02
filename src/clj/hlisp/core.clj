@@ -41,6 +41,9 @@
     (filter-tag :body)
     first))
 
+(defn munge-path [path]
+  (-> (string/replace path "_" "__") (string/replace "/" "_")))
+
 (defn extract-script [elem]
   (let [forms-str           (-> (children elem)
                               (filter-tag :head)
@@ -81,28 +84,27 @@
     (.deleteOnExit t) 
     t))
 
-(defn page-cljs-file []
-  (let [t (java.io.File/createTempFile "hlisp" ".cljs" cljs-srcdir)]
-    (.deleteOnExit t)
-    t))
+(defn page-cljs-file [srcfile cljsdir]
+  (str cljsdir "/___" (munge-path srcfile) ".cljs"))
 
-(defn compile-cljs [srcdir outfile & {:keys [externs]}]
-  (cljsc/build srcdir {:optimizations :advanced
+(defn compile-cljs [srcdir outfile & {:keys [optimizations externs]}]
+  (cljsc/build srcdir {:optimizations optimizations
                        :externs externs
                        :output-to outfile}))
 
-(defn compile-html [srcfile outfile cljsdir & {:keys [externs includes]}]
+(defn compile-html [srcfile outfile cljsdir & {:keys [optimizations externs includes]}]
   (let [hl-src    (get-hlisp-str srcfile)
         html-src  (slurp srcfile)
-        page-cljs (page-cljs-file)
+        page-cljs (str cljsdir "/___page___.cljs")
         cljs-out  (tmpfile)]
     (spit page-cljs hl-src)
-    (compile-cljs cljsdir (.getPath cljs-out) :externs externs)
+    (compile-cljs cljsdir (.getPath cljs-out) :optimizations optimizations
+                                              :externs externs)
     (let [compiled-str  (slurp cljs-out)
           incs          (string/join "\n" (map slurp includes))
-          js-str        (string/join "\n" [incs compiled-str])
+          js-str        (string/join
+                          ["\nvar CLOSURE_NO_DEPS = true;\n" incs compiled-str])
           js-tag        (html (javascript-tag js-str))]
-      (.delete page-cljs) 
       (.delete cljs-out)
       (spit outfile
             (string/replace html-src "<!--__HLISP__-->" js-tag)))))
@@ -115,7 +117,7 @@
   (int (/ (first (time-body (apply f args)))
           1000000)))
 
-(defn compile-watch [srcdir outdir cljsdir & {:keys [externs includes]}]
+(defn compile-watch [srcdir outdir cljsdir & {:keys [optimizations externs includes]}]
   (->>
     (watch-dir-ext srcdir "html" 100)
     (process-b
@@ -133,7 +135,9 @@
               (format
                 "    Elapsed time: %d ms.\n"
                 (elapsed-ms
-                  compile-html infile out cljsdir :externs externs :includes includes)))
+                  compile-html infile out cljsdir :optimizations optimizations
+                                                  :externs externs
+                                                  :includes includes)))
             (flush)
             true)
           (catch Throwable e
@@ -141,9 +145,10 @@
             (flush)
             false))))))
 
-(defn -main [& args]
+(defn -main [opt]
   (do
     (compile-watch "src/html" "resources/public" "src/cljs"
+                   :optimizations (keyword opt)
                    :externs ["src/extern/jquery.js"]
                    :includes ["src/jslib/jquery.js"])
     (println "\nCompiling html files in 'src/html' to 'resources/public'.")))
