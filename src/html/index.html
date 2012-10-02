@@ -4,8 +4,8 @@
   <title>hlisp test</title>
 
   <script type="text/hlisp">
+
     (ns holyshit
-      (:use [hlisp.test :only [doit]])
       (:require-macros [hlisp.macros :as m]))
 
     (m/def-values
@@ -16,7 +16,6 @@
        div              div
        (a {:href "#"})  (a {:href "#"})])
 
-    (doit)
   </script>
 
   <style type="text/css">

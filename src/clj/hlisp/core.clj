@@ -103,7 +103,7 @@
     (let [compiled-str  (slurp cljs-out)
           incs          (string/join "\n" (map slurp includes))
           js-str        (string/join
-                          ["\nvar CLOSURE_NO_DEPS = true;\n" incs compiled-str])
+                          ["var CLOSURE_NO_DEPS = true;\n" incs compiled-str])
           js-tag        (html (javascript-tag js-str))]
       (.delete cljs-out)
       (spit outfile
