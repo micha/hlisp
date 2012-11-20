@@ -1,3 +1,7 @@
+# Notice
+
+This project is no longer in development. It has been superceded by [lein-hlisp](http://github.com/micha/lein-hlisp/) and [hlisp-starter](http://github.com/micha/hlisp-starter/). Sorry!
+
 # Development
 
 Install [Leiningen2](https://github.com/technomancy/leiningen)
