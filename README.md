@@ -1,6 +1,6 @@
 # Notice
 
-This project is no longer in development. It has been superceded by [lein-hlisp](http://github.com/micha/lein-hlisp/) and [hlisp-starter](http://github.com/micha/hlisp-starter/). Sorry!
+This project is no longer in development. It has been superceded by [lein-hlisp](http://github.com/tailrecursion/lein-hlisp/) and [hlisp-starter](http://github.com/tailrecursion/hlisp-starter/). Sorry!
 
 # Development
 
